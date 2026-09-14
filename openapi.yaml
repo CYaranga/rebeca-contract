@@ -1,0 +1,7428 @@
+openapi: 3.1.0
+info:
+  title: Rebeca API
+  version: 1.0.0
+  description: Generado a partir de src/Router/HTTPRouter.js (rebeca-backend) y la coleccion Bruno 'Rebeca
+    - API Endpoints Bruno'. Ver x-source en cada operacion para la linea exacta del router.
+servers:
+- url: https://rebeca.app/api/dev
+  description: 'dev (Bruno environment: Rebeca App DEV)'
+tags:
+- name: Admin
+- name: Agora
+- name: Assistant
+- name: Client
+- name: Services
+- name: access-code
+- name: access-codes
+- name: activity
+- name: admins
+- name: agents
+- name: analytics
+- name: app
+- name: assistant
+- name: business-identity
+- name: cache
+- name: callingCodes
+- name: client
+- name: clients
+- name: code
+- name: codes
+- name: connect
+- name: contact
+- name: cos
+- name: destination
+- name: destinations
+- name: destiny
+- name: error
+- name: events
+- name: flights
+- name: google
+- name: ia
+- name: image
+- name: items
+- name: jobs
+- name: joiners
+- name: labels
+- name: multilanguage
+- name: octorate
+- name: package
+- name: packages
+- name: permission
+- name: permissions
+- name: poi
+- name: pois
+- name: provider
+- name: provider-agent
+- name: provider-widget-config
+- name: qr
+- name: ready_live
+- name: recsys
+- name: resources
+- name: routes
+- name: service
+- name: sessions
+- name: streaming
+- name: subscription
+- name: token
+- name: topics
+- name: tour
+- name: trip
+- name: user
+- name: watson
+- name: webhook
+- name: webhook_salesbot
+- name: webhook_salesbot_probe
+- name: whatsapp
+- name: widget
+- name: widget_auth
+paths:
+  /admins/add:
+    post:
+      operationId: register_Add
+      tags:
+      - admins
+      summary: POST /admins/add
+      x-source: HTTPRouter.js:38
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /user/login:
+    post:
+      operationId: adminLogin
+      tags:
+      - user
+      summary: POST /user/login
+      x-source: HTTPRouter.js:47
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                    password:
+                      type: string
+                  additionalProperties: true
+              additionalProperties: true
+            example:
+              data:
+                email: sergiosef@gmail.com
+                password: luvare75
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /admins/edit:
+    post:
+      operationId: editAdmin
+      tags:
+      - admins
+      summary: POST /admins/edit
+      x-source: HTTPRouter.js:55
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /admins/delete:
+    post:
+      operationId: deleteAdminsByID
+      tags:
+      - admins
+      summary: POST /admins/delete
+      x-source: HTTPRouter.js:61
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /admins/get/filter:
+    post:
+      operationId: getMyAdmins
+      tags:
+      - admins
+      summary: POST /admins/get/filter
+      x-source: HTTPRouter.js:66
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /admins/get/editable:
+    post:
+      operationId: getAdminEditableDetails
+      tags:
+      - admins
+      summary: POST /admins/get/editable
+      x-source: HTTPRouter.js:71
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /admins/update/status:
+    post:
+      operationId: updateAdminStatus
+      tags:
+      - admins
+      summary: POST /admins/update/status
+      x-source: HTTPRouter.js:76
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /ia/gen/story:
+    post:
+      operationId: getGeneratedStory
+      tags:
+      - ia
+      summary: POST /ia/gen/story
+      x-source: HTTPRouter.js:84
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /ia/gen/image:
+    post:
+      operationId: getImageGen
+      tags:
+      - ia
+      summary: POST /ia/gen/image
+      x-source: HTTPRouter.js:85
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /ia/gen/embeddings:
+    post:
+      operationId: generateEmbeddings
+      tags:
+      - ia
+      summary: POST /ia/gen/embeddings
+      x-source: HTTPRouter.js:86
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+    get:
+      operationId: consultEmbeddings
+      tags:
+      - ia
+      summary: GET /ia/gen/embeddings
+      x-source: HTTPRouter.js:87
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /ia/analyze/image/activity:
+    get:
+      operationId: extractActivityDetailsFromImage
+      tags:
+      - ia
+      summary: GET /ia/analyze/image/activity
+      x-source: HTTPRouter.js:88
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /clients/add:
+    post:
+      operationId: register_Add2
+      tags:
+      - Client
+      summary: POST /clients/add
+      x-source: HTTPRouter.js:96
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                    password:
+                      type: string
+                    name:
+                      type: string
+                    last_name:
+                      type: string
+                    mobile:
+                      type: string
+                  additionalProperties: true
+              additionalProperties: true
+            example:
+              data:
+                email: christian07@gmail.com
+                password: '123456'
+                name: Christian
+                last_name: ''
+                mobile: ''
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /clients/login:
+    post:
+      operationId: clientLogin
+      tags:
+      - Client
+      summary: POST /clients/login
+      x-source: HTTPRouter.js:97
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                    password:
+                      type: string
+                  additionalProperties: true
+              additionalProperties: true
+            example:
+              data:
+                email: sergiosef@gmail.com
+                password: luvare75
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /clients/preferences/add:
+    post:
+      operationId: addClientPreferences
+      tags:
+      - clients
+      summary: POST /clients/preferences/add
+      x-source: HTTPRouter.js:98
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /clients/get/filter:
+    post:
+      operationId: getClientsByFilter
+      tags:
+      - clients
+      summary: POST /clients/get/filter
+      x-source: HTTPRouter.js:105
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /clients/delete/email:
+    post:
+      operationId: deleteUsersByEmail
+      tags:
+      - clients
+      summary: POST /clients/delete/email
+      x-source: HTTPRouter.js:106
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /clients/delete/account:
+    post:
+      operationId: deleteAccount
+      tags:
+      - clients
+      summary: POST /clients/delete/account
+      x-source: HTTPRouter.js:107
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /clients/check:
+    post:
+      operationId: checkEmailAvailable
+      tags:
+      - Client
+      summary: POST /clients/check
+      x-source: HTTPRouter.js:108
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                  additionalProperties: true
+              additionalProperties: true
+            example:
+              data:
+                email: christian07@gmail.com
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /clients/update:
+    post:
+      operationId: updateClient
+      tags:
+      - clients
+      summary: POST /clients/update
+      x-source: HTTPRouter.js:109
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /watson/assistant/askV2:
+    post:
+      operationId: askWatsonAssistant
+      tags:
+      - Assistant
+      summary: POST /watson/assistant/askV2
+      x-source: HTTPRouter.js:110
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    client_id:
+                      type: integer
+                    language_code:
+                      type: string
+                    parameters:
+                      type: object
+                      properties:
+                        activity_id:
+                          type: integer
+                        user_activity_id:
+                          type: integer
+                        position_mine:
+                          type: object
+                          properties:
+                            latitude:
+                              type: number
+                            longitude:
+                              type: number
+                          additionalProperties: true
+                        position_other:
+                          type: object
+                          properties:
+                            latitude:
+                              type: number
+                            longitude:
+                              type: number
+                          additionalProperties: true
+                      additionalProperties: true
+                    question:
+                      type: string
+                  additionalProperties: true
+              additionalProperties: true
+            example:
+              data:
+                client_id: 70
+                language_code: es
+                parameters:
+                  activity_id: 37
+                  user_activity_id: 4121
+                  position_mine:
+                    latitude: -12.11981
+                    longitude: -77.029171
+                  position_other:
+                    latitude: -13.8097
+                    longitude: -76.2446
+                question: Distribucion
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /assistant/askV3:
+    post:
+      operationId: askAgentAssistant
+      tags:
+      - Assistant
+      summary: POST /assistant/askV3
+      x-source: HTTPRouter.js:117
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    question:
+                      type: string
+                    client_id:
+                      type: integer
+                    session_id:
+                      type: string
+                    language_code:
+                      type: string
+                    parameters:
+                      type: object
+                      properties:
+                        activity_id:
+                          type: integer
+                      additionalProperties: true
+                    channel:
+                      type: string
+                    agent_name:
+                      type: string
+                  additionalProperties: true
+              additionalProperties: true
+            example:
+              data:
+                question: hay piscina?
+                client_id: 131
+                session_id: thread_OVwaIpN0KjdP7qENjuLGsQDA
+                language_code: en
+                parameters:
+                  activity_id: 37
+                channel: app_web_mobile
+                agent_name: travel
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /assistant/partner-classify:
+    post:
+      operationId: partnerClassify
+      tags:
+      - assistant
+      summary: POST /assistant/partner-classify
+      x-source: HTTPRouter.js:123
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /assistant/partner-status:
+    get:
+      operationId: partnerStatus
+      tags:
+      - assistant
+      summary: GET /assistant/partner-status
+      x-source: HTTPRouter.js:127
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /whatsapp/assistant:
+    get:
+      operationId: verifyWhatsAppAssistant
+      tags:
+      - whatsapp
+      summary: GET /whatsapp/assistant
+      x-source: HTTPRouter.js:128
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+    post:
+      operationId: askWhatsAppAssistant
+      tags:
+      - whatsapp
+      summary: POST /whatsapp/assistant
+      x-source: HTTPRouter.js:132
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /clients/behaviour/log:
+    post:
+      operationId: logUserBehaviour
+      tags:
+      - clients
+      summary: POST /clients/behaviour/log
+      x-source: HTTPRouter.js:133
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /client/status:
+    put:
+      operationId: updateClientStatus
+      tags:
+      - client
+      summary: PUT /client/status
+      x-source: HTTPRouter.js:134
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /client/favourite/poi:
+    post:
+      operationId: setFavouritePOI
+      tags:
+      - client
+      summary: POST /client/favourite/poi
+      x-source: HTTPRouter.js:135
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    client_id:
+                      type: integer
+                    place_of_interest_id:
+                      type: string
+                    is_favourite:
+                      type: boolean
+                  additionalProperties: true
+              additionalProperties: true
+            example:
+              data:
+                client_id: 131
+                place_of_interest_id: '2065'
+                is_favourite: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /client/connection:
+    post:
+      operationId: toggleConnection
+      tags:
+      - client
+      summary: POST /client/connection
+      x-source: HTTPRouter.js:139
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /client/connections:
+    get:
+      operationId: getConnections
+      tags:
+      - client
+      summary: GET /client/connections
+      x-source: HTTPRouter.js:140
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /connect/lodging:
+    get:
+      operationId: getLodging
+      tags:
+      - connect
+      summary: GET /connect/lodging
+      x-source: HTTPRouter.js:141
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /connect/packages:
+    get:
+      operationId: getPackages
+      tags:
+      - connect
+      summary: GET /connect/packages
+      x-source: HTTPRouter.js:145
+      security:
+      - bearerAuth: []
+      - {}
+      parameters:
+      - name: language_code
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /package/details:
+    get:
+      operationId: getPackageDetails
+      tags:
+      - package
+      summary: GET /package/details
+      x-source: HTTPRouter.js:146
+      security:
+      - bearerAuth: []
+      - {}
+      parameters:
+      - name: language_code
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /package/stop:
+    get:
+      operationId: getStopByQr
+      tags:
+      - package
+      summary: GET /package/stop
+      x-source: HTTPRouter.js:147
+      security:
+      - bearerAuth: []
+      - {}
+      parameters:
+      - name: language_code
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /packages:
+    get:
+      operationId: listPackages
+      tags:
+      - packages
+      summary: GET /packages
+      x-source: HTTPRouter.js:155
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /package:
+    get:
+      operationId: getPackageForAdmin
+      tags:
+      - package
+      summary: GET /package
+      x-source: HTTPRouter.js:159
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      operationId: createPackage
+      tags:
+      - package
+      summary: POST /package
+      x-source: HTTPRouter.js:160
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      operationId: updatePackage
+      tags:
+      - package
+      summary: PUT /package
+      x-source: HTTPRouter.js:161
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      operationId: deletePackage
+      tags:
+      - package
+      summary: DELETE /package
+      x-source: HTTPRouter.js:162
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /package/image:
+    post:
+      operationId: uploadPackageImage
+      tags:
+      - package
+      summary: POST /package/image
+      x-source: HTTPRouter.js:166
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /package/translate:
+    post:
+      operationId: retranslatePackageField
+      tags:
+      - package
+      summary: POST /package/translate
+      x-source: HTTPRouter.js:177
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /package/codes:
+    get:
+      operationId: listPackageCodes
+      tags:
+      - package
+      summary: GET /package/codes
+      x-source: HTTPRouter.js:184
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /package/code:
+    post:
+      operationId: createPackageCode
+      tags:
+      - package
+      summary: POST /package/code
+      x-source: HTTPRouter.js:185
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      operationId: updatePackageCode
+      tags:
+      - package
+      summary: PUT /package/code
+      x-source: HTTPRouter.js:186
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      operationId: deletePackageCode
+      tags:
+      - package
+      summary: DELETE /package/code
+      x-source: HTTPRouter.js:187
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /provider/codes:
+    get:
+      operationId: listProviderCodes
+      tags:
+      - provider
+      summary: GET /provider/codes
+      x-source: HTTPRouter.js:191
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /provider/code:
+    post:
+      operationId: createProviderCode
+      tags:
+      - provider
+      summary: POST /provider/code
+      x-source: HTTPRouter.js:192
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      operationId: updateProviderCode
+      tags:
+      - provider
+      summary: PUT /provider/code
+      x-source: HTTPRouter.js:193
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      operationId: deleteProviderCode
+      tags:
+      - provider
+      summary: DELETE /provider/code
+      x-source: HTTPRouter.js:194
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /provider/code/redeem:
+    post:
+      operationId: redeemProviderCode
+      tags:
+      - provider
+      summary: POST /provider/code/redeem
+      x-source: HTTPRouter.js:198
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /package/redeem:
+    post:
+      operationId: redeemPackageCode
+      tags:
+      - package
+      summary: POST /package/redeem
+      x-source: HTTPRouter.js:202
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /package/code/peek:
+    post:
+      operationId: peekCode
+      tags:
+      - package
+      summary: POST /package/code/peek
+      x-source: HTTPRouter.js:210
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /provider/detail:
+    get:
+      operationId: getProviderDetail
+      tags:
+      - provider
+      summary: GET /provider/detail
+      x-source: HTTPRouter.js:214
+      security:
+      - bearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /client/permissions:
+    get:
+      operationId: clientPermissions
+      tags:
+      - client
+      summary: GET /client/permissions
+      x-source: HTTPRouter.js:218
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /client/profile/360:
+    get:
+      operationId: get360Profile
+      tags:
+      - client
+      summary: GET /client/profile/360
+      x-source: HTTPRouter.js:224
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /client/profile/360/foundry:
+    get:
+      operationId: get360ProfileFoundry
+      tags:
+      - client
+      summary: GET /client/profile/360/foundry
+      x-source: HTTPRouter.js:235
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /trip/accommodation/code/claim:
+    post:
+      operationId: claimGenericCode_Claim
+      tags:
+      - Client
+      summary: POST /trip/accommodation/code/claim
+      x-source: HTTPRouter.js:241
+      security:
+      - bearerAuth: []
+      - {}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    client_id:
+                      type: integer
+                    code:
+                      type: string
+                    claim:
+                      type: boolean
+                    language_code:
+                      type: string
+                  additionalProperties: true
+              additionalProperties: true
+            example:
+              data:
+                client_id: 70
+                code: SpyRLagmqU
+                claim: false
+                language_code: en
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /app/enable/code/gen:
+    post:
+      operationId: sendAppEnableCodes
+      tags:
+      - app
+      summary: POST /app/enable/code/gen
+      x-source: HTTPRouter.js:246
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /code/invitation/collaborator:
+    post:
+      operationId: generateCollaboratorCode
+      tags:
+      - code
+      summary: POST /code/invitation/collaborator
+      x-source: HTTPRouter.js:247
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /codes/accommodation:
+    get:
+      operationId: getAccommodationCodes
+      tags:
+      - codes
+      summary: GET /codes/accommodation
+      x-source: HTTPRouter.js:251
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+    put:
+      operationId: updateAccommodationCode
+      tags:
+      - Admin
+      summary: PUT /codes/accommodation
+      x-source: HTTPRouter.js:252
+      security: []
+      parameters:
+      - name: activity_id
+        in: query
+        required: false
+        schema:
+          type: integer
+        example: 37
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    check_list:
+                      type: array
+                      items:
+                        type: string
+                    code_id:
+                      type: integer
+                  additionalProperties: true
+              additionalProperties: true
+            example:
+              data:
+                check_list:
+                - toilet_paper
+                - water
+                code_id: 1257
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /code/accommodation:
+    put:
+      operationId: updateActivationCode
+      tags:
+      - code
+      summary: PUT /code/accommodation
+      x-source: HTTPRouter.js:256
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /codes:
+    delete:
+      operationId: deleteCodesByID
+      tags:
+      - codes
+      summary: DELETE /codes
+      x-source: HTTPRouter.js:257
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /code/resend:
+    post:
+      operationId: resendCodeByEmail
+      tags:
+      - code
+      summary: POST /code/resend
+      x-source: HTTPRouter.js:258
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /code/claim:
+    post:
+      operationId: claimGenericCode_Claim2
+      tags:
+      - code
+      summary: POST /code/claim
+      x-source: HTTPRouter.js:259
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /code/qr/check-in:
+    get:
+      operationId: generateCheckInQR
+      tags:
+      - code
+      summary: GET /code/qr/check-in
+      x-source: HTTPRouter.js:260
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /client/codes:
+    get:
+      operationId: getClientPendingCodes
+      tags:
+      - Client
+      summary: GET /client/codes
+      x-source: HTTPRouter.js:261
+      security: []
+      parameters:
+      - name: email
+        in: query
+        required: false
+        schema:
+          type: string
+        example: christian.yaranga.05@gmail.com
+      - name: validation_date
+        in: query
+        required: false
+        schema:
+          type: string
+        example: '2023-02-27'
+      - name: client_id
+        in: query
+        required: false
+        schema:
+          type: integer
+        example: 70
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /access-code/validate:
+    post:
+      operationId: validateAccessCode
+      tags:
+      - access-code
+      summary: POST /access-code/validate
+      x-source: HTTPRouter.js:265
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /access-codes:
+    get:
+      operationId: getAccessCodes
+      tags:
+      - access-codes
+      summary: GET /access-codes
+      x-source: HTTPRouter.js:266
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      operationId: createAccessCode
+      tags:
+      - access-codes
+      summary: POST /access-codes
+      x-source: HTTPRouter.js:267
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      operationId: updateAccessCode
+      tags:
+      - access-codes
+      summary: PUT /access-codes
+      x-source: HTTPRouter.js:268
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      operationId: deleteAccessCodes
+      tags:
+      - access-codes
+      summary: DELETE /access-codes
+      x-source: HTTPRouter.js:269
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /destination:
+    get:
+      operationId: getDestination
+      tags:
+      - destination
+      summary: GET /destination
+      x-source: HTTPRouter.js:273
+      security: []
+      parameters:
+      - name: destination_id
+        in: query
+        required: false
+        schema:
+          type: integer
+        example: 2
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+    put:
+      operationId: upsertDestination
+      tags:
+      - destination
+      summary: PUT /destination
+      x-source: HTTPRouter.js:274
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /destinations:
+    get:
+      operationId: getDestinations
+      tags:
+      - destinations
+      summary: GET /destinations
+      x-source: HTTPRouter.js:279
+      security: []
+      parameters:
+      - name: stack
+        in: query
+        required: false
+        schema:
+          type: integer
+        example: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /client/engagement/levels:
+    get:
+      operationId: getUserLevels
+      tags:
+      - client
+      summary: GET /client/engagement/levels
+      x-source: HTTPRouter.js:283
+      security: []
+      parameters:
+      - name: client_id
+        in: query
+        required: false
+        schema:
+          type: integer
+        example: 70
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /client/engagement/badges:
+    get:
+      operationId: getUserBadges
+      tags:
+      - client
+      summary: GET /client/engagement/badges
+      x-source: HTTPRouter.js:287
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /client/engagement/rewards:
+    get:
+      operationId: getUserRewards
+      tags:
+      - client
+      summary: GET /client/engagement/rewards
+      x-source: HTTPRouter.js:291
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /client/engagement:
+    post:
+      operationId: registerUserEngagementAction
+      tags:
+      - client
+      summary: POST /client/engagement
+      x-source: HTTPRouter.js:295
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /callingCodes:
+    get:
+      operationId: getCountryCallingCodes
+      tags:
+      - callingCodes
+      summary: GET /callingCodes
+      x-source: HTTPRouter.js:302
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /flights/countries:
+    get:
+      operationId: getCountryCodes
+      tags:
+      - flights
+      summary: GET /flights/countries
+      x-source: HTTPRouter.js:303
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /flights/airports:
+    get:
+      operationId: getAIATACityCodes
+      tags:
+      - flights
+      summary: GET /flights/airports
+      x-source: HTTPRouter.js:304
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /flights/offers:
+    get:
+      operationId: getAvailableFlights
+      tags:
+      - flights
+      summary: GET /flights/offers
+      x-source: HTTPRouter.js:305
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /flights/offer/validate:
+    post:
+      operationId: validateFlightOffer
+      tags:
+      - flights
+      summary: POST /flights/offer/validate
+      x-source: HTTPRouter.js:306
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /flights/offer/book:
+    post:
+      operationId: createFlightBooking
+      tags:
+      - flights
+      summary: POST /flights/offer/book
+      x-source: HTTPRouter.js:310
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /flights/regulations:
+    get:
+      operationId: getFlightRegulations
+      tags:
+      - flights
+      summary: GET /flights/regulations
+      x-source: HTTPRouter.js:311
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /widget/session:
+    post:
+      operationId: createWidgetSession
+      tags:
+      - widget
+      summary: POST /widget/session
+      x-source: HTTPRouter.js:320
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /widget/geocode:
+    post:
+      operationId: geocodeForWidget
+      tags:
+      - widget
+      summary: POST /widget/geocode
+      x-source: HTTPRouter.js:328
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /widget/plan-status/{task_id}:
+    get:
+      operationId: planStatusForWidget
+      tags:
+      - widget
+      summary: GET /widget/plan-status/:task_id
+      x-source: HTTPRouter.js:338
+      security: []
+      parameters:
+      - name: task_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /webhook_salesbot:
+    post:
+      operationId: webhookSalesbot_Webhooksalesbot
+      tags:
+      - webhook_salesbot
+      summary: POST /webhook_salesbot
+      x-source: HTTPRouter.js:346
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /widget_auth/{provider_token}:
+    get:
+      operationId: widgetAuth
+      tags:
+      - widget_auth
+      summary: GET /widget_auth/:provider_token
+      x-source: HTTPRouter.js:347
+      security: []
+      parameters:
+      - name: provider_token
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /webhook_salesbot_probe:
+    post:
+      operationId: webhookSalesbot_Webhooksalesbotprobe
+      tags:
+      - webhook_salesbot_probe
+      summary: POST /webhook_salesbot_probe
+      x-source: HTTPRouter.js:348
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /webhook/{platform}/chat:
+    post:
+      operationId: handleWebhook
+      tags:
+      - webhook
+      summary: POST /webhook/:platform/chat
+      x-source: HTTPRouter.js:355
+      security: []
+      parameters:
+      - name: platform
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                createTime:
+                  type: object
+                  additionalProperties: true
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /resources/labels/update:
+    get:
+      operationId: updateAppLabelsVersion
+      tags:
+      - resources
+      summary: GET /resources/labels/update
+      x-source: HTTPRouter.js:359
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /resources/labels/consult:
+    get:
+      operationId: checkForNewVersions
+      tags:
+      - resources
+      summary: GET /resources/labels/consult
+      x-source: HTTPRouter.js:363
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /labels/app/localize:
+    post:
+      operationId: getAppLocalizedLabels
+      tags:
+      - labels
+      summary: POST /labels/app/localize
+      x-source: HTTPRouter.js:367
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /labels/web/localize:
+    post:
+      operationId: getLocalizedWebLabelsByGroup
+      tags:
+      - Client
+      summary: POST /labels/web/localize
+      x-source: HTTPRouter.js:371
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    group_code:
+                      type: string
+                    language_code:
+                      type: string
+                  additionalProperties: true
+              additionalProperties: true
+            example:
+              data:
+                group_code: tag
+                language_code: en
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /clients/config/set:
+    post:
+      operationId: setClientConfig
+      tags:
+      - Client
+      summary: POST /clients/config/set
+      x-source: HTTPRouter.js:388
+      security:
+      - bearerAuth: []
+      - {}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    client_timezone:
+                      type: string
+                    preferred_language:
+                      type: string
+                    client_id:
+                      type: integer
+                  additionalProperties: true
+              additionalProperties: true
+            example:
+              data:
+                client_timezone: '-05'
+                preferred_language: en
+                client_id: 57
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /service/accommodation/notification/all:
+    post:
+      operationId: sendNotificationToAll
+      tags:
+      - service
+      summary: POST /service/accommodation/notification/all
+      x-source: HTTPRouter.js:393
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /notification/user2accommodation:
+    post:
+      operationId: sendNotificationUser2Accommodation
+      tags:
+      - Client
+      summary: POST /notification/user2accommodation
+      x-source: HTTPRouter.js:397
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    client_id:
+                      type: integer
+                    message:
+                      type: string
+                    user_trip_id:
+                      type: integer
+                    activity_id:
+                      type: integer
+                  additionalProperties: true
+              additionalProperties: true
+            example:
+              data:
+                client_id: 70
+                message: Test
+                user_trip_id: 2652
+                activity_id: 37
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /clients/notification/unsubscribe:
+    post:
+      operationId: unsubscribeSpecificNotification
+      tags:
+      - clients
+      summary: POST /clients/notification/unsubscribe
+      x-source: HTTPRouter.js:401
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /clients/notification/history:
+    post:
+      operationId: getClientNotificationHistory
+      tags:
+      - Client
+      summary: POST /clients/notification/history
+      x-source: HTTPRouter.js:405
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    client_id:
+                      type: integer
+                  additionalProperties: true
+              additionalProperties: true
+            example:
+              data:
+                client_id: 1296
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /clients/notification/mark-viewed:
+    post:
+      operationId: markNotificationAsViewed
+      tags:
+      - Client
+      summary: POST /clients/notification/mark-viewed
+      x-source: HTTPRouter.js:409
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    client_id:
+                      type: integer
+                    associated_entity:
+                      type: string
+                    associated_id:
+                      type: integer
+                  additionalProperties: true
+              additionalProperties: true
+            example:
+              data:
+                client_id: 2541
+                associated_entity: trip_tip
+                associated_id: -2
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /provider/notifications:
+    get:
+      operationId: getProviderNotifications
+      tags:
+      - provider
+      summary: GET /provider/notifications
+      x-source: HTTPRouter.js:413
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /provider/notification/mark-viewed:
+    put:
+      operationId: setProviderNotificationAsViewed
+      tags:
+      - provider
+      summary: PUT /provider/notification/mark-viewed
+      x-source: HTTPRouter.js:417
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /octorate/chat/overview:
+    get:
+      operationId: overview
+      tags:
+      - octorate
+      summary: GET /octorate/chat/overview
+      x-source: HTTPRouter.js:428
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: from
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: live
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: to
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /octorate/chat/filters:
+    get:
+      operationId: filters
+      tags:
+      - octorate
+      summary: GET /octorate/chat/filters
+      x-source: HTTPRouter.js:433
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: from
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: live
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: to
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /octorate/chat/thread/{property}/{thread}:
+    get:
+      operationId: thread
+      tags:
+      - octorate
+      summary: GET /octorate/chat/thread/:property/:thread
+      x-source: HTTPRouter.js:438
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: property
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: thread
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /octorate/chat/stream:
+    get:
+      operationId: stream
+      tags:
+      - octorate
+      summary: GET /octorate/chat/stream
+      x-source: HTTPRouter.js:443
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /octorate/chat/subscribe:
+    get:
+      operationId: subscribe
+      tags:
+      - octorate
+      summary: GET /octorate/chat/subscribe
+      x-source: HTTPRouter.js:449
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: event
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: reservation_url
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: url
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /octorate/chat/subscriptions:
+    get:
+      operationId: subscriptions
+      tags:
+      - octorate
+      summary: GET /octorate/chat/subscriptions
+      x-source: HTTPRouter.js:454
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /octorate/chat/backfill:
+    get:
+      operationId: runBackfillHandler
+      tags:
+      - octorate
+      summary: GET /octorate/chat/backfill
+      x-source: HTTPRouter.js:459
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: concurrency
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: skip_done
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: start_after
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /octorate/chat/backfill-reservations:
+    get:
+      operationId: runReservationsBackfillHandler
+      tags:
+      - octorate
+      summary: GET /octorate/chat/backfill-reservations
+      x-source: HTTPRouter.js:464
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /octorate/chat/backfill-guests:
+    get:
+      operationId: runGuestsBackfillHandler
+      tags:
+      - octorate
+      summary: GET /octorate/chat/backfill-guests
+      x-source: HTTPRouter.js:469
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /octorate/analytics:
+    get:
+      operationId: analyticsHandler
+      tags:
+      - octorate
+      summary: GET /octorate/analytics
+      x-source: HTTPRouter.js:474
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: from
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: property
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: to
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /octorate/coverage:
+    get:
+      operationId: coverageHandler
+      tags:
+      - octorate
+      summary: GET /octorate/coverage
+      x-source: HTTPRouter.js:480
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /webhook/octorate/reservation:
+    post:
+      operationId: reservationWebhook
+      tags:
+      - webhook
+      summary: POST /webhook/octorate/reservation
+      x-source: HTTPRouter.js:485
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /analytics/topics:
+    get:
+      operationId: topicsReport
+      tags:
+      - analytics
+      summary: GET /analytics/topics
+      x-source: HTTPRouter.js:497
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /topics/questions:
+    get:
+      operationId: topicQuestionsHandler
+      tags:
+      - topics
+      summary: GET /topics/questions
+      x-source: HTTPRouter.js:498
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /topics/demographics:
+    get:
+      operationId: topicDemographicsHandler
+      tags:
+      - topics
+      summary: GET /topics/demographics
+      x-source: HTTPRouter.js:499
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /topics/tag:
+    get:
+      operationId: runTaggingHandler
+      tags:
+      - topics
+      summary: GET /topics/tag
+      x-source: HTTPRouter.js:505
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: reset
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: source
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /topics/mine-otro:
+    get:
+      operationId: mineOtroHandler
+      tags:
+      - topics
+      summary: GET /topics/mine-otro
+      x-source: HTTPRouter.js:506
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: source
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /topics/taxonomy:
+    get:
+      operationId: taxonomyHandler
+      tags:
+      - topics
+      summary: GET /topics/taxonomy
+      x-source: HTTPRouter.js:507
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /topics/taxonomy/add:
+    get:
+      operationId: addTaxonomyHandler
+      tags:
+      - topics
+      summary: GET /topics/taxonomy/add
+      x-source: HTTPRouter.js:508
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /topics/proposals:
+    get:
+      operationId: proposalsHandler
+      tags:
+      - topics
+      summary: GET /topics/proposals
+      x-source: HTTPRouter.js:513
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /octorate/rooms:
+    get:
+      operationId: getRooms
+      tags:
+      - octorate
+      summary: GET /octorate/rooms
+      x-source: HTTPRouter.js:517
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /octorate/rooms/available:
+    get:
+      operationId: getAvailableRooms
+      tags:
+      - octorate
+      summary: GET /octorate/rooms/available
+      x-source: HTTPRouter.js:518
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /octorate/availability/calendar:
+    get:
+      operationId: getRoomAvailabilityCalendar
+      tags:
+      - octorate
+      summary: GET /octorate/availability/calendar
+      x-source: HTTPRouter.js:522
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /octorate/availability/check:
+    get:
+      operationId: checkRoomAvailability
+      tags:
+      - octorate
+      summary: GET /octorate/availability/check
+      x-source: HTTPRouter.js:526
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /octorate/room/images:
+    get:
+      operationId: getRoomImages
+      tags:
+      - octorate
+      summary: GET /octorate/room/images
+      x-source: HTTPRouter.js:530
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /octorate/booking/url:
+    get:
+      operationId: getBookingURL
+      tags:
+      - octorate
+      summary: GET /octorate/booking/url
+      x-source: HTTPRouter.js:531
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /octorate/now:
+    get:
+      operationId: getNow
+      tags:
+      - octorate
+      summary: GET /octorate/now
+      x-source: HTTPRouter.js:532
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /octorate/extras:
+    get:
+      operationId: getExtras
+      tags:
+      - octorate
+      summary: GET /octorate/extras
+      x-source: HTTPRouter.js:538
+      security: []
+      parameters:
+      - name: accommodation_id
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: enabled
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: includeMasterAccommodationExtras
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /octorate/reset:
+    get:
+      operationId: resetToken
+      tags:
+      - octorate
+      summary: GET /octorate/reset
+      x-source: HTTPRouter.js:542
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /octorate/accommodations/sync:
+    post:
+      operationId: syncAccommodationsWithOctorate
+      tags:
+      - octorate
+      summary: POST /octorate/accommodations/sync
+      x-source: HTTPRouter.js:547
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /permission/group/get:
+    post:
+      operationId: getGroups
+      tags:
+      - permission
+      summary: POST /permission/group/get
+      x-source: HTTPRouter.js:568
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /permission/group/get/single:
+    post:
+      operationId: getPermissionsInGroup
+      tags:
+      - permission
+      summary: POST /permission/group/get/single
+      x-source: HTTPRouter.js:569
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /permission/group/update:
+    post:
+      operationId: updatePermissionInGroup
+      tags:
+      - permission
+      summary: POST /permission/group/update
+      x-source: HTTPRouter.js:574
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /permission/group/status:
+    post:
+      operationId: updateAccessGroupStatus
+      tags:
+      - permission
+      summary: POST /permission/group/status
+      x-source: HTTPRouter.js:579
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /permissions/group/delete:
+    post:
+      operationId: deleteAccessGroup
+      tags:
+      - permissions
+      summary: POST /permissions/group/delete
+      x-source: HTTPRouter.js:584
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /permissions/group/add:
+    post:
+      operationId: addAccessGroup
+      tags:
+      - permissions
+      summary: POST /permissions/group/add
+      x-source: HTTPRouter.js:589
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /permissions/add:
+    post:
+      operationId: addPermission
+      tags:
+      - permissions
+      summary: POST /permissions/add
+      x-source: HTTPRouter.js:594
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /permissions/delete:
+    post:
+      operationId: deletePermissions
+      tags:
+      - permissions
+      summary: POST /permissions/delete
+      x-source: HTTPRouter.js:595
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /poi/add:
+    post:
+      operationId: addPOI
+      tags:
+      - poi
+      summary: POST /poi/add
+      x-source: HTTPRouter.js:603
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /activity/poi/delete:
+    post:
+      operationId: deletePOIsByID
+      tags:
+      - activity
+      summary: POST /activity/poi/delete
+      x-source: HTTPRouter.js:604
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /activity/poi/get/filter:
+    post:
+      operationId: getPOIsByFilter
+      tags:
+      - activity
+      summary: POST /activity/poi/get/filter
+      x-source: HTTPRouter.js:605
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    look_for:
+                      type: string
+                    language_code:
+                      type: string
+                    filter:
+                      type: string
+                    value:
+                      type: string
+                  additionalProperties: true
+              additionalProperties: true
+            example:
+              data:
+                look_for: all
+                language_code: en
+                filter: category
+                value: Restaurant
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /pois:
+    get:
+      operationId: getPOIs
+      tags:
+      - pois
+      summary: GET /pois
+      x-source: HTTPRouter.js:606
+      security: []
+      parameters:
+      - name: tags
+        in: query
+        required: false
+        schema:
+          type: string
+        example: generic.local_gem
+      - name: destination_id
+        in: query
+        required: false
+        schema:
+          type: integer
+        example: 3
+      - name: include_surrounding_destinations
+        in: query
+        required: false
+        schema:
+          type: boolean
+        example: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /routes:
+    get:
+      operationId: getRoutes
+      tags:
+      - routes
+      summary: GET /routes
+      x-source: HTTPRouter.js:607
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /activity/poi/get/editable:
+    post:
+      operationId: getPOIEditableDetails
+      tags:
+      - activity
+      summary: POST /activity/poi/get/editable
+      x-source: HTTPRouter.js:608
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /activity/poi/get/details:
+    post:
+      operationId: getPOIDetails
+      tags:
+      - Assistant
+      summary: POST /activity/poi/get/details
+      x-source: HTTPRouter.js:612
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    poi_id:
+                      type: integer
+                    language_code:
+                      type: string
+                  additionalProperties: true
+              additionalProperties: true
+            example:
+              data:
+                poi_id: 1322
+                language_code: en
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /activity/poi/edit:
+    post:
+      operationId: editPOI
+      tags:
+      - activity
+      summary: POST /activity/poi/edit
+      x-source: HTTPRouter.js:613
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /poi/selector:
+    post:
+      operationId: getSelectorPOI
+      tags:
+      - poi
+      summary: POST /poi/selector
+      x-source: HTTPRouter.js:618
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /poi/recommend:
+    get:
+      operationId: getRecommendedPOIS
+      tags:
+      - poi
+      summary: GET /poi/recommend
+      x-source: HTTPRouter.js:619
+      security: []
+      parameters:
+      - name: client_id
+        in: query
+        required: false
+        schema:
+          type: integer
+        example: 313
+      - name: destiny
+        in: query
+        required: false
+        schema:
+          type: string
+        example: Paracas
+      - name: en
+        in: query
+        required: false
+        schema:
+          type: string
+        example: en
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /poi/personalized:
+    post:
+      operationId: getPersonalizedPOIS
+      tags:
+      - poi
+      summary: POST /poi/personalized
+      x-source: HTTPRouter.js:620
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    client_id:
+                      type: integer
+                    destination_id:
+                      type: integer
+                    language_code:
+                      type: string
+                  additionalProperties: true
+              additionalProperties: true
+            example:
+              data:
+                client_id: 70
+                destination_id: 3
+                language_code: en
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /poi/import:
+    get:
+      operationId: importPOIS
+      tags:
+      - poi
+      summary: GET /poi/import
+      x-source: HTTPRouter.js:621
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /clients/trip/schedule/set:
+    post:
+      operationId: setClientTripSchedule
+      tags:
+      - clients
+      summary: POST /clients/trip/schedule/set
+      x-source: HTTPRouter.js:632
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /clients/trip/schedule/get:
+    post:
+      operationId: getClientTripSchedule
+      tags:
+      - clients
+      summary: POST /clients/trip/schedule/get
+      x-source: HTTPRouter.js:637
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /planning:
+    get:
+      operationId: generatePlanning
+      tags:
+      - Client
+      summary: GET /planning
+      x-source: HTTPRouter.js:648
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: client_id
+        in: query
+        required: false
+        schema:
+          type: integer
+        example: 131
+      - name: latitude
+        in: query
+        required: false
+        schema:
+          type: number
+        example: -13.8389
+      - name: longitude
+        in: query
+        required: false
+        schema:
+          type: number
+        example: -76.25156
+      - name: user_trip_id
+        in: query
+        required: false
+        schema:
+          type: integer
+        example: 2473
+      - name: force_must_visit
+        in: query
+        required: false
+        schema:
+          type: boolean
+        example: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /schedule:
+    get:
+      operationId: getTripSchedule
+      tags:
+      - Client
+      summary: GET /schedule
+      x-source: HTTPRouter.js:653
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: user_trip_id
+        in: query
+        required: false
+        schema:
+          type: integer
+        example: 2200
+      - name: client_id
+        in: query
+        required: false
+        schema:
+          type: integer
+        example: 131
+      - name: language_code
+        in: query
+        required: false
+        schema:
+          type: string
+        example: en
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      operationId: setTripSchedule
+      tags:
+      - Client
+      summary: PUT /schedule
+      x-source: HTTPRouter.js:657
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    user_trip_id:
+                      type: string
+                    client_id:
+                      type: integer
+                    external_activity:
+                      type: object
+                      properties:
+                        description:
+                          type: string
+                        start_timestamp:
+                          type: string
+                        location:
+                          type: string
+                        external_activity_id:
+                          type: integer
+                      additionalProperties: true
+                  additionalProperties: true
+              additionalProperties: true
+            example:
+              data:
+                user_trip_id: '2200'
+                client_id: 131
+                external_activity:
+                  description: Breakfast
+                  start_timestamp: '2024-07-29 00:00:00-05:00'
+                  location: home
+                  external_activity_id: 50
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /provider/add:
+    post:
+      operationId: addProviderOrOperator
+      tags:
+      - provider
+      summary: POST /provider/add
+      x-source: HTTPRouter.js:667
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /provider/edit:
+    post:
+      operationId: editProviderOrOperator
+      tags:
+      - provider
+      summary: POST /provider/edit
+      x-source: HTTPRouter.js:672
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /provider/delete:
+    post:
+      operationId: deleteProvidersByID
+      tags:
+      - provider
+      summary: POST /provider/delete
+      x-source: HTTPRouter.js:673
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /provider/selector:
+    post:
+      operationId: getSelectorProviders
+      tags:
+      - provider
+      summary: POST /provider/selector
+      x-source: HTTPRouter.js:674
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /provider/get/filter:
+    post:
+      operationId: getMyProviders
+      tags:
+      - provider
+      summary: POST /provider/get/filter
+      x-source: HTTPRouter.js:678
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /provider/get/editable:
+    post:
+      operationId: getProviderEditableDetails
+      tags:
+      - provider
+      summary: POST /provider/get/editable
+      x-source: HTTPRouter.js:679
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /provider/update/status:
+    post:
+      operationId: updateProviderStatus
+      tags:
+      - provider
+      summary: POST /provider/update/status
+      x-source: HTTPRouter.js:683
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /service:
+    post:
+      operationId: addGenericService
+      tags:
+      - service
+      summary: POST /service
+      x-source: HTTPRouter.js:690
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /service/duplicate:
+    post:
+      operationId: duplicateGenericService
+      tags:
+      - service
+      summary: POST /service/duplicate
+      x-source: HTTPRouter.js:695
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /service/accommodation/questions/get:
+    post:
+      operationId: getQuestionsFromAccommodation
+      tags:
+      - service
+      summary: POST /service/accommodation/questions/get
+      x-source: HTTPRouter.js:699
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /service/accommodation/get/range:
+    post:
+      operationId: getAccommodationsInDateRange
+      tags:
+      - Client
+      summary: POST /service/accommodation/get/range
+      x-source: HTTPRouter.js:703
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    start_date:
+                      type: string
+                    end_date:
+                      type: string
+                    language_code:
+                      type: string
+                    destiny:
+                      type: string
+                  additionalProperties: true
+              additionalProperties: true
+            example:
+              data:
+                start_date: '2022-05-25'
+                end_date: '2022-05-29'
+                language_code: en
+                destiny: Lima, Peru
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /service/restaurants/get:
+    post:
+      operationId: getRestaurantsInDate
+      tags:
+      - service
+      summary: POST /service/restaurants/get
+      x-source: HTTPRouter.js:707
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /activity/get/filter:
+    post:
+      operationId: getServicesByFilter
+      tags:
+      - Client
+      summary: POST /activity/get/filter
+      x-source: HTTPRouter.js:711
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    myID:
+                      type: string
+                    look_for:
+                      type: string
+                  additionalProperties: true
+              additionalProperties: true
+            example:
+              data:
+                myID: '35'
+                look_for: mine
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /service/get/editable:
+    post:
+      operationId: getServiceEditableDetails
+      tags:
+      - service
+      summary: POST /service/get/editable
+      x-source: HTTPRouter.js:715
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /service/edit:
+    post:
+      operationId: editService
+      tags:
+      - service
+      summary: POST /service/edit
+      x-source: HTTPRouter.js:719
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /activity/delete:
+    post:
+      operationId: deleteServicesByID
+      tags:
+      - activity
+      summary: POST /activity/delete
+      x-source: HTTPRouter.js:724
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /activity/status/update:
+    post:
+      operationId: updateServicesStatus
+      tags:
+      - activity
+      summary: POST /activity/status/update
+      x-source: HTTPRouter.js:725
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /service/get/info:
+    post:
+      operationId: getServiceInfo
+      tags:
+      - service
+      summary: POST /service/get/info
+      x-source: HTTPRouter.js:729
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /service/availability:
+    get:
+      operationId: getServiceAvailability
+      tags:
+      - service
+      summary: GET /service/availability
+      x-source: HTTPRouter.js:730
+      security: []
+      parameters:
+      - name: activity_id
+        in: query
+        required: false
+        schema:
+          type: integer
+        example: 37
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /service/check_in_outs:
+    get:
+      operationId: getCheckInOuts
+      tags:
+      - service
+      summary: GET /service/check_in_outs
+      x-source: HTTPRouter.js:734
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /service/check_out_images:
+    get:
+      operationId: downloadCheckOutImages
+      tags:
+      - service
+      summary: GET /service/check_out_images
+      x-source: HTTPRouter.js:735
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /services:
+    get:
+      operationId: getServicesOfInterest
+      tags:
+      - Services
+      summary: GET /services
+      x-source: HTTPRouter.js:739
+      security: []
+      parameters:
+      - name: client_id
+        in: query
+        required: false
+        schema:
+          type: integer
+        example: 131
+      - name: language_code
+        in: query
+        required: false
+        schema:
+          type: string
+        example: es
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /qr/item:
+    get:
+      operationId: getItemInfoFromQRCode
+      tags:
+      - qr
+      summary: GET /qr/item
+      x-source: HTTPRouter.js:740
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /items/qr:
+    get:
+      operationId: getItemsWithQR
+      tags:
+      - items
+      summary: GET /items/qr
+      x-source: HTTPRouter.js:741
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /destiny/qa:
+    get:
+      operationId: getDestinyQA
+      tags:
+      - destiny
+      summary: GET /destiny/qa
+      x-source: HTTPRouter.js:742
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+    post:
+      operationId: setDestinyQA
+      tags:
+      - destiny
+      summary: POST /destiny/qa
+      x-source: HTTPRouter.js:743
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /service/CheckInForm:
+    get:
+      operationId: getServiceCheckInForm
+      tags:
+      - service
+      summary: GET /service/CheckInForm
+      x-source: HTTPRouter.js:748
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+    post:
+      operationId: updateServiceCheckInFormTemp
+      tags:
+      - service
+      summary: POST /service/CheckInForm
+      x-source: HTTPRouter.js:757
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /service/CheckInFormTemp:
+    post:
+      operationId: updateServiceCheckInForm
+      tags:
+      - service
+      summary: POST /service/CheckInFormTemp
+      x-source: HTTPRouter.js:752
+      security: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: string
+                  example: '{"activity_id":140,"user_trip_id":3054,"in_charge_name":"Valentina Correa","in_charge_document":"1094938881","in_charge_mobile":"3186342878","total_adults":5,"total_children":0,"metadata":{"companions":[{"name":"Valentina
+                    Correa","document":"1094938881"}],"cars":[{"license_plate":"Cbr281","model":"Chevrolet
+                    N400"}]}}'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /service/TermsConditionsForm:
+    post:
+      operationId: submitTermsConditionsForm
+      tags:
+      - Services
+      summary: POST /service/TermsConditionsForm
+      x-source: HTTPRouter.js:761
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    client_id:
+                      type: integer
+                    name:
+                      type: string
+                    last_name:
+                      type: string
+                    activity_id:
+                      type: integer
+                  additionalProperties: true
+              additionalProperties: true
+            example:
+              data:
+                client_id: 2582
+                name: Ricardo
+                last_name: Haro
+                activity_id: 140
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /service/bulk:
+    put:
+      operationId: bulkServiceUpsert
+      tags:
+      - service
+      summary: PUT /service/bulk
+      x-source: HTTPRouter.js:765
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /service/qas:
+    get:
+      operationId: getAccommodationQAs
+      tags:
+      - service
+      summary: GET /service/qas
+      x-source: HTTPRouter.js:770
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /service/distribution:
+    get:
+      operationId: getAccommodationDistribution
+      tags:
+      - service
+      summary: GET /service/distribution
+      x-source: HTTPRouter.js:771
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /streaming/channels/filter:
+    get:
+      operationId: getChannelsByFilter
+      tags:
+      - streaming
+      summary: GET /streaming/channels/filter
+      x-source: HTTPRouter.js:778
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /streaming/channel:
+    get:
+      operationId: getChannelEditableDetails
+      tags:
+      - streaming
+      summary: GET /streaming/channel
+      x-source: HTTPRouter.js:782
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+    post:
+      operationId: addChannel
+      tags:
+      - streaming
+      summary: POST /streaming/channel
+      x-source: HTTPRouter.js:786
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+    put:
+      operationId: updateChannel
+      tags:
+      - streaming
+      summary: PUT /streaming/channel
+      x-source: HTTPRouter.js:787
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+    delete:
+      operationId: deleteChannel
+      tags:
+      - streaming
+      summary: DELETE /streaming/channel
+      x-source: HTTPRouter.js:792
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /streaming/channel/status:
+    put:
+      operationId: updateChannelStatus
+      tags:
+      - streaming
+      summary: PUT /streaming/channel/status
+      x-source: HTTPRouter.js:788
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /streaming/session/filter:
+    get:
+      operationId: getSessionsByFilter
+      tags:
+      - streaming
+      summary: GET /streaming/session/filter
+      x-source: HTTPRouter.js:793
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /streaming/session:
+    post:
+      operationId: addInstantSession
+      tags:
+      - streaming
+      summary: POST /streaming/session
+      x-source: HTTPRouter.js:797
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+    put:
+      operationId: updateSession
+      tags:
+      - streaming
+      summary: PUT /streaming/session
+      x-source: HTTPRouter.js:798
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+    delete:
+      operationId: deleteStreamingSession
+      tags:
+      - streaming
+      summary: DELETE /streaming/session
+      x-source: HTTPRouter.js:799
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /streaming/session/invite:
+    post:
+      operationId: sendInviteToSession
+      tags:
+      - streaming
+      summary: POST /streaming/session/invite
+      x-source: HTTPRouter.js:803
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /streaming/session/join:
+    post:
+      operationId: joinSession
+      tags:
+      - Agora
+      summary: POST /streaming/session/join
+      x-source: HTTPRouter.js:807
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    user_id:
+                      type: integer
+                    streaming_session_id:
+                      type: integer
+                  additionalProperties: true
+              additionalProperties: true
+            example:
+              data:
+                user_id: 131
+                streaming_session_id: 965
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /streaming/session/finish:
+    post:
+      operationId: endSession
+      tags:
+      - streaming
+      summary: POST /streaming/session/finish
+      x-source: HTTPRouter.js:808
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /streaming/session/user:
+    get:
+      operationId: getSessionUsersInfo
+      tags:
+      - streaming
+      summary: GET /streaming/session/user
+      x-source: HTTPRouter.js:809
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /streaming/session/status:
+    get:
+      operationId: getSessionStatus
+      tags:
+      - streaming
+      summary: GET /streaming/session/status
+      x-source: HTTPRouter.js:813
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /streaming/session/ban:
+    post:
+      operationId: banSessionUser
+      tags:
+      - streaming
+      summary: POST /streaming/session/ban
+      x-source: HTTPRouter.js:820
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /streaming/session/audience:
+    get:
+      operationId: getSessionAudience
+      tags:
+      - Agora
+      summary: GET /streaming/session/audience
+      x-source: HTTPRouter.js:821
+      security: []
+      parameters:
+      - name: streaming_session_id
+        in: query
+        required: false
+        schema:
+          type: integer
+        example: 585
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /clients/trip/get:
+    post:
+      operationId: getMyUserTrips
+      tags:
+      - Client
+      summary: POST /clients/trip/get
+      x-source: HTTPRouter.js:829
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    user_id:
+                      type: integer
+                    is_admin:
+                      type: boolean
+                  additionalProperties: true
+              additionalProperties: true
+            example:
+              data:
+                user_id: 70
+                is_admin: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /clients/trip/appoint:
+    post:
+      operationId: newClientTrip
+      tags:
+      - clients
+      summary: POST /clients/trip/appoint
+      x-source: HTTPRouter.js:836
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /trip/accommodation/code/gen:
+    post:
+      operationId: createAccommodationCode
+      tags:
+      - trip
+      summary: POST /trip/accommodation/code/gen
+      x-source: HTTPRouter.js:841
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /clients/trip/update:
+    post:
+      operationId: updateClientTrip
+      tags:
+      - clients
+      summary: POST /clients/trip/update
+      x-source: HTTPRouter.js:845
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /clients/trip/get/filter:
+    post:
+      operationId: getClientsTripsByFilter
+      tags:
+      - clients
+      summary: POST /clients/trip/get/filter
+      x-source: HTTPRouter.js:847
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /clients/trip/delete:
+    post:
+      operationId: softDeleteClientTripsByID
+      tags:
+      - Client
+      summary: POST /clients/trip/delete
+      x-source: HTTPRouter.js:852
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    type: integer
+              additionalProperties: true
+            example:
+              data:
+              - 2654
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /client/trip/check-in:
+    get:
+      operationId: getCheckInInfo
+      tags:
+      - client
+      summary: GET /client/trip/check-in
+      x-source: HTTPRouter.js:856
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+    post:
+      operationId: commitCheckIn
+      tags:
+      - Client
+      summary: POST /client/trip/check-in
+      x-source: HTTPRouter.js:857
+      security: []
+      parameters:
+      - name: activity_id
+        in: query
+        required: false
+        schema:
+          type: integer
+        example: 37
+      - name: language_code
+        in: query
+        required: false
+        schema:
+          type: string
+        example: en
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    user_activity_id:
+                      type: integer
+                  additionalProperties: true
+              additionalProperties: true
+            example:
+              data:
+                user_activity_id: 5745
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /client/trip/check-out/image:
+    post:
+      operationId: uploadCheckOutImage
+      tags:
+      - Client
+      summary: POST /client/trip/check-out/image
+      x-source: HTTPRouter.js:858
+      security: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                user_activity_id:
+                  type: string
+                  example: '4353'
+                photo:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /client/trip/check-out:
+    post:
+      operationId: checkOut
+      tags:
+      - client
+      summary: POST /client/trip/check-out
+      x-source: HTTPRouter.js:863
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+    get:
+      operationId: getCheckOutInstructions
+      tags:
+      - client
+      summary: GET /client/trip/check-out
+      x-source: HTTPRouter.js:864
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /service/booking:
+    post:
+      operationId: bookService
+      tags:
+      - service
+      summary: POST /service/booking
+      x-source: HTTPRouter.js:868
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /trip/actions:
+    get:
+      operationId: getTripUserTasks
+      tags:
+      - Client
+      summary: GET /trip/actions
+      x-source: HTTPRouter.js:869
+      security: []
+      parameters:
+      - name: activity_id
+        in: query
+        required: false
+        schema:
+          type: integer
+        example: 37
+      - name: client_id
+        in: query
+        required: false
+        schema:
+          type: integer
+        example: 70
+      - name: user_trip_id
+        in: query
+        required: false
+        schema:
+          type: integer
+        example: 2648
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+    post:
+      operationId: setTripUserTasks
+      tags:
+      - trip
+      summary: POST /trip/actions
+      x-source: HTTPRouter.js:870
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /trip/service/video:
+    post:
+      operationId: setTripServiceVideos
+      tags:
+      - Client
+      summary: POST /trip/service/video
+      x-source: HTTPRouter.js:871
+      security: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                videofile:
+                  type: string
+                  format: binary
+                activity_id:
+                  type: string
+                  example: '169'
+                admin_id:
+                  type: string
+                  example: '131'
+                user_trip_id:
+                  type: string
+                  example: '1614'
+                title:
+                  type: string
+                  example: ''
+                description:
+                  type: string
+                  example: ''
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+    get:
+      operationId: getTripServiceVideo
+      tags:
+      - Admin
+      summary: GET /trip/service/video
+      x-source: HTTPRouter.js:876
+      security: []
+      parameters:
+      - name: activity_id
+        in: query
+        required: false
+        schema:
+          type: integer
+        example: 37
+      - name: video_id
+        in: query
+        required: false
+        schema:
+          type: integer
+        example: 217
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+    delete:
+      operationId: deleteTripServiceVideo
+      tags:
+      - Client
+      summary: DELETE /trip/service/video
+      x-source: HTTPRouter.js:877
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    type: integer
+              additionalProperties: true
+            example:
+              data:
+              - 46
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /clients/state/set:
+    post:
+      operationId: setUserState
+      tags:
+      - clients
+      summary: POST /clients/state/set
+      x-source: HTTPRouter.js:887
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /clients/state/get:
+    post:
+      operationId: getUserState
+      tags:
+      - clients
+      summary: POST /clients/state/get
+      x-source: HTTPRouter.js:888
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /clients/rating/add:
+    post:
+      operationId: addAppRating
+      tags:
+      - Client
+      summary: POST /clients/rating/add
+      x-source: HTTPRouter.js:892
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    client_id:
+                      type: integer
+                    rating:
+                      type: integer
+                    comment:
+                      type: string
+                    language_code:
+                      type: string
+                  additionalProperties: true
+              additionalProperties: true
+            example:
+              data:
+                client_id: 70
+                rating: 3
+                comment: ''
+                language_code: en
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /clients/profile/set:
+    post:
+      operationId: setUserProfile
+      tags:
+      - Client
+      summary: POST /clients/profile/set
+      x-source: HTTPRouter.js:893
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: user_id
+        in: query
+        required: false
+        schema:
+          type: integer
+        example: 70
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    user_id:
+                      type: integer
+                    name:
+                      type: string
+                    birth_date:
+                      type: string
+                    last_name:
+                      type: string
+                    mobile:
+                      type: string
+                  additionalProperties: true
+              additionalProperties: true
+            example:
+              data:
+                user_id: 3480
+                name: Christian
+                birth_date: '1995-10-04'
+                last_name: ''
+                mobile: ''
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /clients/profile/get:
+    post:
+      operationId: getUserProfile
+      tags:
+      - Client
+      summary: POST /clients/profile/get
+      x-source: HTTPRouter.js:901
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    client_id:
+                      type: integer
+                  additionalProperties: true
+              additionalProperties: true
+            example:
+              data:
+                client_id: 70
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /user/recover:
+    post:
+      operationId: sendRecoverEmail
+      tags:
+      - Client
+      summary: POST /user/recover
+      x-source: HTTPRouter.js:902
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                  additionalProperties: true
+              additionalProperties: true
+            example:
+              data:
+                email: gyula.farkas@eulerinnovations.com
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /user/reset:
+    post:
+      operationId: resetPassword
+      tags:
+      - user
+      summary: POST /user/reset
+      x-source: HTTPRouter.js:903
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /ready_live:
+    get:
+      operationId: ready_live
+      tags:
+      - ready_live
+      summary: GET /ready_live
+      x-source: HTTPRouter.js:907
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /app/config:
+    get:
+      operationId: getAppConfig
+      tags:
+      - app
+      summary: GET /app/config
+      x-source: HTTPRouter.js:908
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /joiners:
+    get:
+      operationId: joinersDashboard
+      tags:
+      - joiners
+      summary: GET /joiners
+      x-source: HTTPRouter.js:909
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /image/resize:
+    get:
+      operationId: resizeImage
+      tags:
+      - image
+      summary: GET /image/resize
+      x-source: HTTPRouter.js:910
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /multilanguage/translate:
+    post:
+      operationId: translateMultiLanguageTab
+      tags:
+      - multilanguage
+      summary: POST /multilanguage/translate
+      x-source: HTTPRouter.js:911
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /cache/clean:
+    post:
+      operationId: cleanCache
+      tags:
+      - cache
+      summary: POST /cache/clean
+      x-source: HTTPRouter.js:915
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /cache/stats:
+    get:
+      operationId: getCacheStats
+      tags:
+      - cache
+      summary: GET /cache/stats
+      x-source: HTTPRouter.js:916
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /app/deeplink:
+    get:
+      operationId: appDeepLink
+      tags:
+      - app
+      summary: GET /app/deeplink
+      x-source: HTTPRouter.js:918
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /cos/download:
+    get:
+      operationId: downloadCOSFilesByFolder
+      tags:
+      - cos
+      summary: GET /cos/download
+      x-source: HTTPRouter.js:919
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /contact/email:
+    post:
+      operationId: sendContactEmailFromWebpage
+      tags:
+      - contact
+      summary: POST /contact/email
+      x-source: HTTPRouter.js:920
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /jobs/manage:
+    post:
+      operationId: manageCronJobs
+      tags:
+      - jobs
+      summary: POST /jobs/manage
+      x-source: HTTPRouter.js:924
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /error/report:
+    post:
+      operationId: sendErrorReport
+      tags:
+      - error
+      summary: POST /error/report
+      x-source: HTTPRouter.js:927
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      operationId: getErrorReport
+      tags:
+      - error
+      summary: GET /error/report
+      x-source: HTTPRouter.js:928
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /service/ratings:
+    get:
+      operationId: getAppRatings
+      tags:
+      - service
+      summary: GET /service/ratings
+      x-source: HTTPRouter.js:933
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /watson/logs:
+    get:
+      operationId: getWatsonLogs
+      tags:
+      - watson
+      summary: GET /watson/logs
+      x-source: HTTPRouter.js:934
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /sessions:
+    get:
+      operationId: getSessions
+      tags:
+      - sessions
+      summary: GET /sessions
+      x-source: HTTPRouter.js:938
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /sessions/report:
+    get:
+      operationId: getSessionsReport
+      tags:
+      - sessions
+      summary: GET /sessions/report
+      x-source: HTTPRouter.js:939
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /sessions/report/foundry:
+    get:
+      operationId: getSessionsReportFoundry
+      tags:
+      - sessions
+      summary: GET /sessions/report/foundry
+      x-source: HTTPRouter.js:940
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /business-identity:
+    get:
+      operationId: list_Businessidentity
+      tags:
+      - business-identity
+      summary: GET /business-identity
+      x-source: HTTPRouter.js:950
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      operationId: create_Businessidentity
+      tags:
+      - business-identity
+      summary: POST /business-identity
+      x-source: HTTPRouter.js:954
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /business-identity/agents:
+    get:
+      operationId: agents
+      tags:
+      - business-identity
+      summary: GET /business-identity/agents
+      x-source: HTTPRouter.js:953
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: refresh
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /business-identity/assign-threads:
+    post:
+      operationId: assignThreads
+      tags:
+      - business-identity
+      summary: POST /business-identity/assign-threads
+      x-source: HTTPRouter.js:955
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /business-identity/{id}:
+    delete:
+      operationId: deactivate
+      tags:
+      - business-identity
+      summary: DELETE /business-identity/:id
+      x-source: HTTPRouter.js:956
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /business-identity/{id}/reactivate:
+    post:
+      operationId: reactivate
+      tags:
+      - business-identity
+      summary: POST /business-identity/:id/reactivate
+      x-source: HTTPRouter.js:960
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /business-identity/agents/{id}:
+    get:
+      operationId: agentDetail
+      tags:
+      - business-identity
+      summary: GET /business-identity/agents/:id
+      x-source: HTTPRouter.js:963
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /agents:
+    get:
+      operationId: list_Agents
+      tags:
+      - agents
+      summary: GET /agents
+      x-source: HTTPRouter.js:968
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      operationId: create_Agents
+      tags:
+      - agents
+      summary: POST /agents
+      x-source: HTTPRouter.js:969
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /agents/backfill:
+    post:
+      operationId: backfill
+      tags:
+      - agents
+      summary: POST /agents/backfill
+      x-source: HTTPRouter.js:974
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /agents/{id}:
+    get:
+      operationId: get_Agents
+      tags:
+      - agents
+      summary: GET /agents/:id
+      x-source: HTTPRouter.js:975
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      operationId: update
+      tags:
+      - agents
+      summary: PUT /agents/:id
+      x-source: HTTPRouter.js:976
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      operationId: remove_Agents
+      tags:
+      - agents
+      summary: DELETE /agents/:id
+      x-source: HTTPRouter.js:983
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /agents/{id}/reference:
+    put:
+      operationId: updateReference
+      tags:
+      - agents
+      summary: PUT /agents/:id/reference
+      x-source: HTTPRouter.js:980
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /agents/{id}/indexing-status:
+    get:
+      operationId: indexingStatus
+      tags:
+      - agents
+      summary: GET /agents/:id/indexing-status
+      x-source: HTTPRouter.js:982
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /provider-agent:
+    get:
+      operationId: list_Provideragent
+      tags:
+      - provider-agent
+      summary: GET /provider-agent
+      x-source: HTTPRouter.js:989
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: prov_id
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      operationId: upsert_Provideragent
+      tags:
+      - provider-agent
+      summary: PUT /provider-agent
+      x-source: HTTPRouter.js:990
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /provider-agent/{prov_id}/{role}:
+    delete:
+      operationId: remove_Provideragent
+      tags:
+      - provider-agent
+      summary: DELETE /provider-agent/:prov_id/:role
+      x-source: HTTPRouter.js:991
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: prov_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: role
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /provider-widget-config/{prov_id}:
+    get:
+      operationId: get_Providerwidgetconfig
+      tags:
+      - provider-widget-config
+      summary: GET /provider-widget-config/:prov_id
+      x-source: HTTPRouter.js:996
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: prov_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      operationId: upsert_Providerwidgetconfig
+      tags:
+      - provider-widget-config
+      summary: PUT /provider-widget-config/:prov_id
+      x-source: HTTPRouter.js:997
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: prov_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /sessions/backfill-channel:
+    get:
+      operationId: backfillChannelHandler
+      tags:
+      - sessions
+      summary: GET /sessions/backfill-channel
+      x-source: HTTPRouter.js:1000
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /sessions/backfill-userbehavior:
+    get:
+      operationId: backfillUserBehaviorHandler
+      tags:
+      - sessions
+      summary: GET /sessions/backfill-userbehavior
+      x-source: HTTPRouter.js:1006
+      security: []
+      parameters:
+      - name: max
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /sessions/{thread_id}:
+    get:
+      operationId: getSessionById
+      tags:
+      - sessions
+      summary: GET /sessions/:thread_id
+      x-source: HTTPRouter.js:1010
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: thread_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /watson/TTS:
+    get:
+      operationId: synthesizeV2
+      tags:
+      - watson
+      summary: GET /watson/TTS
+      x-source: HTTPRouter.js:1011
+      security: []
+      parameters:
+      - name: text
+        in: query
+        required: false
+        schema:
+          type: string
+        example: How can I help you?
+      - name: format
+        in: query
+        required: false
+        schema:
+          type: string
+        example: wav
+      - name: language_code
+        in: query
+        required: false
+        schema:
+          type: string
+        example: en
+      - name: cache
+        in: query
+        required: false
+        schema:
+          type: string
+        example: t
+      - name: client_id
+        in: query
+        required: false
+        schema:
+          type: integer
+        example: 70
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /token/refresh:
+    post:
+      operationId: refreshToken
+      tags:
+      - token
+      summary: POST /token/refresh
+      x-source: HTTPRouter.js:1012
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /events/report:
+    get:
+      operationId: getEventsReport
+      tags:
+      - events
+      summary: GET /events/report
+      x-source: HTTPRouter.js:1018
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /app/log:
+    post:
+      operationId: appLogger
+      tags:
+      - app
+      summary: POST /app/log
+      x-source: HTTPRouter.js:1019
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /qr/encode:
+    get:
+      operationId: encodeMessageInQR
+      tags:
+      - qr
+      summary: GET /qr/encode
+      x-source: HTTPRouter.js:1020
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /recsys/startup:
+    get:
+      operationId: recSysStartup
+      tags:
+      - recsys
+      summary: GET /recsys/startup
+      x-source: HTTPRouter.js:1021
+      security: []
+      parameters:
+      - name: client_id
+        in: query
+        required: false
+        schema:
+          type: integer
+        example: 131
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /pois/distance:
+    get:
+      operationId: getPoisDistance
+      tags:
+      - pois
+      summary: GET /pois/distance
+      x-source: HTTPRouter.js:1022
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /subscription:
+    post:
+      operationId: subscribeUser
+      tags:
+      - subscription
+      summary: POST /subscription
+      x-source: HTTPRouter.js:1023
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /google/videos:
+    get:
+      operationId: getGoogleVideos
+      tags:
+      - google
+      summary: GET /google/videos
+      x-source: HTTPRouter.js:1024
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /watson/questions/get/filter:
+    post:
+      operationId: getWatsonQuestions
+      tags:
+      - watson
+      summary: POST /watson/questions/get/filter
+      x-source: HTTPRouter.js:1028
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /watson/questions/get/selector:
+    post:
+      operationId: getWatsonQuestionsSelector
+      tags:
+      - watson
+      summary: POST /watson/questions/get/selector
+      x-source: HTTPRouter.js:1032
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /watson/questions/delete:
+    post:
+      operationId: deleteQuestions
+      tags:
+      - watson
+      summary: POST /watson/questions/delete
+      x-source: HTTPRouter.js:1036
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /watson/questions/upsert:
+    post:
+      operationId: upsertQuestion
+      tags:
+      - watson
+      summary: POST /watson/questions/upsert
+      x-source: HTTPRouter.js:1037
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /activity/tour/get/filter:
+    post:
+      operationId: getToursByFilter
+      tags:
+      - activity
+      summary: POST /activity/tour/get/filter
+      x-source: HTTPRouter.js:1041
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /activity/tour/get/range:
+    post:
+      operationId: getToursInDateRange
+      tags:
+      - activity
+      summary: POST /activity/tour/get/range
+      x-source: HTTPRouter.js:1042
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /activity/tour/get/info:
+    post:
+      operationId: getTourInfoByID
+      tags:
+      - activity
+      summary: POST /activity/tour/get/info
+      x-source: HTTPRouter.js:1046
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /tour/add:
+    post:
+      operationId: addTour
+      tags:
+      - tour
+      summary: POST /tour/add
+      x-source: HTTPRouter.js:1047
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /tour/get/editable:
+    post:
+      operationId: getTourEditableDetails
+      tags:
+      - tour
+      summary: POST /tour/get/editable
+      x-source: HTTPRouter.js:1048
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+  /routes/import:
+    post:
+      operationId: importRoutes
+      tags:
+      - routes
+      summary: POST /routes/import
+      x-source: HTTPRouter.js:1049
+      security: []
+      parameters:
+      - name: file
+        in: query
+        required: false
+        schema:
+          type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+    GenericResult:
+      type: object
+      additionalProperties: true
+      description: Forma generica de respuesta 200 no documentada explicitamente por el handler.
+    DataEnvelope:
+      type: object
+      required:
+      - data
+      properties:
+        data:
+          type: object
+          additionalProperties: true
+      description: 'Envoltorio {data: ...} usado por la mayoria de rutas POST/PUT/DELETE de este backend
+        (verificado via grep req.body.data en los handlers).'
