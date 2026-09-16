@@ -544,6 +544,20 @@ export const handlers = [
   http.put("*/provider-agent", () => HttpResponse.json({})),
   // remove_Provideragent
   http.delete("*/provider-agent/:prov_id/:role", () => HttpResponse.json({})),
+  // get_Providerchannels
+  http.get("*/provider-channels/:prov_id", () => HttpResponse.json({})),
+  // putWhatsapp_Providerchannels
+  http.put("*/provider-channels/:prov_id/whatsapp", () => HttpResponse.json({})),
+  // deleteWhatsapp_Providerchannels
+  http.delete("*/provider-channels/:prov_id/whatsapp", () => HttpResponse.json({})),
+  // testWhatsapp_Providerchannels
+  http.post("*/provider-channels/:prov_id/whatsapp/test", () => HttpResponse.json({})),
+  // putKommo_Providerchannels
+  http.put("*/provider-channels/:prov_id/kommo", () => HttpResponse.json({})),
+  // deleteKommo_Providerchannels
+  http.delete("*/provider-channels/:prov_id/kommo", () => HttpResponse.json({})),
+  // putChannels_Providerchannels
+  http.put("*/provider-channels/:prov_id/channels", () => HttpResponse.json({})),
   // get_Providerwidgetconfig
   http.get("*/provider-widget-config/:prov_id", () => HttpResponse.json({})),
   // upsert_Providerwidgetconfig

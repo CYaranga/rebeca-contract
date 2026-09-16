@@ -4083,6 +4083,96 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/provider-channels/{prov_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** GET /provider-channels/:prov_id */
+        get: operations["get_Providerchannels"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/provider-channels/{prov_id}/whatsapp": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** PUT /provider-channels/:prov_id/whatsapp */
+        put: operations["putWhatsapp_Providerchannels"];
+        post?: never;
+        /** DELETE /provider-channels/:prov_id/whatsapp */
+        delete: operations["deleteWhatsapp_Providerchannels"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/provider-channels/{prov_id}/whatsapp/test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** POST /provider-channels/:prov_id/whatsapp/test */
+        post: operations["testWhatsapp_Providerchannels"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/provider-channels/{prov_id}/kommo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** PUT /provider-channels/:prov_id/kommo */
+        put: operations["putKommo_Providerchannels"];
+        post?: never;
+        /** DELETE /provider-channels/:prov_id/kommo */
+        delete: operations["deleteKommo_Providerchannels"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/provider-channels/{prov_id}/channels": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * PUT /provider-channels/:prov_id/channels
+         * @description Quitar 'widget' del array revoca (active=false) las reglas business_identity con signal_type client_key/origin activas de ese negocio. Volver a añadir 'widget' no las reactiva.
+         */
+        put: operations["putChannels_Providerchannels"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/provider-widget-config/{prov_id}": {
         parameters: {
             query?: never;
@@ -4491,6 +4581,39 @@ export interface components {
             data: {
                 [key: string]: unknown;
             };
+        };
+        /** @description Fila de `provider` tal como la devuelve getFilteredProviders (Repository/provider/DAL.js:43). */
+        Provider: {
+            prov_id?: number;
+            provider_status?: string;
+            address?: string | null;
+            company_name?: string;
+            location?: string | null;
+            type?: string;
+            channels?: components["schemas"]["ProviderChannel"][];
+            description?: string | null;
+        };
+        /**
+         * @description Repository/providerChannels/index.js:16 (CHANNELS).
+         * @enum {string}
+         */
+        ProviderChannel: "widget" | "whatsapp" | "kommo";
+        /** @description Forma devuelta por toChannelsView (Repository/providerChannels/index.js:81); los secretos son write-only, solo viajan como has_*. */
+        ProviderChannelsView: {
+            whatsapp?: {
+                phone_number_id?: string | null;
+                verify_token?: string | null;
+                business_account_id?: string | null;
+                has_token?: boolean;
+                has_app_secret?: boolean;
+            };
+            kommo?: {
+                subdomain?: string | null;
+                client_id?: string | null;
+                has_client_secret?: boolean;
+                connected?: boolean;
+            };
+            channels?: components["schemas"]["ProviderChannel"][];
         };
     };
     responses: never;
@@ -9352,7 +9475,11 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["GenericResult"];
+                    "application/json": {
+                        data?: components["schemas"]["Provider"][];
+                    } & {
+                        [key: string]: unknown;
+                    };
                 };
             };
         };
@@ -12304,6 +12431,275 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["GenericResult"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    get_Providerchannels: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                prov_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["ProviderChannelsView"];
+                    } & {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    putWhatsapp_Providerchannels: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                prov_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["DataEnvelope"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["ProviderChannelsView"];
+                    } & {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    deleteWhatsapp_Providerchannels: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                prov_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    [key: string]: unknown;
+                };
+            };
+        };
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    testWhatsapp_Providerchannels: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                prov_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    [key: string]: unknown;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: {
+                            ok?: boolean;
+                            phone_number_id?: string;
+                            display_phone_number?: string;
+                            verified_name?: string;
+                            quality_rating?: string;
+                        };
+                    } & {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    putKommo_Providerchannels: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                prov_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["DataEnvelope"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["ProviderChannelsView"];
+                    } & {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    deleteKommo_Providerchannels: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                prov_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    [key: string]: unknown;
+                };
+            };
+        };
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    putChannels_Providerchannels: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                prov_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["DataEnvelope"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["ProviderChannelsView"];
+                    } & {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Unauthorized */
