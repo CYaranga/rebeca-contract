@@ -54,6 +54,7 @@ tags:
 - name: pois
 - name: provider
 - name: provider-agent
+- name: provider-channels
 - name: provider-widget-config
 - name: qr
 - name: ready_live
@@ -4302,7 +4303,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericResult'
+                type: object
+                additionalProperties: true
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Provider'
   /provider/get/editable:
     post:
       operationId: getProviderEditableDetails
@@ -6851,6 +6858,264 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /provider-channels/{prov_id}:
+    get:
+      operationId: get_Providerchannels
+      tags:
+      - provider-channels
+      summary: GET /provider-channels/:prov_id
+      x-source: HTTPRouter.js:1011
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: prov_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ProviderChannelsView'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /provider-channels/{prov_id}/whatsapp:
+    put:
+      operationId: putWhatsapp_Providerchannels
+      tags:
+      - provider-channels
+      summary: PUT /provider-channels/:prov_id/whatsapp
+      x-source: HTTPRouter.js:1012
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: prov_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ProviderChannelsView'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      operationId: deleteWhatsapp_Providerchannels
+      tags:
+      - provider-channels
+      summary: DELETE /provider-channels/:prov_id/whatsapp
+      x-source: HTTPRouter.js:1013
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: prov_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /provider-channels/{prov_id}/whatsapp/test:
+    post:
+      operationId: testWhatsapp_Providerchannels
+      tags:
+      - provider-channels
+      summary: POST /provider-channels/:prov_id/whatsapp/test
+      x-source: HTTPRouter.js:1014
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: prov_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      ok:
+                        type: boolean
+                      phone_number_id:
+                        type: string
+                      display_phone_number:
+                        type: string
+                      verified_name:
+                        type: string
+                      quality_rating:
+                        type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /provider-channels/{prov_id}/kommo:
+    put:
+      operationId: putKommo_Providerchannels
+      tags:
+      - provider-channels
+      summary: PUT /provider-channels/:prov_id/kommo
+      x-source: HTTPRouter.js:1015
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: prov_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ProviderChannelsView'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      operationId: deleteKommo_Providerchannels
+      tags:
+      - provider-channels
+      summary: DELETE /provider-channels/:prov_id/kommo
+      x-source: HTTPRouter.js:1016
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: prov_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /provider-channels/{prov_id}/channels:
+    put:
+      operationId: putChannels_Providerchannels
+      tags:
+      - provider-channels
+      summary: PUT /provider-channels/:prov_id/channels
+      description: Quitar 'widget' del array revoca (active=false) las reglas business_identity con
+        signal_type client_key/origin activas de ese negocio. Volver a añadir 'widget' no las reactiva.
+      x-source: HTTPRouter.js:1017
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: prov_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataEnvelope'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ProviderChannelsView'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /provider-widget-config/{prov_id}:
     get:
       operationId: get_Providerwidgetconfig
@@ -7426,3 +7691,64 @@ components:
           additionalProperties: true
       description: 'Envoltorio {data: ...} usado por la mayoria de rutas POST/PUT/DELETE de este backend
         (verificado via grep req.body.data en los handlers).'
+    Provider:
+      type: object
+      description: Fila de `provider` tal como la devuelve getFilteredProviders (Repository/provider/DAL.js:43).
+      properties:
+        prov_id:
+          type: integer
+        provider_status:
+          type: string
+        address:
+          type: [string, 'null']
+        company_name:
+          type: string
+        location:
+          type: [string, 'null']
+        type:
+          type: string
+        channels:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProviderChannel'
+        description:
+          type: [string, 'null']
+    ProviderChannel:
+      type: string
+      enum:
+      - widget
+      - whatsapp
+      - kommo
+      description: Repository/providerChannels/index.js:16 (CHANNELS).
+    ProviderChannelsView:
+      type: object
+      description: Forma devuelta por toChannelsView (Repository/providerChannels/index.js:81); los secretos son write-only, solo viajan como has_*.
+      properties:
+        whatsapp:
+          type: object
+          properties:
+            phone_number_id:
+              type: [string, 'null']
+            verify_token:
+              type: [string, 'null']
+            business_account_id:
+              type: [string, 'null']
+            has_token:
+              type: boolean
+            has_app_secret:
+              type: boolean
+        kommo:
+          type: object
+          properties:
+            subdomain:
+              type: [string, 'null']
+            client_id:
+              type: [string, 'null']
+            has_client_secret:
+              type: boolean
+            connected:
+              type: boolean
+        channels:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProviderChannel'
