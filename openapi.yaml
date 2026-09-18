@@ -7401,8 +7401,8 @@ paths:
       tags:
       - recsys
       summary: GET /recsys/plan-status/:task_id
-      x-source: 'HTTPRouter.js (pendiente: ruta nueva de purgar-secretos-token/decisions.md Q2, junto
-        a recsys/startup; reutiliza fetchPlanStatus de Repository/widget/API.js:20)'
+      x-source: src/Repository/recsys/API.js:16-41 (getPlanStatus), registrado en
+        src/Router/HTTPRouter.js:352-357
       security:
       - bearerAuth: []
       parameters:
@@ -7418,7 +7418,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PlanStatusResult'
+                $ref: '#/components/schemas/RecsysPlanStatus'
         '400':
           description: task_id invalido
           content:
@@ -7749,8 +7749,21 @@ components:
           additionalProperties: true
           description: 'Passthrough crudo del cuerpo que devuelve el upstream de recsys (`{task_id,
             status, result}`), sin remapear.'
-      description: Respuesta compartida por GET /widget/plan-status/{task_id} y GET /recsys/plan-status/{task_id}
-        (fetchPlanStatus, Repository/widget/API.js:20).
+      description: 'Respuesta de GET /widget/plan-status/{task_id} (planStatusForWidget,
+        Repository/widget/API.js:244-245): envuelve el cuerpo de recsys en el
+        sobre estándar {status,data}.'
+    RecsysPlanStatus:
+      type: object
+      properties:
+        task_id:
+          type: string
+        status:
+          type: string
+        result:
+          type: [object, 'null']
+          additionalProperties: true
+      description: Respuesta de GET /recsys/plan-status/{task_id} (getPlanStatus, Repository/recsys/API.js:41).
+        Passthrough crudo del cuerpo del upstream de recsys, sin envoltorio.
     Provider:
       type: object
       description: Fila de `provider` tal como la devuelve getFilteredProviders (Repository/provider/DAL.js:43).

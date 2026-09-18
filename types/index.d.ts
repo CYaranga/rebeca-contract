@@ -4599,13 +4599,21 @@ export interface components {
                 [key: string]: unknown;
             };
         };
-        /** @description Respuesta compartida por GET /widget/plan-status/{task_id} y GET /recsys/plan-status/{task_id} (fetchPlanStatus, Repository/widget/API.js:20). */
+        /** @description Respuesta de GET /widget/plan-status/{task_id} (planStatusForWidget, Repository/widget/API.js:244-245): envuelve el cuerpo de recsys en el sobre estándar {status,data}. */
         PlanStatusResult: {
             status?: string;
             /** @description Passthrough crudo del cuerpo que devuelve el upstream de recsys (`{task_id, status, result}`), sin remapear. */
             data?: {
                 [key: string]: unknown;
             };
+        };
+        /** @description Respuesta de GET /recsys/plan-status/{task_id} (getPlanStatus, Repository/recsys/API.js:41). Passthrough crudo del cuerpo del upstream de recsys, sin envoltorio. */
+        RecsysPlanStatus: {
+            task_id?: string;
+            status?: string;
+            result?: {
+                [key: string]: unknown;
+            } | null;
         };
         /** @description Fila de `provider` tal como la devuelve getFilteredProviders (Repository/provider/DAL.js:43). */
         Provider: {
@@ -13054,7 +13062,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PlanStatusResult"];
+                    "application/json": components["schemas"]["RecsysPlanStatus"];
                 };
             };
             /** @description task_id invalido */
