@@ -13642,7 +13642,9 @@ export interface operations {
     getMapsStatic: {
         parameters: {
             query: {
+                /** @description Rechaza vacio, hex y notacion exponencial antes de convertir a numero (mismo DECIMAL_COMPONENT_PATTERN de src/Repository/maps/API.js). */
                 lat: number;
+                /** @description Rechaza vacio, hex y notacion exponencial antes de convertir a numero (mismo DECIMAL_COMPONENT_PATTERN de src/Repository/maps/API.js). */
                 lng: number;
             };
             header?: never;
