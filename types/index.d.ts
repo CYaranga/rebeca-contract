@@ -4662,6 +4662,544 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/logs/batch": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * POST /logs/batch
+         * @description Ingesta de logs de cualquier emisor (app, front-admin, widget, totem, backend). El token de emisor valida `source`: una entry con source distinto al del token se descarta en silencio (Q11-bis:2). Cap 50 entries por lote y 256 KB por body. Antes de insertar: redactPii, computeFingerprint (solo level=error), cap 4096 caracteres por campo libre. Sin rate limit por IP (Q11-bis anula D9 de la spec): la defensa es el token de emisor revocable en /auth/tokens, nunca un 429.
+         */
+        post: operations["postLogsBatch"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /logs
+         * @description Paginacion por cursor (id), no por offset.
+         */
+        get: operations["getLogs"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** GET /logs/{id} */
+        get: operations["getLog"];
+        put?: never;
+        post?: never;
+        /** DELETE /logs/{id} */
+        delete: operations["deleteLog"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs/bulk-delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** POST /logs/bulk-delete */
+        post: operations["postLogsBulkDelete"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs/tail": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /logs/tail
+         * @description Polling incremental (ADR 2026-08-16, spec:257).
+         */
+        get: operations["getLogsTail"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs/sessions/{id}/timeline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /logs/sessions/{id}/timeline
+         * @description Filas de todos los emisores en orden temporal.
+         */
+        get: operations["getSessionTimeline"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs/trace/{trace_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /logs/trace/{trace_id}
+         * @description Incluye link KQL por request_id.
+         */
+        get: operations["getTrace"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs/users/{id}/profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** GET /logs/users/{id}/profile */
+        get: operations["getUserLogProfile"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs/users/rich": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /logs/users/rich
+         * @description Valores de filtro enriquecidos para la tab Usuarios.
+         */
+        get: operations["getUsersRich"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs/devices": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /logs/devices
+         * @description Valores distintos de device_id/device_model para filtros.
+         */
+        get: operations["getLogsDevices"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs/sources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /logs/sources
+         * @description Valores distintos de source presentes en logs, para filtros.
+         */
+        get: operations["getLogsSources"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs/categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /logs/categories
+         * @description Valores distintos de category presentes en logs, para filtros.
+         */
+        get: operations["getLogsCategories"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs/errors/groups": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /logs/errors/groups
+         * @description Grupos por fingerprint con estado de triaje.
+         */
+        get: operations["getErrorGroups"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs/errors/groups/{fingerprint}/state": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** PATCH /logs/errors/groups/{fingerprint}/state */
+        patch: operations["patchErrorGroupState"];
+        trace?: never;
+    };
+    "/logs/stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /logs/stats
+         * @description Volumen, tasa de error, p50/p95/p99 por endpoint.
+         */
+        get: operations["getStats"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs/stats/timeseries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** GET /logs/stats/timeseries */
+        get: operations["getStatsTimeseries"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs/behaviour/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /logs/behaviour/events
+         * @description Lee de user_behavior (base principal), no de rebeca_logs.
+         */
+        get: operations["getBehaviourEvents"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs/behaviour/top-actions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** GET /logs/behaviour/top-actions */
+        get: operations["getBehaviourTopActions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs/behaviour/by-version": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** GET /logs/behaviour/by-version */
+        get: operations["getBehaviourByVersion"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs/bugs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** GET /logs/bugs */
+        get: operations["getBugs"];
+        put?: never;
+        /**
+         * POST /logs/bugs
+         * @description Crea el bug report; la captura se sube aparte via PUT /logs/bugs/{id}/screenshot.
+         */
+        post: operations["postBugs"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs/bugs/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** GET /logs/bugs/{id} */
+        get: operations["getBug"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** PATCH /logs/bugs/{id} */
+        patch: operations["patchBug"];
+        trace?: never;
+    };
+    "/logs/bugs/{id}/screenshot": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /logs/bugs/{id}/screenshot
+         * @description Servida por proxy autenticado, nunca la URL directa del Blob.
+         */
+        get: operations["getBugScreenshot"];
+        /**
+         * PUT /logs/bugs/{id}/screenshot
+         * @description Captura del bug, cap 2 MB, solo image/png|jpeg|webp; se guarda en Blob, contenedor logs-screenshots.
+         */
+        put: operations["putBugScreenshot"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs/replay": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * POST /logs/replay
+         * @description Solo contra la URL base del mismo entorno del backend que lo ejecuta (guardia SSRF portada de replay/ssrf.ts). La credencial es siempre el JWT del admin que lanza el replay, nunca se guarda ni reutiliza la del usuario original. request_data va redactado en ingesta: el replay es best-effort.
+         */
+        post: operations["postReplay"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs/{id}/replays": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** GET /logs/{id}/replays */
+        get: operations["getLogReplays"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs/replays/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** DELETE /logs/replays/{id} */
+        delete: operations["deleteReplay"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs/auth/tokens": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** GET /logs/auth/tokens */
+        get: operations["getAuthTokens"];
+        put?: never;
+        /**
+         * POST /logs/auth/tokens
+         * @description Crea un token de API. type=user es del usuario autenticado (Logs access); type=emitter va ligado a source y sustituye las env vars LOGGER_KEY_* (decisions.md Q11-bis:1). Solo acepta el JWT del usuario autenticado, nunca un token rl_live_ existente.
+         */
+        post: operations["postAuthTokens"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs/auth/tokens/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * DELETE /logs/auth/tokens/{id}
+         * @description Revoca el token; una clave filtrada del bundle se rota sin redeploy del backend (decisions.md Q11-bis:1).
+         */
+        delete: operations["deleteAuthToken"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs/agent/triage-summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /logs/agent/triage-summary
+         * @description Digest para agentes, mismo dato que la tool MCP get_triage_summary.
+         */
+        get: operations["getAgentTriageSummary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -4737,9 +5275,363 @@ export interface components {
             };
             channels?: components["schemas"]["ProviderChannel"][];
         };
+        /**
+         * @description Glosario spec:39. `test` es etiqueta de cliente (front-admin la manda cuando la API lleva /test/) y cae en la base de dev; no es un schema de Postgres propio.
+         * @enum {string}
+         */
+        LogEnvironment: "dev" | "test" | "prod";
+        /**
+         * @description Glosario spec:37. Quien escribio la fila. El backend valida que coincida con el `source` ligado al token de emisor (X-Logger-Key) usado en la ingesta.
+         * @enum {string}
+         */
+        LogSource: "app-ios" | "app-android" | "front-admin" | "widget" | "totem" | "backend";
+        /**
+         * @description Glosario spec:38. Canal de negocio de la conversacion; distinto de `source` (una fila puede tener source=backend y channel=whatsapp).
+         * @enum {string}
+         */
+        LogChannel: "app" | "whatsapp" | "kommo" | "widget" | "octorate" | "totem";
+        /**
+         * @description Modelo de datos spec:140. `fingerprint` solo se calcula para level=error.
+         * @enum {string}
+         */
+        LogLevel: "debug" | "info" | "warn" | "error";
+        /** @description spec:214-226. `source` se valida contra el token del emisor; una entry con source distinto se descarta (Q11-bis:2). */
+        LogEntry: {
+            source: components["schemas"]["LogSource"];
+            environment: components["schemas"]["LogEnvironment"];
+            level: components["schemas"]["LogLevel"];
+            message: string;
+            /** Format: date-time */
+            timestamp: string;
+            /** @description Mismo valor que el header X-Session-Id de la peticion que origino la fila. */
+            session_id: string;
+            /** @description Mismo valor que el header X-Trace-Id de la peticion que origino la fila. */
+            trace_id: string;
+            user_id?: string | null;
+            device_id?: string | null;
+            /** @enum {string|null} */
+            channel?: "app" | "whatsapp" | "kommo" | "widget" | "octorate" | "totem" | null;
+            category?: string | null;
+            metadata?: {
+                [key: string]: unknown;
+            } | null;
+            http_method?: string | null;
+            endpoint?: string | null;
+            status_code?: number | null;
+            duration_ms?: number | null;
+            /** @description Redactado por redactPii antes de insertar (JWT, bearer, api keys, emails, tarjetas, hashes); cap 4096 caracteres por campo libre. */
+            request_data?: {
+                [key: string]: unknown;
+            } | null;
+            /** @description Mismo redactado y cap que request_data. */
+            response_data?: {
+                [key: string]: unknown;
+            } | null;
+            /** @description Header X-Request-Id devuelto por el backend, para enlazar con Azure. */
+            request_id?: string | null;
+            app_version?: string | null;
+            os_version?: string | null;
+            device_model?: string | null;
+            network_type?: string | null;
+            /** @description Solo se procesan en warn/error, como hoy en el worker. */
+            breadcrumbs?: {
+                [key: string]: unknown;
+            }[] | null;
+        };
+        /** @description Body de POST /logs/batch. Maximo 50 entries y 256 KB por body (spec:216). */
+        LogBatchRequest: {
+            entries: components["schemas"]["LogEntry"][];
+        };
+        /** @description Sin 429 (Q11-bis): el lote nunca se rechaza completo por limite de tasa, solo por forma (400) o token invalido (401). */
+        LogBatchResult: {
+            /** @description Entries insertadas. */
+            accepted: number;
+            /** @description Entries descartadas por source distinto al del token o por campo invalido. */
+            rejected: number;
+        };
+        /** @description Fila de `logs` (rebeca_logs), modelo de datos spec:134-162. */
+        LogRow: {
+            /** Format: int64 */
+            id?: number;
+            /** Format: date-time */
+            created_at?: string;
+            environment?: components["schemas"]["LogEnvironment"];
+            source?: components["schemas"]["LogSource"];
+            /** @enum {string|null} */
+            channel?: "app" | "whatsapp" | "kommo" | "widget" | "octorate" | "totem" | null;
+            level?: components["schemas"]["LogLevel"];
+            category?: string | null;
+            message?: string;
+            metadata?: {
+                [key: string]: unknown;
+            } | null;
+            user_id?: string | null;
+            provider_id?: number | null;
+            device_id?: string | null;
+            session_id?: string | null;
+            trace_id?: string | null;
+            request_id?: string | null;
+            http_method?: string | null;
+            endpoint?: string | null;
+            status_code?: number | null;
+            duration_ms?: number | null;
+            request_data?: {
+                [key: string]: unknown;
+            } | null;
+            response_data?: {
+                [key: string]: unknown;
+            } | null;
+            app_version?: string | null;
+            os_version?: string | null;
+            device_model?: string | null;
+            network_type?: string | null;
+            fingerprint?: string | null;
+            breadcrumbs?: {
+                [key: string]: unknown;
+            }[] | null;
+        };
+        /** @description Respuesta de GET /logs y GET /logs/tail. */
+        LogsPage: {
+            data: components["schemas"]["LogRow"][];
+            /** @description Cursor por id para la siguiente pagina; null si no hay mas filas. Paginacion por cursor, no por offset (spec:255). */
+            cursor: string | null;
+        };
+        /** @description GET /logs/sessions/:id/timeline (spec:258): filas de todos los emisores en orden temporal. */
+        SessionTimeline: {
+            session_id?: string;
+            entries?: components["schemas"]["LogRow"][];
+        };
+        /** @description GET /logs/trace/:trace_id (spec:258). */
+        TraceResult: {
+            trace_id?: string;
+            entries?: components["schemas"]["LogRow"][];
+            /** @description Link KQL por request_id, cuando la traza tiene filas con request_id (spec:258). */
+            azure_kql_link?: string | null;
+        };
+        /**
+         * @description Modelo de datos spec:165.
+         * @enum {string}
+         */
+        ErrorGroupStatus: "open" | "ignored" | "resolved" | "monitoring";
+        /** @description Fila de `error_group_states` (spec:163-170) mas los agregados de `logs` con el mismo fingerprint, para la tab Errores (spec:282). */
+        ErrorGroup: {
+            fingerprint?: string;
+            status?: components["schemas"]["ErrorGroupStatus"];
+            assigned_to?: string | null;
+            note?: string | null;
+            /** Format: date-time */
+            updated_at?: string | null;
+            updated_by?: string | null;
+            /** @description Filas de nivel error con este fingerprint, agregado sobre logs. */
+            count?: number;
+            /** Format: date-time */
+            last_seen?: string;
+        };
+        /** @description PATCH /logs/errors/groups/:fingerprint/state (spec:260). */
+        ErrorGroupUpdateRequest: {
+            status?: components["schemas"]["ErrorGroupStatus"];
+            assigned_to?: string | null;
+            note?: string | null;
+        };
+        /**
+         * @description Modelo de datos spec:177.
+         * @enum {string}
+         */
+        BugSeverity: "low" | "medium" | "high" | "critical";
+        /**
+         * @description Modelo de datos spec:185.
+         * @enum {string}
+         */
+        BugStatus: "new" | "triaged" | "in_progress" | "resolved" | "wontfix";
+        /** @description Fila de `bug_reports` (spec:171-189). No caduca (D17). */
+        BugReport: {
+            /** Format: int64 */
+            id?: number;
+            environment?: components["schemas"]["LogEnvironment"];
+            source?: components["schemas"]["LogSource"];
+            user_id?: string | null;
+            session_id?: string | null;
+            severity?: components["schemas"]["BugSeverity"];
+            description?: string;
+            device_model?: string | null;
+            os_version?: string | null;
+            app_version?: string | null;
+            breadcrumbs?: {
+                [key: string]: unknown;
+            }[] | null;
+            related_log_ids?: number[] | null;
+            /** @description Referencia al blob en el contenedor Azure logs-screenshots; servido por proxy autenticado en GET /logs/bugs/:id/screenshot, nunca la URL directa. */
+            screenshot_blob?: string | null;
+            status?: components["schemas"]["BugStatus"];
+            assigned_to?: string | null;
+            note?: string | null;
+            /** Format: date-time */
+            created_at?: string;
+        };
+        /** @description Body de POST /logs/bugs (X-Logger-Key). La captura se sube aparte via PUT /logs/bugs/:id/screenshot (spec:263). */
+        BugCreateRequest: {
+            environment: components["schemas"]["LogEnvironment"];
+            source: components["schemas"]["LogSource"];
+            user_id?: string | null;
+            session_id?: string | null;
+            severity: components["schemas"]["BugSeverity"];
+            description: string;
+            device_model?: string | null;
+            os_version?: string | null;
+            app_version?: string | null;
+            breadcrumbs?: {
+                [key: string]: unknown;
+            }[] | null;
+            related_log_ids?: number[] | null;
+        };
+        /** @description PATCH /logs/bugs/:id (spec:263), auth JWT + Logs access. */
+        BugUpdateRequest: {
+            status?: components["schemas"]["BugStatus"];
+            assigned_to?: string | null;
+            note?: string | null;
+        };
+        /** @description Fila de `log_replays` (spec:190-200). */
+        LogReplay: {
+            /** Format: int64 */
+            id?: number;
+            /** Format: int64 */
+            parent_log_id?: number;
+            version?: number;
+            status_code?: number | null;
+            duration_ms?: number | null;
+            response_data?: {
+                [key: string]: unknown;
+            } | null;
+            error?: string | null;
+            /** @description Usuario admin (JWT) que lanzo el replay; nunca la credencial original (spec:298). */
+            launched_by?: string;
+            /** Format: date-time */
+            created_at?: string;
+        };
+        /** @description POST /logs/replay (spec:293-301): solo contra la URL base del mismo entorno del backend que lo ejecuta (guardia SSRF portada de replay/ssrf.ts); credencial siempre el JWT de quien lo lanza; request_data va redactado, best-effort. */
+        ReplayCreateRequest: {
+            /** Format: int64 */
+            log_id: number;
+        };
+        /**
+         * @description decisions.md Q11-bis:1. `user`: token de una persona con Logs access, para agentes y scripts (spec:201-209/D16). `emitter`: token de un emisor (app/admin/widget), ligado a `source`, sustituye a las env vars LOGGER_KEY_*.
+         * @enum {string}
+         */
+        ApiTokenType: "user" | "emitter";
+        /** @description Fila de `api_tokens` (spec:201-209) sin el hash; nunca se devuelve el plaintext tras la creacion. */
+        ApiToken: {
+            /** Format: int64 */
+            id?: number;
+            /** @description Primeros caracteres del token en plaintext (rl_live_...), para identificarlo en la lista sin exponerlo entero. */
+            prefix?: string;
+            name?: string;
+            type?: components["schemas"]["ApiTokenType"];
+            /**
+             * @description Solo presente si type=emitter; el source con el que se valida cada LogEntry ingerida con este token.
+             * @enum {string|null}
+             */
+            source?: "app-ios" | "app-android" | "front-admin" | "widget" | "totem" | "backend" | null;
+            /** @description users.user_id de la base principal; null en tokens type=emitter. */
+            user_id?: number | null;
+            /** Format: date-time */
+            expires_at?: string | null;
+            /** Format: date-time */
+            last_used?: string | null;
+        };
+        /** @description POST /logs/auth/tokens (spec:265), auth JWT del usuario autenticado. */
+        ApiTokenCreateRequest: {
+            name: string;
+            type: components["schemas"]["ApiTokenType"];
+            /**
+             * @description Obligatorio si type=emitter; ignorado si type=user.
+             * @enum {string|null}
+             */
+            source?: "app-ios" | "app-android" | "front-admin" | "widget" | "totem" | "backend" | null;
+            /** Format: date-time */
+            expires_at?: string | null;
+        };
+        /** @description Respuesta de POST /logs/auth/tokens. */
+        ApiTokenCreated: components["schemas"]["ApiToken"] & {
+            /** @description Plaintext rl_live_<32> (spec:203); se muestra una sola vez, solo el hash se guarda. */
+            token: string;
+        };
+        /** @description GET /logs/users/:id/profile (spec:259): perfil para la tab Usuarios (spec:285). */
+        UserLogProfile: {
+            user_id?: string;
+            devices?: string[];
+            app_versions?: string[];
+            recent_sessions?: string[];
+            top_errors?: components["schemas"]["ErrorGroup"][];
+        };
+        StatsEndpointLatency: {
+            endpoint?: string;
+            count?: number;
+            p50?: number;
+            p95?: number;
+            p99?: number;
+        };
+        /** @description GET /logs/stats (spec:261): volumen, tasa de error, p50/p95/p99 por endpoint. */
+        StatsSummary: {
+            total?: number;
+            error_rate?: number;
+            by_endpoint?: components["schemas"]["StatsEndpointLatency"][];
+        };
+        StatsTimeseriesPoint: {
+            /** Format: date-time */
+            ts?: string;
+            count?: number;
+            error_count?: number;
+        };
+        /** @description GET /logs/stats/timeseries?range= (spec:261). */
+        StatsTimeseries: {
+            /** @enum {string} */
+            range?: "1h" | "6h" | "24h" | "7d" | "30d";
+            points?: components["schemas"]["StatsTimeseriesPoint"][];
+        };
+        /** @description Fila de `user_behavior` (base principal, no rebeca_logs). GET /logs/behaviour/events (spec:262). Evento de comportamiento: accion de UI action:subject (Glosario spec:45). */
+        BehaviourEvent: {
+            /** Format: int64 */
+            id?: number;
+            /** Format: date-time */
+            created_at?: string;
+            user_id?: string | null;
+            action?: string;
+            subject?: string;
+            app_version?: string | null;
+            metadata?: {
+                [key: string]: unknown;
+            } | null;
+        };
+        /** @description GET /logs/behaviour/top-actions (spec:262). */
+        BehaviourTopAction: {
+            action?: string;
+            subject?: string;
+            count?: number;
+        };
+        /** @description GET /logs/behaviour/by-version (spec:262). */
+        BehaviourByVersion: {
+            app_version?: string;
+            action?: string;
+            subject?: string;
+            count?: number;
+        };
+        /** @description GET /logs/agent/triage-summary (spec:266): digest para agentes, mismo dato que la tool MCP get_triage_summary (spec:272). */
+        TriageSummary: {
+            /** Format: date-time */
+            generated_at?: string;
+            open_error_groups?: number;
+            open_bugs?: number;
+            top_error_groups?: components["schemas"]["ErrorGroup"][];
+            recent_bugs?: components["schemas"]["BugReport"][];
+        };
     };
     responses: never;
-    parameters: never;
+    parameters: {
+        /** @description Header de correlacion recomendado en toda peticion al backend (spec:228); el backend lo cuelga en req.ctx y lo usa para etiquetar su propia fila de log con la sesion del cliente (Glosario spec:40). */
+        XSessionIdHeader: string;
+        /** @description Header de correlacion recomendado en toda peticion al backend (spec:228); el backend lo cuelga en req.ctx y lo usa para etiquetar su propia fila de log con la traza del cliente (Glosario spec:41). */
+        XTraceIdHeader: string;
+    };
     requestBodies: never;
     headers: never;
     pathItems: never;
@@ -13682,6 +14574,1664 @@ export interface operations {
             };
             /** @description Fallo de Google (sin filtrar la key en el log) */
             500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    postLogsBatch: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Header de correlacion recomendado en toda peticion al backend (spec:228); el backend lo cuelga en req.ctx y lo usa para etiquetar su propia fila de log con la sesion del cliente (Glosario spec:40). */
+                "X-Session-Id"?: components["parameters"]["XSessionIdHeader"];
+                /** @description Header de correlacion recomendado en toda peticion al backend (spec:228); el backend lo cuelga en req.ctx y lo usa para etiquetar su propia fila de log con la traza del cliente (Glosario spec:41). */
+                "X-Trace-Id"?: components["parameters"]["XTraceIdHeader"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LogBatchRequest"];
+            };
+        };
+        responses: {
+            /** @description Lote procesado; entries con source distinto al del token se descartan sin fallar el resto del lote */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "accepted": 3,
+                     *       "rejected": 1
+                     *     }
+                     */
+                    "application/json": components["schemas"]["LogBatchResult"];
+                };
+            };
+            /** @description Lote invalido (mas de 50 entries, body mayor a 256 KB, o falta un campo obligatorio) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description X-Logger-Key ausente, invalida o revocada */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getLogs: {
+        parameters: {
+            query?: {
+                environment?: components["schemas"]["LogEnvironment"];
+                source?: components["schemas"]["LogSource"];
+                channel?: components["schemas"]["LogChannel"];
+                level?: components["schemas"]["LogLevel"];
+                category?: string;
+                user_id?: string;
+                device_id?: string;
+                session_id?: string;
+                trace_id?: string;
+                fingerprint?: string;
+                app_version?: string;
+                search?: string;
+                start?: string;
+                end?: string;
+                limit?: number;
+                cursor?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "data": [
+                     *         {
+                     *           "id": 918234,
+                     *           "created_at": "2026-09-18T14:02:11.000Z",
+                     *           "environment": "prod",
+                     *           "source": "app-ios",
+                     *           "channel": "app",
+                     *           "level": "error",
+                     *           "category": "http",
+                     *           "message": "GET /package/details -> 500",
+                     *           "metadata": null,
+                     *           "user_id": "4821",
+                     *           "provider_id": null,
+                     *           "device_id": "dev-9f2a",
+                     *           "session_id": "sess-77c1",
+                     *           "trace_id": "trace-4b90",
+                     *           "request_id": "req-a10f",
+                     *           "http_method": "GET",
+                     *           "endpoint": "/package/details",
+                     *           "status_code": 500,
+                     *           "duration_ms": 812,
+                     *           "request_data": null,
+                     *           "response_data": null,
+                     *           "app_version": "4.12.0",
+                     *           "os_version": "iOS 18.1",
+                     *           "device_model": "iPhone15,3",
+                     *           "network_type": "wifi",
+                     *           "fingerprint": "a1b2c3d4",
+                     *           "breadcrumbs": []
+                     *         }
+                     *       ],
+                     *       "cursor": "918233"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["LogsPage"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getLog: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Entero; el backend lo registra como /logs/:id(\d+), despues de las rutas literales (/logs/batch, /logs/bulk-delete, /logs/tail), para no matchear con ellas. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "id": 918234,
+                     *       "created_at": "2026-09-18T14:02:11.000Z",
+                     *       "environment": "prod",
+                     *       "source": "app-ios",
+                     *       "channel": "app",
+                     *       "level": "error",
+                     *       "category": "http",
+                     *       "message": "GET /package/details -> 500",
+                     *       "metadata": null,
+                     *       "user_id": "4821",
+                     *       "provider_id": null,
+                     *       "device_id": "dev-9f2a",
+                     *       "session_id": "sess-77c1",
+                     *       "trace_id": "trace-4b90",
+                     *       "request_id": "req-a10f",
+                     *       "http_method": "GET",
+                     *       "endpoint": "/package/details",
+                     *       "status_code": 500,
+                     *       "duration_ms": 812,
+                     *       "request_data": null,
+                     *       "response_data": null,
+                     *       "app_version": "4.12.0",
+                     *       "os_version": "iOS 18.1",
+                     *       "device_model": "iPhone15,3",
+                     *       "network_type": "wifi",
+                     *       "fingerprint": "a1b2c3d4",
+                     *       "breadcrumbs": []
+                     *     }
+                     */
+                    "application/json": components["schemas"]["LogRow"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description No existe */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    deleteLog: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Entero; el backend lo registra como /logs/:id(\d+), despues de las rutas literales (/logs/batch, /logs/bulk-delete, /logs/tail), para no matchear con ellas. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Borrado */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description No existe */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    postLogsBulkDelete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    ids: number[];
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "deleted": 3
+                     *     }
+                     */
+                    "application/json": {
+                        deleted?: number;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getLogsTail: {
+        parameters: {
+            query?: {
+                /** @description id de la ultima fila ya vista por el cliente */
+                after?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "data": [],
+                     *       "cursor": null
+                     *     }
+                     */
+                    "application/json": components["schemas"]["LogsPage"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getSessionTimeline: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "session_id": "sess-77c1",
+                     *       "entries": []
+                     *     }
+                     */
+                    "application/json": components["schemas"]["SessionTimeline"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getTrace: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                trace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "trace_id": "trace-4b90",
+                     *       "entries": [],
+                     *       "azure_kql_link": null
+                     *     }
+                     */
+                    "application/json": components["schemas"]["TraceResult"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getUserLogProfile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "user_id": "4821",
+                     *       "devices": [
+                     *         "dev-9f2a"
+                     *       ],
+                     *       "app_versions": [
+                     *         "4.12.0"
+                     *       ],
+                     *       "recent_sessions": [
+                     *         "sess-77c1"
+                     *       ],
+                     *       "top_errors": []
+                     *     }
+                     */
+                    "application/json": components["schemas"]["UserLogProfile"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description No existe */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getUsersRich: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example [
+                     *       {
+                     *         "user_id": "4821",
+                     *         "devices": [
+                     *           "dev-9f2a"
+                     *         ],
+                     *         "app_versions": [
+                     *           "4.12.0"
+                     *         ],
+                     *         "recent_sessions": [
+                     *           "sess-77c1"
+                     *         ],
+                     *         "top_errors": []
+                     *       }
+                     *     ]
+                     */
+                    "application/json": components["schemas"]["UserLogProfile"][];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getLogsDevices: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example [
+                     *       "iPhone15,3",
+                     *       "Pixel 8"
+                     *     ]
+                     */
+                    "application/json": string[];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getLogsSources: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example [
+                     *       "app-ios",
+                     *       "front-admin"
+                     *     ]
+                     */
+                    "application/json": components["schemas"]["LogSource"][];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getLogsCategories: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example [
+                     *       "http",
+                     *       "auth"
+                     *     ]
+                     */
+                    "application/json": string[];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getErrorGroups: {
+        parameters: {
+            query?: {
+                status?: components["schemas"]["ErrorGroupStatus"];
+                environment?: components["schemas"]["LogEnvironment"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example [
+                     *       {
+                     *         "fingerprint": "a1b2c3d4",
+                     *         "status": "open",
+                     *         "assigned_to": null,
+                     *         "note": null,
+                     *         "updated_at": "2026-09-18T14:02:11.000Z",
+                     *         "updated_by": null,
+                     *         "count": 42,
+                     *         "last_seen": "2026-09-18T14:02:11.000Z"
+                     *       }
+                     *     ]
+                     */
+                    "application/json": components["schemas"]["ErrorGroup"][];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    patchErrorGroupState: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                fingerprint: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ErrorGroupUpdateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "fingerprint": "a1b2c3d4",
+                     *       "status": "resolved",
+                     *       "assigned_to": "sergio@rebeca.travel",
+                     *       "note": "Corregido en 4.12.1",
+                     *       "updated_at": "2026-09-18T15:00:00.000Z",
+                     *       "updated_by": "sergio@rebeca.travel",
+                     *       "count": 42,
+                     *       "last_seen": "2026-09-18T14:02:11.000Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ErrorGroup"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description No existe */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getStats: {
+        parameters: {
+            query?: {
+                environment?: components["schemas"]["LogEnvironment"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "total": 72000,
+                     *       "error_rate": 0.006,
+                     *       "by_endpoint": [
+                     *         {
+                     *           "endpoint": "/package/details",
+                     *           "count": 1200,
+                     *           "p50": 120,
+                     *           "p95": 480,
+                     *           "p99": 900
+                     *         }
+                     *       ]
+                     *     }
+                     */
+                    "application/json": components["schemas"]["StatsSummary"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getStatsTimeseries: {
+        parameters: {
+            query: {
+                range: "1h" | "6h" | "24h" | "7d" | "30d";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "range": "24h",
+                     *       "points": [
+                     *         {
+                     *           "ts": "2026-09-18T14:00:00.000Z",
+                     *           "count": 3100,
+                     *           "error_count": 19
+                     *         }
+                     *       ]
+                     *     }
+                     */
+                    "application/json": components["schemas"]["StatsTimeseries"];
+                };
+            };
+            /** @description range invalido */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getBehaviourEvents: {
+        parameters: {
+            query?: {
+                user_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example [
+                     *       {
+                     *         "id": 5501,
+                     *         "created_at": "2026-09-18T14:02:11.000Z",
+                     *         "user_id": "4821",
+                     *         "action": "tap",
+                     *         "subject": "package_card",
+                     *         "app_version": "4.12.0",
+                     *         "metadata": null
+                     *       }
+                     *     ]
+                     */
+                    "application/json": components["schemas"]["BehaviourEvent"][];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getBehaviourTopActions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example [
+                     *       {
+                     *         "action": "tap",
+                     *         "subject": "package_card",
+                     *         "count": 3120
+                     *       }
+                     *     ]
+                     */
+                    "application/json": components["schemas"]["BehaviourTopAction"][];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getBehaviourByVersion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example [
+                     *       {
+                     *         "app_version": "4.12.0",
+                     *         "action": "tap",
+                     *         "subject": "package_card",
+                     *         "count": 1800
+                     *       }
+                     *     ]
+                     */
+                    "application/json": components["schemas"]["BehaviourByVersion"][];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getBugs: {
+        parameters: {
+            query?: {
+                status?: components["schemas"]["BugStatus"];
+                environment?: components["schemas"]["LogEnvironment"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example [
+                     *       {
+                     *         "id": 501,
+                     *         "environment": "prod",
+                     *         "source": "app-ios",
+                     *         "user_id": "4821",
+                     *         "session_id": "sess-77c1",
+                     *         "severity": "high",
+                     *         "description": "La app se cierra al abrir el detalle del paquete",
+                     *         "device_model": "iPhone15,3",
+                     *         "os_version": "iOS 18.1",
+                     *         "app_version": "4.12.0",
+                     *         "breadcrumbs": [],
+                     *         "related_log_ids": [
+                     *           918234
+                     *         ],
+                     *         "screenshot_blob": "bug-501.png",
+                     *         "status": "new",
+                     *         "assigned_to": null,
+                     *         "note": null,
+                     *         "created_at": "2026-09-18T14:05:00.000Z"
+                     *       }
+                     *     ]
+                     */
+                    "application/json": components["schemas"]["BugReport"][];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    postBugs: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Header de correlacion recomendado en toda peticion al backend (spec:228); el backend lo cuelga en req.ctx y lo usa para etiquetar su propia fila de log con la sesion del cliente (Glosario spec:40). */
+                "X-Session-Id"?: components["parameters"]["XSessionIdHeader"];
+                /** @description Header de correlacion recomendado en toda peticion al backend (spec:228); el backend lo cuelga en req.ctx y lo usa para etiquetar su propia fila de log con la traza del cliente (Glosario spec:41). */
+                "X-Trace-Id"?: components["parameters"]["XTraceIdHeader"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BugCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Creado */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "id": 501,
+                     *       "environment": "prod",
+                     *       "source": "app-ios",
+                     *       "user_id": "4821",
+                     *       "session_id": "sess-77c1",
+                     *       "severity": "high",
+                     *       "description": "La app se cierra al abrir el detalle del paquete",
+                     *       "device_model": "iPhone15,3",
+                     *       "os_version": "iOS 18.1",
+                     *       "app_version": "4.12.0",
+                     *       "breadcrumbs": [],
+                     *       "related_log_ids": [
+                     *         918234
+                     *       ],
+                     *       "screenshot_blob": null,
+                     *       "status": "new",
+                     *       "assigned_to": null,
+                     *       "note": null,
+                     *       "created_at": "2026-09-18T14:05:00.000Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["BugReport"];
+                };
+            };
+            /** @description Body invalido */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description X-Logger-Key ausente, invalida o revocada */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getBug: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "id": 501,
+                     *       "environment": "prod",
+                     *       "source": "app-ios",
+                     *       "user_id": "4821",
+                     *       "session_id": "sess-77c1",
+                     *       "severity": "high",
+                     *       "description": "La app se cierra al abrir el detalle del paquete",
+                     *       "device_model": "iPhone15,3",
+                     *       "os_version": "iOS 18.1",
+                     *       "app_version": "4.12.0",
+                     *       "breadcrumbs": [],
+                     *       "related_log_ids": [
+                     *         918234
+                     *       ],
+                     *       "screenshot_blob": "bug-501.png",
+                     *       "status": "new",
+                     *       "assigned_to": null,
+                     *       "note": null,
+                     *       "created_at": "2026-09-18T14:05:00.000Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["BugReport"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description No existe */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    patchBug: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BugUpdateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "id": 501,
+                     *       "environment": "prod",
+                     *       "source": "app-ios",
+                     *       "user_id": "4821",
+                     *       "session_id": "sess-77c1",
+                     *       "severity": "high",
+                     *       "description": "La app se cierra al abrir el detalle del paquete",
+                     *       "device_model": "iPhone15,3",
+                     *       "os_version": "iOS 18.1",
+                     *       "app_version": "4.12.0",
+                     *       "breadcrumbs": [],
+                     *       "related_log_ids": [
+                     *         918234
+                     *       ],
+                     *       "screenshot_blob": "bug-501.png",
+                     *       "status": "triaged",
+                     *       "assigned_to": "sergio@rebeca.travel",
+                     *       "note": "Reproducido en 4.12.0",
+                     *       "created_at": "2026-09-18T14:05:00.000Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["BugReport"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description No existe */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getBugScreenshot: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Imagen (stream) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "image/png": string;
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description No existe */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    putBugScreenshot: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "image/png": string;
+                "image/jpeg": string;
+                "image/webp": string;
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "id": 501,
+                     *       "environment": "prod",
+                     *       "source": "app-ios",
+                     *       "user_id": "4821",
+                     *       "session_id": "sess-77c1",
+                     *       "severity": "high",
+                     *       "description": "La app se cierra al abrir el detalle del paquete",
+                     *       "device_model": "iPhone15,3",
+                     *       "os_version": "iOS 18.1",
+                     *       "app_version": "4.12.0",
+                     *       "breadcrumbs": [],
+                     *       "related_log_ids": [
+                     *         918234
+                     *       ],
+                     *       "screenshot_blob": "bug-501.png",
+                     *       "status": "new",
+                     *       "assigned_to": null,
+                     *       "note": null,
+                     *       "created_at": "2026-09-18T14:05:00.000Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["BugReport"];
+                };
+            };
+            /** @description Imagen invalida (formato o tamano fuera de cap) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description X-Logger-Key ausente, invalida o revocada */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description No existe */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    postReplay: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReplayCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "id": 12,
+                     *       "parent_log_id": 918234,
+                     *       "version": 1,
+                     *       "status_code": 500,
+                     *       "duration_ms": 640,
+                     *       "response_data": null,
+                     *       "error": null,
+                     *       "launched_by": "sergio@rebeca.travel",
+                     *       "created_at": "2026-09-18T15:10:00.000Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["LogReplay"];
+                };
+            };
+            /** @description log_id invalido o host de replay rechazado por la guardia SSRF */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description log_id no existe */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getLogReplays: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example [
+                     *       {
+                     *         "id": 12,
+                     *         "parent_log_id": 918234,
+                     *         "version": 1,
+                     *         "status_code": 500,
+                     *         "duration_ms": 640,
+                     *         "response_data": null,
+                     *         "error": null,
+                     *         "launched_by": "sergio@rebeca.travel",
+                     *         "created_at": "2026-09-18T15:10:00.000Z"
+                     *       }
+                     *     ]
+                     */
+                    "application/json": components["schemas"]["LogReplay"][];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    deleteReplay: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Borrado */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description No existe */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getAuthTokens: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example [
+                     *       {
+                     *         "id": 7,
+                     *         "prefix": "rl_live_9f2a",
+                     *         "name": "app-ios prod",
+                     *         "type": "emitter",
+                     *         "source": "app-ios",
+                     *         "user_id": null,
+                     *         "expires_at": null,
+                     *         "last_used": "2026-09-18T14:02:11.000Z"
+                     *       }
+                     *     ]
+                     */
+                    "application/json": components["schemas"]["ApiToken"][];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    postAuthTokens: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ApiTokenCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Creado; el plaintext solo se devuelve en esta respuesta */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "id": 7,
+                     *       "prefix": "rl_live_9f2a",
+                     *       "name": "app-ios prod",
+                     *       "type": "emitter",
+                     *       "source": "app-ios",
+                     *       "user_id": null,
+                     *       "expires_at": null,
+                     *       "last_used": null,
+                     *       "token": "rl_live_9f2a1c7e4b3d6a8f0e2c5b1a9d7f3e6c"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiTokenCreated"];
+                };
+            };
+            /** @description Body invalido (falta source para type=emitter) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    deleteAuthToken: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Revocado */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description No existe */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getAgentTriageSummary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "generated_at": "2026-09-18T15:30:00.000Z",
+                     *       "open_error_groups": 4,
+                     *       "open_bugs": 2,
+                     *       "top_error_groups": [
+                     *         {
+                     *           "fingerprint": "a1b2c3d4",
+                     *           "status": "open",
+                     *           "assigned_to": null,
+                     *           "note": null,
+                     *           "updated_at": "2026-09-18T14:02:11.000Z",
+                     *           "updated_by": null,
+                     *           "count": 42,
+                     *           "last_seen": "2026-09-18T14:02:11.000Z"
+                     *         }
+                     *       ],
+                     *       "recent_bugs": [
+                     *         {
+                     *           "id": 501,
+                     *           "environment": "prod",
+                     *           "source": "app-ios",
+                     *           "user_id": "4821",
+                     *           "session_id": "sess-77c1",
+                     *           "severity": "high",
+                     *           "description": "La app se cierra al abrir el detalle del paquete",
+                     *           "device_model": "iPhone15,3",
+                     *           "os_version": "iOS 18.1",
+                     *           "app_version": "4.12.0",
+                     *           "breadcrumbs": [],
+                     *           "related_log_ids": [
+                     *             918234
+                     *           ],
+                     *           "screenshot_blob": "bug-501.png",
+                     *           "status": "new",
+                     *           "assigned_to": null,
+                     *           "note": null,
+                     *           "created_at": "2026-09-18T14:05:00.000Z"
+                     *         }
+                     *       ]
+                     *     }
+                     */
+                    "application/json": components["schemas"]["TriageSummary"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };

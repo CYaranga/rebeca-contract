@@ -2,8 +2,13 @@ openapi: 3.1.0
 info:
   title: Rebeca API
   version: 1.0.0
-  description: Generado a partir de src/Router/HTTPRouter.js (rebeca-backend) y la coleccion Bruno 'Rebeca
-    - API Endpoints Bruno'. Ver x-source en cada operacion para la linea exacta del router.
+  description: 'Generado a partir de src/Router/HTTPRouter.js (rebeca-backend) y la coleccion Bruno ''Rebeca
+    - API Endpoints Bruno''. Ver x-source en cada operacion para la linea exacta del router. Las rutas
+    de logs/errors/bugs/replay/behaviour/trace/users/stats/tokens son contrato adelantado por el
+    architect: su x-source apunta a la spec del vault, aun sin implementar en rebeca-backend. Headers
+    de correlacion X-Session-Id/X-Trace-Id (components.parameters XSessionIdHeader/XTraceIdHeader):
+    convencion recomendada en toda peticion al backend para que el backend etiquete su propia fila de
+    log con sesion/traza; documentados explicitamente solo en las rutas de ingesta de logs/bugs.'
 servers:
 - url: https://rebeca.app/api/dev
   description: 'dev (Bruno environment: Rebeca App DEV)'
@@ -21,6 +26,8 @@ tags:
 - name: analytics
 - name: app
 - name: assistant
+- name: behaviour
+- name: bugs
 - name: business-identity
 - name: cache
 - name: callingCodes
@@ -35,6 +42,7 @@ tags:
 - name: destinations
 - name: destiny
 - name: error
+- name: errors
 - name: events
 - name: flights
 - name: google
@@ -44,6 +52,7 @@ tags:
 - name: jobs
 - name: joiners
 - name: labels
+- name: logs
 - name: maps
 - name: multilanguage
 - name: octorate
@@ -60,17 +69,22 @@ tags:
 - name: qr
 - name: ready_live
 - name: recsys
+- name: replay
 - name: resources
 - name: routes
 - name: service
 - name: sessions
+- name: stats
 - name: streaming
 - name: subscription
 - name: token
+- name: tokens
 - name: topics
 - name: tour
+- name: trace
 - name: trip
 - name: user
+- name: users
 - name: watson
 - name: webhook
 - name: webhook_salesbot
@@ -7917,12 +7931,1533 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /logs/batch:
+    post:
+      operationId: postLogsBatch
+      tags:
+      - logs
+      summary: POST /logs/batch
+      description: 'Ingesta de logs de cualquier emisor (app, front-admin, widget, totem, backend). El
+        token de emisor valida `source`: una entry con source distinto al del token se descarta en
+        silencio (Q11-bis:2). Cap 50 entries por lote y 256 KB por body. Antes de insertar: redactPii,
+        computeFingerprint (solo level=error), cap 4096 caracteres por campo libre. Sin rate limit por
+        IP (Q11-bis anula D9 de la spec): la defensa es el token de emisor revocable en /auth/tokens,
+        nunca un 429.'
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:214-236; sin rate limit por
+        decisions.md Q11-bis (2026-09-18); aun sin implementar en backend'
+      security:
+      - loggerKeyAuth: []
+      parameters:
+      - $ref: '#/components/parameters/XSessionIdHeader'
+      - $ref: '#/components/parameters/XTraceIdHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogBatchRequest'
+      responses:
+        '200':
+          description: Lote procesado; entries con source distinto al del token se descartan sin fallar
+            el resto del lote
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogBatchResult'
+              example:
+                accepted: 3
+                rejected: 1
+        '400':
+          description: Lote invalido (mas de 50 entries, body mayor a 256 KB, o falta un campo
+            obligatorio)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: X-Logger-Key ausente, invalida o revocada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /logs:
+    get:
+      operationId: getLogs
+      tags:
+      - logs
+      summary: GET /logs
+      description: Paginacion por cursor (id), no por offset.
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:255; aun sin implementar en backend'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: environment
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/LogEnvironment'
+      - name: source
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/LogSource'
+      - name: channel
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/LogChannel'
+      - name: level
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/LogLevel'
+      - name: category
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: user_id
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: device_id
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: session_id
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: trace_id
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: fingerprint
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: app_version
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: search
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: start
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: end
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 500
+          default: 100
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogsPage'
+              example:
+                data:
+                - id: 918234
+                  created_at: '2026-09-18T14:02:11.000Z'
+                  environment: prod
+                  source: app-ios
+                  channel: app
+                  level: error
+                  category: http
+                  message: 'GET /package/details -> 500'
+                  metadata: null
+                  user_id: '4821'
+                  provider_id: null
+                  device_id: dev-9f2a
+                  session_id: sess-77c1
+                  trace_id: trace-4b90
+                  request_id: req-a10f
+                  http_method: GET
+                  endpoint: /package/details
+                  status_code: 500
+                  duration_ms: 812
+                  request_data: null
+                  response_data: null
+                  app_version: 4.12.0
+                  os_version: iOS 18.1
+                  device_model: iPhone15,3
+                  network_type: wifi
+                  fingerprint: a1b2c3d4
+                  breadcrumbs: []
+                cursor: '918233'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /logs/{id}:
+    get:
+      operationId: getLog
+      tags:
+      - logs
+      summary: GET /logs/{id}
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:256; aun sin implementar en backend'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Entero; el backend lo registra como /logs/:id(\d+), despues de las rutas
+          literales (/logs/batch, /logs/bulk-delete, /logs/tail), para no matchear con ellas.
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogRow'
+              example:
+                id: 918234
+                created_at: '2026-09-18T14:02:11.000Z'
+                environment: prod
+                source: app-ios
+                channel: app
+                level: error
+                category: http
+                message: 'GET /package/details -> 500'
+                metadata: null
+                user_id: '4821'
+                provider_id: null
+                device_id: dev-9f2a
+                session_id: sess-77c1
+                trace_id: trace-4b90
+                request_id: req-a10f
+                http_method: GET
+                endpoint: /package/details
+                status_code: 500
+                duration_ms: 812
+                request_data: null
+                response_data: null
+                app_version: 4.12.0
+                os_version: iOS 18.1
+                device_model: iPhone15,3
+                network_type: wifi
+                fingerprint: a1b2c3d4
+                breadcrumbs: []
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No existe
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      operationId: deleteLog
+      tags:
+      - logs
+      summary: DELETE /logs/{id}
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:256; aun sin implementar en backend'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Entero; el backend lo registra como /logs/:id(\d+), despues de las rutas
+          literales (/logs/batch, /logs/bulk-delete, /logs/tail), para no matchear con ellas.
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '204':
+          description: Borrado
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No existe
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /logs/bulk-delete:
+    post:
+      operationId: postLogsBulkDelete
+      tags:
+      - logs
+      summary: POST /logs/bulk-delete
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:256; aun sin implementar en backend'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - ids
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: integer
+                    format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  deleted:
+                    type: integer
+              example:
+                deleted: 3
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /logs/tail:
+    get:
+      operationId: getLogsTail
+      tags:
+      - logs
+      summary: GET /logs/tail
+      description: 'Polling incremental (ADR 2026-08-16, spec:257).'
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:257; aun sin implementar en backend'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: after
+        in: query
+        required: false
+        description: id de la ultima fila ya vista por el cliente
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogsPage'
+              example:
+                data: []
+                cursor: null
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /logs/sessions/{id}/timeline:
+    get:
+      operationId: getSessionTimeline
+      tags:
+      - trace
+      summary: GET /logs/sessions/{id}/timeline
+      description: Filas de todos los emisores en orden temporal.
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:258; aun sin implementar en backend'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionTimeline'
+              example:
+                session_id: sess-77c1
+                entries: []
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /logs/trace/{trace_id}:
+    get:
+      operationId: getTrace
+      tags:
+      - trace
+      summary: GET /logs/trace/{trace_id}
+      description: Incluye link KQL por request_id.
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:258; aun sin implementar en backend'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: trace_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TraceResult'
+              example:
+                trace_id: trace-4b90
+                entries: []
+                azure_kql_link: null
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /logs/users/{id}/profile:
+    get:
+      operationId: getUserLogProfile
+      tags:
+      - users
+      summary: GET /logs/users/{id}/profile
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:259; aun sin implementar en backend'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLogProfile'
+              example:
+                user_id: '4821'
+                devices:
+                - dev-9f2a
+                app_versions:
+                - 4.12.0
+                recent_sessions:
+                - sess-77c1
+                top_errors: []
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No existe
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /logs/users/rich:
+    get:
+      operationId: getUsersRich
+      tags:
+      - users
+      summary: GET /logs/users/rich
+      description: Valores de filtro enriquecidos para la tab Usuarios.
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:259; aun sin implementar en backend'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserLogProfile'
+              example:
+              - user_id: '4821'
+                devices:
+                - dev-9f2a
+                app_versions:
+                - 4.12.0
+                recent_sessions:
+                - sess-77c1
+                top_errors: []
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /logs/devices:
+    get:
+      operationId: getLogsDevices
+      tags:
+      - logs
+      summary: GET /logs/devices
+      description: Valores distintos de device_id/device_model para filtros.
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:259; aun sin implementar en backend'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+              example:
+              - iPhone15,3
+              - Pixel 8
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /logs/sources:
+    get:
+      operationId: getLogsSources
+      tags:
+      - logs
+      summary: GET /logs/sources
+      description: Valores distintos de source presentes en logs, para filtros.
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:259; aun sin implementar en backend'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LogSource'
+              example:
+              - app-ios
+              - front-admin
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /logs/categories:
+    get:
+      operationId: getLogsCategories
+      tags:
+      - logs
+      summary: GET /logs/categories
+      description: Valores distintos de category presentes en logs, para filtros.
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:259; aun sin implementar en backend'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+              example:
+              - http
+              - auth
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /logs/errors/groups:
+    get:
+      operationId: getErrorGroups
+      tags:
+      - errors
+      summary: GET /logs/errors/groups
+      description: Grupos por fingerprint con estado de triaje.
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:260; aun sin implementar en backend'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: status
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/ErrorGroupStatus'
+      - name: environment
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/LogEnvironment'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ErrorGroup'
+              example:
+              - fingerprint: a1b2c3d4
+                status: open
+                assigned_to: null
+                note: null
+                updated_at: '2026-09-18T14:02:11.000Z'
+                updated_by: null
+                count: 42
+                last_seen: '2026-09-18T14:02:11.000Z'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /logs/errors/groups/{fingerprint}/state:
+    patch:
+      operationId: patchErrorGroupState
+      tags:
+      - errors
+      summary: PATCH /logs/errors/groups/{fingerprint}/state
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:260; aun sin implementar en backend'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: fingerprint
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorGroupUpdateRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorGroup'
+              example:
+                fingerprint: a1b2c3d4
+                status: resolved
+                assigned_to: sergio@rebeca.travel
+                note: Corregido en 4.12.1
+                updated_at: '2026-09-18T15:00:00.000Z'
+                updated_by: sergio@rebeca.travel
+                count: 42
+                last_seen: '2026-09-18T14:02:11.000Z'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No existe
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /logs/stats:
+    get:
+      operationId: getStats
+      tags:
+      - stats
+      summary: GET /logs/stats
+      description: Volumen, tasa de error, p50/p95/p99 por endpoint.
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:261; aun sin implementar en backend'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: environment
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/LogEnvironment'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatsSummary'
+              example:
+                total: 72000
+                error_rate: 0.006
+                by_endpoint:
+                - endpoint: /package/details
+                  count: 1200
+                  p50: 120
+                  p95: 480
+                  p99: 900
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /logs/stats/timeseries:
+    get:
+      operationId: getStatsTimeseries
+      tags:
+      - stats
+      summary: GET /logs/stats/timeseries
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:261; aun sin implementar en backend'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: range
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - 1h
+          - 6h
+          - 24h
+          - 7d
+          - 30d
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatsTimeseries'
+              example:
+                range: 24h
+                points:
+                - ts: '2026-09-18T14:00:00.000Z'
+                  count: 3100
+                  error_count: 19
+        '400':
+          description: range invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /logs/behaviour/events:
+    get:
+      operationId: getBehaviourEvents
+      tags:
+      - behaviour
+      summary: GET /logs/behaviour/events
+      description: Lee de user_behavior (base principal), no de rebeca_logs.
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:262; aun sin implementar en backend'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: user_id
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BehaviourEvent'
+              example:
+              - id: 5501
+                created_at: '2026-09-18T14:02:11.000Z'
+                user_id: '4821'
+                action: tap
+                subject: package_card
+                app_version: 4.12.0
+                metadata: null
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /logs/behaviour/top-actions:
+    get:
+      operationId: getBehaviourTopActions
+      tags:
+      - behaviour
+      summary: GET /logs/behaviour/top-actions
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:262; aun sin implementar en backend'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BehaviourTopAction'
+              example:
+              - action: tap
+                subject: package_card
+                count: 3120
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /logs/behaviour/by-version:
+    get:
+      operationId: getBehaviourByVersion
+      tags:
+      - behaviour
+      summary: GET /logs/behaviour/by-version
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:262; aun sin implementar en backend'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BehaviourByVersion'
+              example:
+              - app_version: 4.12.0
+                action: tap
+                subject: package_card
+                count: 1800
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /logs/bugs:
+    post:
+      operationId: postBugs
+      tags:
+      - bugs
+      summary: POST /logs/bugs
+      description: Crea el bug report; la captura se sube aparte via PUT /logs/bugs/{id}/screenshot.
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:263; aun sin implementar en backend'
+      security:
+      - loggerKeyAuth: []
+      parameters:
+      - $ref: '#/components/parameters/XSessionIdHeader'
+      - $ref: '#/components/parameters/XTraceIdHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BugCreateRequest'
+      responses:
+        '201':
+          description: Creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BugReport'
+              example:
+                id: 501
+                environment: prod
+                source: app-ios
+                user_id: '4821'
+                session_id: sess-77c1
+                severity: high
+                description: La app se cierra al abrir el detalle del paquete
+                device_model: iPhone15,3
+                os_version: iOS 18.1
+                app_version: 4.12.0
+                breadcrumbs: []
+                related_log_ids:
+                - 918234
+                screenshot_blob: null
+                status: new
+                assigned_to: null
+                note: null
+                created_at: '2026-09-18T14:05:00.000Z'
+        '400':
+          description: Body invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: X-Logger-Key ausente, invalida o revocada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      operationId: getBugs
+      tags:
+      - bugs
+      summary: GET /logs/bugs
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:263; aun sin implementar en backend'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: status
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/BugStatus'
+      - name: environment
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/LogEnvironment'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BugReport'
+              example:
+              - id: 501
+                environment: prod
+                source: app-ios
+                user_id: '4821'
+                session_id: sess-77c1
+                severity: high
+                description: La app se cierra al abrir el detalle del paquete
+                device_model: iPhone15,3
+                os_version: iOS 18.1
+                app_version: 4.12.0
+                breadcrumbs: []
+                related_log_ids:
+                - 918234
+                screenshot_blob: bug-501.png
+                status: new
+                assigned_to: null
+                note: null
+                created_at: '2026-09-18T14:05:00.000Z'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /logs/bugs/{id}:
+    get:
+      operationId: getBug
+      tags:
+      - bugs
+      summary: GET /logs/bugs/{id}
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:263; aun sin implementar en backend'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BugReport'
+              example:
+                id: 501
+                environment: prod
+                source: app-ios
+                user_id: '4821'
+                session_id: sess-77c1
+                severity: high
+                description: La app se cierra al abrir el detalle del paquete
+                device_model: iPhone15,3
+                os_version: iOS 18.1
+                app_version: 4.12.0
+                breadcrumbs: []
+                related_log_ids:
+                - 918234
+                screenshot_blob: bug-501.png
+                status: new
+                assigned_to: null
+                note: null
+                created_at: '2026-09-18T14:05:00.000Z'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No existe
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      operationId: patchBug
+      tags:
+      - bugs
+      summary: PATCH /logs/bugs/{id}
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:263; aun sin implementar en backend'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BugUpdateRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BugReport'
+              example:
+                id: 501
+                environment: prod
+                source: app-ios
+                user_id: '4821'
+                session_id: sess-77c1
+                severity: high
+                description: La app se cierra al abrir el detalle del paquete
+                device_model: iPhone15,3
+                os_version: iOS 18.1
+                app_version: 4.12.0
+                breadcrumbs: []
+                related_log_ids:
+                - 918234
+                screenshot_blob: bug-501.png
+                status: triaged
+                assigned_to: sergio@rebeca.travel
+                note: Reproducido en 4.12.0
+                created_at: '2026-09-18T14:05:00.000Z'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No existe
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /logs/bugs/{id}/screenshot:
+    put:
+      operationId: putBugScreenshot
+      tags:
+      - bugs
+      summary: PUT /logs/bugs/{id}/screenshot
+      description: Captura del bug, cap 2 MB, solo image/png|jpeg|webp; se guarda en Blob, contenedor
+        logs-screenshots.
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:263; aun sin implementar en backend'
+      security:
+      - loggerKeyAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          image/png:
+            schema:
+              type: string
+              format: binary
+          image/jpeg:
+            schema:
+              type: string
+              format: binary
+          image/webp:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BugReport'
+              example:
+                id: 501
+                environment: prod
+                source: app-ios
+                user_id: '4821'
+                session_id: sess-77c1
+                severity: high
+                description: La app se cierra al abrir el detalle del paquete
+                device_model: iPhone15,3
+                os_version: iOS 18.1
+                app_version: 4.12.0
+                breadcrumbs: []
+                related_log_ids:
+                - 918234
+                screenshot_blob: bug-501.png
+                status: new
+                assigned_to: null
+                note: null
+                created_at: '2026-09-18T14:05:00.000Z'
+        '400':
+          description: Imagen invalida (formato o tamano fuera de cap)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: X-Logger-Key ausente, invalida o revocada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No existe
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      operationId: getBugScreenshot
+      tags:
+      - bugs
+      summary: GET /logs/bugs/{id}/screenshot
+      description: Servida por proxy autenticado, nunca la URL directa del Blob.
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:263; aun sin implementar en backend'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Imagen (stream)
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No existe
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /logs/replay:
+    post:
+      operationId: postReplay
+      tags:
+      - replay
+      summary: POST /logs/replay
+      description: 'Solo contra la URL base del mismo entorno del backend que lo ejecuta (guardia SSRF
+        portada de replay/ssrf.ts). La credencial es siempre el JWT del admin que lanza el replay, nunca
+        se guarda ni reutiliza la del usuario original. request_data va redactado en ingesta: el replay
+        es best-effort.'
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:293-301; aun sin implementar en
+        backend'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReplayCreateRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogReplay'
+              example:
+                id: 12
+                parent_log_id: 918234
+                version: 1
+                status_code: 500
+                duration_ms: 640
+                response_data: null
+                error: null
+                launched_by: sergio@rebeca.travel
+                created_at: '2026-09-18T15:10:00.000Z'
+        '400':
+          description: log_id invalido o host de replay rechazado por la guardia SSRF
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: log_id no existe
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /logs/{id}/replays:
+    get:
+      operationId: getLogReplays
+      tags:
+      - replay
+      summary: GET /logs/{id}/replays
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:264; aun sin implementar en backend'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LogReplay'
+              example:
+              - id: 12
+                parent_log_id: 918234
+                version: 1
+                status_code: 500
+                duration_ms: 640
+                response_data: null
+                error: null
+                launched_by: sergio@rebeca.travel
+                created_at: '2026-09-18T15:10:00.000Z'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /logs/replays/{id}:
+    delete:
+      operationId: deleteReplay
+      tags:
+      - replay
+      summary: DELETE /logs/replays/{id}
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:264; aun sin implementar en backend'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '204':
+          description: Borrado
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No existe
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /logs/auth/tokens:
+    post:
+      operationId: postAuthTokens
+      tags:
+      - tokens
+      summary: POST /logs/auth/tokens
+      description: Crea un token de API. type=user es del usuario autenticado (Logs access); type=emitter
+        va ligado a source y sustituye las env vars LOGGER_KEY_* (decisions.md Q11-bis:1). Solo acepta
+        el JWT del usuario autenticado, nunca un token rl_live_ existente.
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:265; type=emitter por decisions.md
+        Q11-bis (2026-09-18); aun sin implementar en backend'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApiTokenCreateRequest'
+      responses:
+        '201':
+          description: Creado; el plaintext solo se devuelve en esta respuesta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiTokenCreated'
+              example:
+                id: 7
+                prefix: rl_live_9f2a
+                name: app-ios prod
+                type: emitter
+                source: app-ios
+                user_id: null
+                expires_at: null
+                last_used: null
+                token: rl_live_9f2a1c7e4b3d6a8f0e2c5b1a9d7f3e6c
+        '400':
+          description: Body invalido (falta source para type=emitter)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      operationId: getAuthTokens
+      tags:
+      - tokens
+      summary: GET /logs/auth/tokens
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:265; aun sin implementar en backend'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiToken'
+              example:
+              - id: 7
+                prefix: rl_live_9f2a
+                name: app-ios prod
+                type: emitter
+                source: app-ios
+                user_id: null
+                expires_at: null
+                last_used: '2026-09-18T14:02:11.000Z'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /logs/auth/tokens/{id}:
+    delete:
+      operationId: deleteAuthToken
+      tags:
+      - tokens
+      summary: DELETE /logs/auth/tokens/{id}
+      description: Revoca el token; una clave filtrada del bundle se rota sin redeploy del backend
+        (decisions.md Q11-bis:1).
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:265; aun sin implementar en backend'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '204':
+          description: Revocado
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No existe
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /logs/agent/triage-summary:
+    get:
+      operationId: getAgentTriageSummary
+      tags:
+      - logs
+      summary: GET /logs/agent/triage-summary
+      description: Digest para agentes, mismo dato que la tool MCP get_triage_summary.
+      x-source: 'spec Logs en Postgres y panel de trazabilidad.md:266; aun sin implementar en backend'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TriageSummary'
+              example:
+                generated_at: '2026-09-18T15:30:00.000Z'
+                open_error_groups: 4
+                open_bugs: 2
+                top_error_groups:
+                - fingerprint: a1b2c3d4
+                  status: open
+                  assigned_to: null
+                  note: null
+                  updated_at: '2026-09-18T14:02:11.000Z'
+                  updated_by: null
+                  count: 42
+                  last_seen: '2026-09-18T14:02:11.000Z'
+                recent_bugs:
+                - id: 501
+                  environment: prod
+                  source: app-ios
+                  user_id: '4821'
+                  session_id: sess-77c1
+                  severity: high
+                  description: La app se cierra al abrir el detalle del paquete
+                  device_model: iPhone15,3
+                  os_version: iOS 18.1
+                  app_version: 4.12.0
+                  breadcrumbs: []
+                  related_log_ids:
+                  - 918234
+                  screenshot_blob: bug-501.png
+                  status: new
+                  assigned_to: null
+                  note: null
+                  created_at: '2026-09-18T14:05:00.000Z'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+      description: 'JWT de sesion admin (12h), o token de API `rl_live_<32>` (type=user, con Logs
+        access) en las rutas de lectura bajo /logs (errors/bugs/replay/behaviour/stats/tokens,
+        spec:251). POST/GET/DELETE /logs/auth/tokens solo aceptan el JWT del usuario autenticado, no
+        un token rl_live_ (spec:265).'
+    loggerKeyAuth:
+      type: apiKey
+      in: header
+      name: X-Logger-Key
+      description: 'Token de emisor (api_tokens tipo `emitter`, decisions.md Q11-bis:1), gestionado por
+        POST/GET/DELETE /logs/auth/tokens. Sustituye las env vars LOGGER_KEY_*. Valida `source` en cada
+        POST /logs/batch y POST /logs/bugs; sin rate limit por IP (Q11-bis).'
+  parameters:
+    XSessionIdHeader:
+      name: X-Session-Id
+      in: header
+      required: false
+      description: 'Header de correlacion recomendado en toda peticion al backend (spec:228); el
+        backend lo cuelga en req.ctx y lo usa para etiquetar su propia fila de log con la sesion del
+        cliente (Glosario spec:40).'
+      schema:
+        type: string
+    XTraceIdHeader:
+      name: X-Trace-Id
+      in: header
+      required: false
+      description: 'Header de correlacion recomendado en toda peticion al backend (spec:228); el
+        backend lo cuelga en req.ctx y lo usa para etiquetar su propia fila de log con la traza del
+        cliente (Glosario spec:41).'
+      schema:
+        type: string
   schemas:
     Error:
       type: object
@@ -8046,3 +9581,677 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ProviderChannel'
+    LogEnvironment:
+      type: string
+      enum:
+      - dev
+      - test
+      - prod
+      description: 'Glosario spec:39. `test` es etiqueta de cliente (front-admin la manda cuando la API
+        lleva /test/) y cae en la base de dev; no es un schema de Postgres propio.'
+    LogSource:
+      type: string
+      enum:
+      - app-ios
+      - app-android
+      - front-admin
+      - widget
+      - totem
+      - backend
+      description: 'Glosario spec:37. Quien escribio la fila. El backend valida que coincida con el
+        `source` ligado al token de emisor (X-Logger-Key) usado en la ingesta.'
+    LogChannel:
+      type: string
+      enum:
+      - app
+      - whatsapp
+      - kommo
+      - widget
+      - octorate
+      - totem
+      description: 'Glosario spec:38. Canal de negocio de la conversacion; distinto de `source` (una
+        fila puede tener source=backend y channel=whatsapp).'
+    LogLevel:
+      type: string
+      enum:
+      - debug
+      - info
+      - warn
+      - error
+      description: 'Modelo de datos spec:140. `fingerprint` solo se calcula para level=error.'
+    LogEntry:
+      type: object
+      required:
+      - source
+      - environment
+      - level
+      - message
+      - timestamp
+      - session_id
+      - trace_id
+      properties:
+        source:
+          $ref: '#/components/schemas/LogSource'
+        environment:
+          $ref: '#/components/schemas/LogEnvironment'
+        level:
+          $ref: '#/components/schemas/LogLevel'
+        message:
+          type: string
+          maxLength: 4096
+        timestamp:
+          type: string
+          format: date-time
+        session_id:
+          type: string
+          description: Mismo valor que el header X-Session-Id de la peticion que origino la fila.
+        trace_id:
+          type: string
+          description: Mismo valor que el header X-Trace-Id de la peticion que origino la fila.
+        user_id:
+          type: [string, 'null']
+        device_id:
+          type: [string, 'null']
+        channel:
+          type: [string, 'null']
+          enum:
+          - app
+          - whatsapp
+          - kommo
+          - widget
+          - octorate
+          - totem
+          - null
+        category:
+          type: [string, 'null']
+          maxLength: 4096
+        metadata:
+          type: [object, 'null']
+          additionalProperties: true
+        http_method:
+          type: [string, 'null']
+        endpoint:
+          type: [string, 'null']
+        status_code:
+          type: [integer, 'null']
+        duration_ms:
+          type: [integer, 'null']
+        request_data:
+          type: [object, 'null']
+          additionalProperties: true
+          description: Redactado por redactPii antes de insertar (JWT, bearer, api keys, emails,
+            tarjetas, hashes); cap 4096 caracteres por campo libre.
+        response_data:
+          type: [object, 'null']
+          additionalProperties: true
+          description: Mismo redactado y cap que request_data.
+        request_id:
+          type: [string, 'null']
+          description: Header X-Request-Id devuelto por el backend, para enlazar con Azure.
+        app_version:
+          type: [string, 'null']
+        os_version:
+          type: [string, 'null']
+        device_model:
+          type: [string, 'null']
+        network_type:
+          type: [string, 'null']
+        breadcrumbs:
+          type: [array, 'null']
+          items:
+            type: object
+            additionalProperties: true
+          description: Solo se procesan en warn/error, como hoy en el worker.
+      description: 'spec:214-226. `source` se valida contra el token del emisor; una entry con source
+        distinto se descarta (Q11-bis:2).'
+    LogBatchRequest:
+      type: object
+      required:
+      - entries
+      properties:
+        entries:
+          type: array
+          minItems: 1
+          maxItems: 50
+          items:
+            $ref: '#/components/schemas/LogEntry'
+      description: 'Body de POST /logs/batch. Maximo 50 entries y 256 KB por body (spec:216).'
+    LogBatchResult:
+      type: object
+      required:
+      - accepted
+      - rejected
+      properties:
+        accepted:
+          type: integer
+          description: Entries insertadas.
+        rejected:
+          type: integer
+          description: Entries descartadas por source distinto al del token o por campo invalido.
+      description: 'Sin 429 (Q11-bis): el lote nunca se rechaza completo por limite de tasa, solo por
+        forma (400) o token invalido (401).'
+    LogRow:
+      type: object
+      description: 'Fila de `logs` (rebeca_logs), modelo de datos spec:134-162.'
+      properties:
+        id:
+          type: integer
+          format: int64
+        created_at:
+          type: string
+          format: date-time
+        environment:
+          $ref: '#/components/schemas/LogEnvironment'
+        source:
+          $ref: '#/components/schemas/LogSource'
+        channel:
+          type: [string, 'null']
+          enum:
+          - app
+          - whatsapp
+          - kommo
+          - widget
+          - octorate
+          - totem
+          - null
+        level:
+          $ref: '#/components/schemas/LogLevel'
+        category:
+          type: [string, 'null']
+        message:
+          type: string
+        metadata:
+          type: [object, 'null']
+          additionalProperties: true
+        user_id:
+          type: [string, 'null']
+        provider_id:
+          type: [integer, 'null']
+        device_id:
+          type: [string, 'null']
+        session_id:
+          type: [string, 'null']
+        trace_id:
+          type: [string, 'null']
+        request_id:
+          type: [string, 'null']
+        http_method:
+          type: [string, 'null']
+        endpoint:
+          type: [string, 'null']
+        status_code:
+          type: [integer, 'null']
+        duration_ms:
+          type: [integer, 'null']
+        request_data:
+          type: [object, 'null']
+          additionalProperties: true
+        response_data:
+          type: [object, 'null']
+          additionalProperties: true
+        app_version:
+          type: [string, 'null']
+        os_version:
+          type: [string, 'null']
+        device_model:
+          type: [string, 'null']
+        network_type:
+          type: [string, 'null']
+        fingerprint:
+          type: [string, 'null']
+        breadcrumbs:
+          type: [array, 'null']
+          items:
+            type: object
+            additionalProperties: true
+    LogsPage:
+      type: object
+      required:
+      - data
+      - cursor
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/LogRow'
+        cursor:
+          type: [string, 'null']
+          description: Cursor por id para la siguiente pagina; null si no hay mas filas. Paginacion por
+            cursor, no por offset (spec:255).
+      description: Respuesta de GET /logs y GET /logs/tail.
+    SessionTimeline:
+      type: object
+      properties:
+        session_id:
+          type: string
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/LogRow'
+      description: 'GET /logs/sessions/:id/timeline (spec:258): filas de todos los emisores en orden temporal.'
+    TraceResult:
+      type: object
+      properties:
+        trace_id:
+          type: string
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/LogRow'
+        azure_kql_link:
+          type: [string, 'null']
+          description: Link KQL por request_id, cuando la traza tiene filas con request_id (spec:258).
+      description: 'GET /logs/trace/:trace_id (spec:258).'
+    ErrorGroupStatus:
+      type: string
+      enum:
+      - open
+      - ignored
+      - resolved
+      - monitoring
+      description: 'Modelo de datos spec:165.'
+    ErrorGroup:
+      type: object
+      description: 'Fila de `error_group_states` (spec:163-170) mas los agregados de `logs` con el mismo
+        fingerprint, para la tab Errores (spec:282).'
+      properties:
+        fingerprint:
+          type: string
+        status:
+          $ref: '#/components/schemas/ErrorGroupStatus'
+        assigned_to:
+          type: [string, 'null']
+        note:
+          type: [string, 'null']
+        updated_at:
+          type: [string, 'null']
+          format: date-time
+        updated_by:
+          type: [string, 'null']
+        count:
+          type: integer
+          description: Filas de nivel error con este fingerprint, agregado sobre logs.
+        last_seen:
+          type: string
+          format: date-time
+    ErrorGroupUpdateRequest:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ErrorGroupStatus'
+        assigned_to:
+          type: [string, 'null']
+        note:
+          type: [string, 'null']
+      description: 'PATCH /logs/errors/groups/:fingerprint/state (spec:260).'
+    BugSeverity:
+      type: string
+      enum:
+      - low
+      - medium
+      - high
+      - critical
+      description: 'Modelo de datos spec:177.'
+    BugStatus:
+      type: string
+      enum:
+      - new
+      - triaged
+      - in_progress
+      - resolved
+      - wontfix
+      description: 'Modelo de datos spec:185.'
+    BugReport:
+      type: object
+      description: 'Fila de `bug_reports` (spec:171-189). No caduca (D17).'
+      properties:
+        id:
+          type: integer
+          format: int64
+        environment:
+          $ref: '#/components/schemas/LogEnvironment'
+        source:
+          $ref: '#/components/schemas/LogSource'
+        user_id:
+          type: [string, 'null']
+        session_id:
+          type: [string, 'null']
+        severity:
+          $ref: '#/components/schemas/BugSeverity'
+        description:
+          type: string
+        device_model:
+          type: [string, 'null']
+        os_version:
+          type: [string, 'null']
+        app_version:
+          type: [string, 'null']
+        breadcrumbs:
+          type: [array, 'null']
+          items:
+            type: object
+            additionalProperties: true
+        related_log_ids:
+          type: [array, 'null']
+          items:
+            type: integer
+            format: int64
+        screenshot_blob:
+          type: [string, 'null']
+          description: Referencia al blob en el contenedor Azure logs-screenshots; servido por proxy
+            autenticado en GET /logs/bugs/:id/screenshot, nunca la URL directa.
+        status:
+          $ref: '#/components/schemas/BugStatus'
+        assigned_to:
+          type: [string, 'null']
+        note:
+          type: [string, 'null']
+        created_at:
+          type: string
+          format: date-time
+    BugCreateRequest:
+      type: object
+      required:
+      - environment
+      - source
+      - severity
+      - description
+      properties:
+        environment:
+          $ref: '#/components/schemas/LogEnvironment'
+        source:
+          $ref: '#/components/schemas/LogSource'
+        user_id:
+          type: [string, 'null']
+        session_id:
+          type: [string, 'null']
+        severity:
+          $ref: '#/components/schemas/BugSeverity'
+        description:
+          type: string
+          maxLength: 4096
+        device_model:
+          type: [string, 'null']
+        os_version:
+          type: [string, 'null']
+        app_version:
+          type: [string, 'null']
+        breadcrumbs:
+          type: [array, 'null']
+          items:
+            type: object
+            additionalProperties: true
+        related_log_ids:
+          type: [array, 'null']
+          items:
+            type: integer
+            format: int64
+      description: 'Body de POST /logs/bugs (X-Logger-Key). La captura se sube aparte via PUT
+        /logs/bugs/:id/screenshot (spec:263).'
+    BugUpdateRequest:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/BugStatus'
+        assigned_to:
+          type: [string, 'null']
+        note:
+          type: [string, 'null']
+      description: 'PATCH /logs/bugs/:id (spec:263), auth JWT + Logs access.'
+    LogReplay:
+      type: object
+      description: 'Fila de `log_replays` (spec:190-200).'
+      properties:
+        id:
+          type: integer
+          format: int64
+        parent_log_id:
+          type: integer
+          format: int64
+        version:
+          type: integer
+        status_code:
+          type: [integer, 'null']
+        duration_ms:
+          type: [integer, 'null']
+        response_data:
+          type: [object, 'null']
+          additionalProperties: true
+        error:
+          type: [string, 'null']
+        launched_by:
+          type: string
+          description: Usuario admin (JWT) que lanzo el replay; nunca la credencial original (spec:298).
+        created_at:
+          type: string
+          format: date-time
+    ReplayCreateRequest:
+      type: object
+      required:
+      - log_id
+      properties:
+        log_id:
+          type: integer
+          format: int64
+      description: 'POST /logs/replay (spec:293-301): solo contra la URL base del mismo entorno del backend
+        que lo ejecuta (guardia SSRF portada de replay/ssrf.ts); credencial siempre el JWT de quien lo
+        lanza; request_data va redactado, best-effort.'
+    ApiTokenType:
+      type: string
+      enum:
+      - user
+      - emitter
+      description: 'decisions.md Q11-bis:1. `user`: token de una persona con Logs access, para agentes y
+        scripts (spec:201-209/D16). `emitter`: token de un emisor (app/admin/widget), ligado a `source`,
+        sustituye a las env vars LOGGER_KEY_*.'
+    ApiToken:
+      type: object
+      description: 'Fila de `api_tokens` (spec:201-209) sin el hash; nunca se devuelve el plaintext tras
+        la creacion.'
+      properties:
+        id:
+          type: integer
+          format: int64
+        prefix:
+          type: string
+          description: Primeros caracteres del token en plaintext (rl_live_...), para identificarlo en
+            la lista sin exponerlo entero.
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/ApiTokenType'
+        source:
+          type: [string, 'null']
+          enum:
+          - app-ios
+          - app-android
+          - front-admin
+          - widget
+          - totem
+          - backend
+          - null
+          description: Solo presente si type=emitter; el source con el que se valida cada LogEntry
+            ingerida con este token.
+        user_id:
+          type: [integer, 'null']
+          description: users.user_id de la base principal; null en tokens type=emitter.
+        expires_at:
+          type: [string, 'null']
+          format: date-time
+        last_used:
+          type: [string, 'null']
+          format: date-time
+    ApiTokenCreateRequest:
+      type: object
+      required:
+      - name
+      - type
+      properties:
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/ApiTokenType'
+        source:
+          type: [string, 'null']
+          enum:
+          - app-ios
+          - app-android
+          - front-admin
+          - widget
+          - totem
+          - backend
+          - null
+          description: Obligatorio si type=emitter; ignorado si type=user.
+        expires_at:
+          type: [string, 'null']
+          format: date-time
+      description: 'POST /logs/auth/tokens (spec:265), auth JWT del usuario autenticado.'
+    ApiTokenCreated:
+      allOf:
+      - $ref: '#/components/schemas/ApiToken'
+      - type: object
+        required:
+        - token
+        properties:
+          token:
+            type: string
+            description: Plaintext rl_live_<32> (spec:203); se muestra una sola vez, solo el hash se
+              guarda.
+      description: Respuesta de POST /logs/auth/tokens.
+    UserLogProfile:
+      type: object
+      description: 'GET /logs/users/:id/profile (spec:259): perfil para la tab Usuarios (spec:285).'
+      properties:
+        user_id:
+          type: string
+        devices:
+          type: array
+          items:
+            type: string
+        app_versions:
+          type: array
+          items:
+            type: string
+        recent_sessions:
+          type: array
+          items:
+            type: string
+        top_errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorGroup'
+    StatsEndpointLatency:
+      type: object
+      properties:
+        endpoint:
+          type: string
+        count:
+          type: integer
+        p50:
+          type: integer
+        p95:
+          type: integer
+        p99:
+          type: integer
+    StatsSummary:
+      type: object
+      description: 'GET /logs/stats (spec:261): volumen, tasa de error, p50/p95/p99 por endpoint.'
+      properties:
+        total:
+          type: integer
+        error_rate:
+          type: number
+        by_endpoint:
+          type: array
+          items:
+            $ref: '#/components/schemas/StatsEndpointLatency'
+    StatsTimeseriesPoint:
+      type: object
+      properties:
+        ts:
+          type: string
+          format: date-time
+        count:
+          type: integer
+        error_count:
+          type: integer
+    StatsTimeseries:
+      type: object
+      description: 'GET /logs/stats/timeseries?range= (spec:261).'
+      properties:
+        range:
+          type: string
+          enum:
+          - 1h
+          - 6h
+          - 24h
+          - 7d
+          - 30d
+        points:
+          type: array
+          items:
+            $ref: '#/components/schemas/StatsTimeseriesPoint'
+    BehaviourEvent:
+      type: object
+      description: 'Fila de `user_behavior` (base principal, no rebeca_logs). GET /logs/behaviour/events
+        (spec:262). Evento de comportamiento: accion de UI action:subject (Glosario spec:45).'
+      properties:
+        id:
+          type: integer
+          format: int64
+        created_at:
+          type: string
+          format: date-time
+        user_id:
+          type: [string, 'null']
+        action:
+          type: string
+        subject:
+          type: string
+        app_version:
+          type: [string, 'null']
+        metadata:
+          type: [object, 'null']
+          additionalProperties: true
+    BehaviourTopAction:
+      type: object
+      description: 'GET /logs/behaviour/top-actions (spec:262).'
+      properties:
+        action:
+          type: string
+        subject:
+          type: string
+        count:
+          type: integer
+    BehaviourByVersion:
+      type: object
+      description: 'GET /logs/behaviour/by-version (spec:262).'
+      properties:
+        app_version:
+          type: string
+        action:
+          type: string
+        subject:
+          type: string
+        count:
+          type: integer
+    TriageSummary:
+      type: object
+      description: 'GET /logs/agent/triage-summary (spec:266): digest para agentes, mismo dato que la tool MCP
+        get_triage_summary (spec:272).'
+      properties:
+        generated_at:
+          type: string
+          format: date-time
+        open_error_groups:
+          type: integer
+        open_bugs:
+          type: integer
+        top_error_groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorGroup'
+        recent_bugs:
+          type: array
+          items:
+            $ref: '#/components/schemas/BugReport'
