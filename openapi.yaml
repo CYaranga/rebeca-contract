@@ -44,6 +44,7 @@ tags:
 - name: jobs
 - name: joiners
 - name: labels
+- name: maps
 - name: multilanguage
 - name: octorate
 - name: package
@@ -2294,7 +2295,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericResult'
+                $ref: '#/components/schemas/PlanStatusResult'
   /webhook_salesbot:
     post:
       operationId: webhookSalesbot_Webhooksalesbot
@@ -7395,6 +7396,54 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericResult'
+  /recsys/plan-status/{task_id}:
+    get:
+      operationId: recSysPlanStatus
+      tags:
+      - recsys
+      summary: GET /recsys/plan-status/:task_id
+      x-source: src/Repository/recsys/API.js:16-41 (getPlanStatus), registrado en
+        src/Router/HTTPRouter.js:352-357
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: task_id
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^[A-Za-z0-9_-]{1,128}$
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecsysPlanStatus'
+        '400':
+          description: task_id invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Fallo del upstream de recsys
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /pois/distance:
     get:
       operationId: getPoisDistance
@@ -7665,6 +7714,209 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericResult'
+  /maps/places/autocomplete:
+    get:
+      operationId: getMapsPlacesAutocomplete
+      tags:
+      - maps
+      summary: GET /maps/places/autocomplete
+      description: Proxy de Google Places Autocomplete; la key de servidor (GOOGLE_API_KEY) queda en
+        backend y nunca se reenvia al cliente. Publica (authenticateOptional, se usa en onboarding
+        antes del login) - sesion opcional, no requiere token.
+      x-source: src/Repository/maps/API.js:55-86 (autocomplete), registrado en src/Router/HTTPRouter.js:325
+      security: []
+      parameters:
+      - name: input
+        in: query
+        required: true
+        schema:
+          type: string
+          maxLength: 200
+      - name: language
+        in: query
+        required: false
+        schema:
+          type: string
+          maxLength: 10
+      - name: types
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - (cities)
+      responses:
+        '200':
+          description: '{status: "success", data: <JSON de Google Places Autocomplete tal cual>}'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoogleMapsResult'
+        '400':
+          description: Parametros invalidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Fallo de Google (sin filtrar la key en el log)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /maps/places/details:
+    get:
+      operationId: getMapsPlacesDetails
+      tags:
+      - maps
+      summary: GET /maps/places/details
+      description: Proxy de Google Places Details con fields=place_id,address_components fijo en
+        servidor; la key de servidor (GOOGLE_API_KEY) queda en backend y nunca se reenvia al cliente.
+        Publica (authenticateOptional, se usa en onboarding antes del login) - sesion opcional, no
+        requiere token.
+      x-source: src/Repository/maps/API.js:88-111 (details), registrado en src/Router/HTTPRouter.js:326
+      security: []
+      parameters:
+      - name: place_id
+        in: query
+        required: true
+        schema:
+          type: string
+          pattern: ^[A-Za-z0-9_-]{1,512}$
+      - name: language
+        in: query
+        required: false
+        schema:
+          type: string
+          maxLength: 10
+      responses:
+        '200':
+          description: '{status: "success", data: <JSON de Google Places Details tal cual>}'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoogleMapsResult'
+        '400':
+          description: Parametros invalidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Fallo de Google (sin filtrar la key en el log)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /maps/geocode:
+    get:
+      operationId: getMapsGeocode
+      tags:
+      - maps
+      summary: GET /maps/geocode
+      description: Proxy de Google Geocoding; la key de servidor (GOOGLE_API_KEY) queda en backend y
+        nunca se reenvia al cliente. Requiere exactamente uno de latlng o place_id.
+      x-source: src/Repository/maps/API.js:113-152 (geocode), registrado en src/Router/HTTPRouter.js:329
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: latlng
+        in: query
+        required: false
+        description: 'Formato lat,lng (numericos en rango); exactamente uno de latlng o place_id es
+          obligatorio.'
+        schema:
+          type: string
+      - name: place_id
+        in: query
+        required: false
+        description: Exactamente uno de latlng o place_id es obligatorio.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: '{status: "success", data: <JSON de Google Geocoding tal cual>}'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoogleMapsResult'
+        '400':
+          description: Parametros invalidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Fallo de Google (sin filtrar la key en el log)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /maps/static:
+    get:
+      operationId: getMapsStatic
+      tags:
+      - maps
+      summary: GET /maps/static
+      description: Proxy de Google Static Maps con zoom=15, size=600x300, scale=2,
+        markers=color:0x6440FE fijos en servidor; la key de servidor (GOOGLE_API_KEY) queda en backend
+        y nunca se reenvia al cliente. Cache-Control privado de 1 dia.
+      x-source: src/Repository/maps/API.js:154-176 (staticMap), registrado en src/Router/HTTPRouter.js:330
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: lat
+        in: query
+        required: true
+        description: Rechaza vacio, hex y notacion exponencial antes de convertir a numero
+          (mismo DECIMAL_COMPONENT_PATTERN de src/Repository/maps/API.js).
+        schema:
+          type: number
+          minimum: -90
+          maximum: 90
+          pattern: ^-?\d{1,3}(\.\d+)?$
+      - name: lng
+        in: query
+        required: true
+        description: Rechaza vacio, hex y notacion exponencial antes de convertir a numero
+          (mismo DECIMAL_COMPONENT_PATTERN de src/Repository/maps/API.js).
+        schema:
+          type: number
+          minimum: -180
+          maximum: 180
+          pattern: ^-?\d{1,3}(\.\d+)?$
+      responses:
+        '200':
+          description: Imagen PNG del mapa estatico (stream), Cache-Control privado de 1 dia
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Parametros invalidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Fallo de Google (sin filtrar la key en el log)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   securitySchemes:
     bearerAuth:
@@ -7691,6 +7943,48 @@ components:
           additionalProperties: true
       description: 'Envoltorio {data: ...} usado por la mayoria de rutas POST/PUT/DELETE de este backend
         (verificado via grep req.body.data en los handlers).'
+    GoogleMapsResult:
+      type: object
+      required:
+      - status
+      - data
+      properties:
+        status:
+          type: string
+          enum:
+          - success
+        data:
+          type: object
+          additionalProperties: true
+          description: JSON de Google (Places Autocomplete/Details o Geocoding) tal cual, sin transformar.
+      description: 'Envoltorio {status, data} real de src/Repository/maps/API.js (Helpers/status.js
+        successMessage): el handler mete la respuesta cruda de Google en `data` sin transformarla, pero
+        NO es passthrough puro a nivel raiz.'
+    PlanStatusResult:
+      type: object
+      properties:
+        status:
+          type: string
+        data:
+          type: object
+          additionalProperties: true
+          description: 'Passthrough crudo del cuerpo que devuelve el upstream de recsys (`{task_id,
+            status, result}`), sin remapear.'
+      description: 'Respuesta de GET /widget/plan-status/{task_id} (planStatusForWidget,
+        Repository/widget/API.js:244-245): envuelve el cuerpo de recsys en el
+        sobre estándar {status,data}.'
+    RecsysPlanStatus:
+      type: object
+      properties:
+        task_id:
+          type: string
+        status:
+          type: string
+        result:
+          type: [object, 'null']
+          additionalProperties: true
+      description: Respuesta de GET /recsys/plan-status/{task_id} (getPlanStatus, Repository/recsys/API.js:41).
+        Passthrough crudo del cuerpo del upstream de recsys, sin envoltorio.
     Provider:
       type: object
       description: Fila de `provider` tal como la devuelve getFilteredProviders (Repository/provider/DAL.js:43).
