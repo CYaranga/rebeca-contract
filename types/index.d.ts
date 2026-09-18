@@ -5284,7 +5284,7 @@ export interface components {
          * @description Glosario spec:37. Quien escribio la fila. El backend valida que coincida con el `source` ligado al token de emisor (X-Logger-Key) usado en la ingesta.
          * @enum {string}
          */
-        LogSource: "app-ios" | "app-android" | "front-admin" | "widget" | "totem" | "backend";
+        LogSource: "app-ios" | "app-android" | "app-web" | "front-admin" | "widget" | "totem" | "backend";
         /**
          * @description Glosario spec:38. Canal de negocio de la conversacion; distinto de `source` (una fila puede tener source=backend y channel=whatsapp).
          * @enum {string}
@@ -5530,7 +5530,7 @@ export interface components {
              * @description Solo presente si type=emitter; el source con el que se valida cada LogEntry ingerida con este token.
              * @enum {string|null}
              */
-            source?: "app-ios" | "app-android" | "front-admin" | "widget" | "totem" | "backend" | null;
+            source?: "app-ios" | "app-android" | "app-web" | "front-admin" | "widget" | "totem" | "backend" | null;
             /** @description users.user_id de la base principal; null en tokens type=emitter. */
             user_id?: number | null;
             /** Format: date-time */
@@ -5546,7 +5546,7 @@ export interface components {
              * @description Obligatorio si type=emitter; ignorado si type=user.
              * @enum {string|null}
              */
-            source?: "app-ios" | "app-android" | "front-admin" | "widget" | "totem" | "backend" | null;
+            source?: "app-ios" | "app-android" | "app-web" | "front-admin" | "widget" | "totem" | "backend" | null;
             /** Format: date-time */
             expires_at?: string | null;
         };

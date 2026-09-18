@@ -9594,6 +9594,7 @@ components:
       enum:
       - app-ios
       - app-android
+      - app-web
       - front-admin
       - widget
       - totem
@@ -10065,6 +10066,7 @@ components:
           enum:
           - app-ios
           - app-android
+          - app-web
           - front-admin
           - widget
           - totem
@@ -10096,6 +10098,7 @@ components:
           enum:
           - app-ios
           - app-android
+          - app-web
           - front-admin
           - widget
           - totem
