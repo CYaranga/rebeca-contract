@@ -608,4 +608,12 @@ export const handlers = [
   http.post("*/tour/get/editable", () => HttpResponse.json({})),
   // importRoutes
   http.post("*/routes/import", () => HttpResponse.json({})),
+  // getMapsPlacesAutocomplete
+  http.get("*/maps/places/autocomplete", () => HttpResponse.json({})),
+  // getMapsPlacesDetails
+  http.get("*/maps/places/details", () => HttpResponse.json({})),
+  // getMapsGeocode
+  http.get("*/maps/geocode", () => HttpResponse.json({})),
+  // getMapsStatic
+  http.get("*/maps/static", () => HttpResponse.json({})),
 ];

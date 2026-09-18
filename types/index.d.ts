@@ -4582,6 +4582,86 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/maps/places/autocomplete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /maps/places/autocomplete
+         * @description Proxy de Google Places Autocomplete; la key de servidor (GOOGLE_API_KEY) queda en backend y nunca se reenvia al cliente. Publica (authenticateOptional, se usa en onboarding antes del login) - sesion opcional, no requiere token.
+         */
+        get: operations["getMapsPlacesAutocomplete"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/maps/places/details": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /maps/places/details
+         * @description Proxy de Google Places Details con fields=place_id,address_components fijo en servidor; la key de servidor (GOOGLE_API_KEY) queda en backend y nunca se reenvia al cliente. Publica (authenticateOptional, se usa en onboarding antes del login) - sesion opcional, no requiere token.
+         */
+        get: operations["getMapsPlacesDetails"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/maps/geocode": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /maps/geocode
+         * @description Proxy de Google Geocoding; la key de servidor (GOOGLE_API_KEY) queda en backend y nunca se reenvia al cliente. Requiere exactamente uno de latlng o place_id.
+         */
+        get: operations["getMapsGeocode"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/maps/static": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /maps/static
+         * @description Proxy de Google Static Maps con zoom=15, size=600x300, scale=2, markers=color:0x6440FE fijos en servidor; la key de servidor (GOOGLE_API_KEY) queda en backend y nunca se reenvia al cliente. Cache-Control privado de 1 dia.
+         */
+        get: operations["getMapsStatic"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -4595,6 +4675,15 @@ export interface components {
         };
         /** @description Envoltorio {data: ...} usado por la mayoria de rutas POST/PUT/DELETE de este backend (verificado via grep req.body.data en los handlers). */
         DataEnvelope: {
+            data: {
+                [key: string]: unknown;
+            };
+        };
+        /** @description Envoltorio {status, data} real de src/Repository/maps/API.js (Helpers/status.js successMessage): el handler mete la respuesta cruda de Google en `data` sin transformarla, pero NO es passthrough puro a nivel raiz. */
+        GoogleMapsResult: {
+            /** @enum {string} */
+            status: "success";
+            /** @description JSON de Google (Places Autocomplete/Details o Geocoding) tal cual, sin transformar. */
             data: {
                 [key: string]: unknown;
             };
@@ -13411,6 +13500,191 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["GenericResult"];
+                };
+            };
+        };
+    };
+    getMapsPlacesAutocomplete: {
+        parameters: {
+            query: {
+                input: string;
+                language?: string;
+                types?: "(cities)";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description {status: "success", data: <JSON de Google Places Autocomplete tal cual>} */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoogleMapsResult"];
+                };
+            };
+            /** @description Parametros invalidos */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Fallo de Google (sin filtrar la key en el log) */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getMapsPlacesDetails: {
+        parameters: {
+            query: {
+                place_id: string;
+                language?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description {status: "success", data: <JSON de Google Places Details tal cual>} */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoogleMapsResult"];
+                };
+            };
+            /** @description Parametros invalidos */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Fallo de Google (sin filtrar la key en el log) */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getMapsGeocode: {
+        parameters: {
+            query?: {
+                /** @description Formato lat,lng (numericos en rango); exactamente uno de latlng o place_id es obligatorio. */
+                latlng?: string;
+                /** @description Exactamente uno de latlng o place_id es obligatorio. */
+                place_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description {status: "success", data: <JSON de Google Geocoding tal cual>} */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoogleMapsResult"];
+                };
+            };
+            /** @description Parametros invalidos */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Fallo de Google (sin filtrar la key en el log) */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getMapsStatic: {
+        parameters: {
+            query: {
+                lat: number;
+                lng: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Imagen PNG del mapa estatico (stream), Cache-Control privado de 1 dia */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "image/png": string;
+                };
+            };
+            /** @description Parametros invalidos */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Fallo de Google (sin filtrar la key en el log) */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
                 };
             };
         };

@@ -44,6 +44,7 @@ tags:
 - name: jobs
 - name: joiners
 - name: labels
+- name: maps
 - name: multilanguage
 - name: octorate
 - name: package
@@ -7713,6 +7714,202 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericResult'
+  /maps/places/autocomplete:
+    get:
+      operationId: getMapsPlacesAutocomplete
+      tags:
+      - maps
+      summary: GET /maps/places/autocomplete
+      description: Proxy de Google Places Autocomplete; la key de servidor (GOOGLE_API_KEY) queda en
+        backend y nunca se reenvia al cliente. Publica (authenticateOptional, se usa en onboarding
+        antes del login) - sesion opcional, no requiere token.
+      x-source: src/Repository/maps/API.js:55-86 (autocomplete), registrado en src/Router/HTTPRouter.js:325
+      security: []
+      parameters:
+      - name: input
+        in: query
+        required: true
+        schema:
+          type: string
+          maxLength: 200
+      - name: language
+        in: query
+        required: false
+        schema:
+          type: string
+          maxLength: 10
+      - name: types
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - (cities)
+      responses:
+        '200':
+          description: '{status: "success", data: <JSON de Google Places Autocomplete tal cual>}'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoogleMapsResult'
+        '400':
+          description: Parametros invalidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Fallo de Google (sin filtrar la key en el log)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /maps/places/details:
+    get:
+      operationId: getMapsPlacesDetails
+      tags:
+      - maps
+      summary: GET /maps/places/details
+      description: Proxy de Google Places Details con fields=place_id,address_components fijo en
+        servidor; la key de servidor (GOOGLE_API_KEY) queda en backend y nunca se reenvia al cliente.
+        Publica (authenticateOptional, se usa en onboarding antes del login) - sesion opcional, no
+        requiere token.
+      x-source: src/Repository/maps/API.js:88-111 (details), registrado en src/Router/HTTPRouter.js:326
+      security: []
+      parameters:
+      - name: place_id
+        in: query
+        required: true
+        schema:
+          type: string
+          pattern: ^[A-Za-z0-9_-]{1,512}$
+      - name: language
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: '{status: "success", data: <JSON de Google Places Details tal cual>}'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoogleMapsResult'
+        '400':
+          description: Parametros invalidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Fallo de Google (sin filtrar la key en el log)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /maps/geocode:
+    get:
+      operationId: getMapsGeocode
+      tags:
+      - maps
+      summary: GET /maps/geocode
+      description: Proxy de Google Geocoding; la key de servidor (GOOGLE_API_KEY) queda en backend y
+        nunca se reenvia al cliente. Requiere exactamente uno de latlng o place_id.
+      x-source: src/Repository/maps/API.js:113-152 (geocode), registrado en src/Router/HTTPRouter.js:329
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: latlng
+        in: query
+        required: false
+        description: 'Formato lat,lng (numericos en rango); exactamente uno de latlng o place_id es
+          obligatorio.'
+        schema:
+          type: string
+      - name: place_id
+        in: query
+        required: false
+        description: Exactamente uno de latlng o place_id es obligatorio.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: '{status: "success", data: <JSON de Google Geocoding tal cual>}'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoogleMapsResult'
+        '400':
+          description: Parametros invalidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Fallo de Google (sin filtrar la key en el log)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /maps/static:
+    get:
+      operationId: getMapsStatic
+      tags:
+      - maps
+      summary: GET /maps/static
+      description: Proxy de Google Static Maps con zoom=15, size=600x300, scale=2,
+        markers=color:0x6440FE fijos en servidor; la key de servidor (GOOGLE_API_KEY) queda en backend
+        y nunca se reenvia al cliente. Cache-Control privado de 1 dia.
+      x-source: src/Repository/maps/API.js:154-176 (staticMap), registrado en src/Router/HTTPRouter.js:330
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: lat
+        in: query
+        required: true
+        schema:
+          type: number
+          minimum: -90
+          maximum: 90
+      - name: lng
+        in: query
+        required: true
+        schema:
+          type: number
+          minimum: -180
+          maximum: 180
+      responses:
+        '200':
+          description: Imagen PNG del mapa estatico (stream), Cache-Control privado de 1 dia
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Parametros invalidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Fallo de Google (sin filtrar la key en el log)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   securitySchemes:
     bearerAuth:
@@ -7739,6 +7936,23 @@ components:
           additionalProperties: true
       description: 'Envoltorio {data: ...} usado por la mayoria de rutas POST/PUT/DELETE de este backend
         (verificado via grep req.body.data en los handlers).'
+    GoogleMapsResult:
+      type: object
+      required:
+      - status
+      - data
+      properties:
+        status:
+          type: string
+          enum:
+          - success
+        data:
+          type: object
+          additionalProperties: true
+          description: JSON de Google (Places Autocomplete/Details o Geocoding) tal cual, sin transformar.
+      description: 'Envoltorio {status, data} real de src/Repository/maps/API.js (Helpers/status.js
+        successMessage): el handler mete la respuesta cruda de Google en `data` sin transformarla, pero
+        NO es passthrough puro a nivel raiz.'
     PlanStatusResult:
       type: object
       properties:
