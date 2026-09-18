@@ -4344,6 +4344,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/recsys/plan-status/{task_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** GET /recsys/plan-status/:task_id */
+        get: operations["recSysPlanStatus"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/pois/distance": {
         parameters: {
             query?: never;
@@ -4579,6 +4596,14 @@ export interface components {
         /** @description Envoltorio {data: ...} usado por la mayoria de rutas POST/PUT/DELETE de este backend (verificado via grep req.body.data en los handlers). */
         DataEnvelope: {
             data: {
+                [key: string]: unknown;
+            };
+        };
+        /** @description Respuesta compartida por GET /widget/plan-status/{task_id} y GET /recsys/plan-status/{task_id} (fetchPlanStatus, Repository/widget/API.js:20). */
+        PlanStatusResult: {
+            status?: string;
+            /** @description Passthrough crudo del cuerpo que devuelve el upstream de recsys (`{task_id, status, result}`), sin remapear. */
+            data?: {
                 [key: string]: unknown;
             };
         };
@@ -7229,7 +7254,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["GenericResult"];
+                    "application/json": components["schemas"]["PlanStatusResult"];
                 };
             };
         };
@@ -13008,6 +13033,64 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["GenericResult"];
+                };
+            };
+        };
+    };
+    recSysPlanStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                task_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanStatusResult"];
+                };
+            };
+            /** @description task_id invalido */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Task not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Fallo del upstream de recsys */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
                 };
             };
         };

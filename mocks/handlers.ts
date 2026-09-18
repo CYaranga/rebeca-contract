@@ -580,6 +580,8 @@ export const handlers = [
   http.get("*/qr/encode", () => HttpResponse.json({})),
   // recSysStartup
   http.get("*/recsys/startup", () => HttpResponse.json({})),
+  // recSysPlanStatus
+  http.get("*/recsys/plan-status/:task_id", () => HttpResponse.json({})),
   // getPoisDistance
   http.get("*/pois/distance", () => HttpResponse.json({})),
   // subscribeUser

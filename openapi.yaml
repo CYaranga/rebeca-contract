@@ -2294,7 +2294,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericResult'
+                $ref: '#/components/schemas/PlanStatusResult'
   /webhook_salesbot:
     post:
       operationId: webhookSalesbot_Webhooksalesbot
@@ -7395,6 +7395,54 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericResult'
+  /recsys/plan-status/{task_id}:
+    get:
+      operationId: recSysPlanStatus
+      tags:
+      - recsys
+      summary: GET /recsys/plan-status/:task_id
+      x-source: 'HTTPRouter.js (pendiente: ruta nueva de purgar-secretos-token/decisions.md Q2, junto
+        a recsys/startup; reutiliza fetchPlanStatus de Repository/widget/API.js:20)'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: task_id
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^[A-Za-z0-9_-]{1,128}$
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlanStatusResult'
+        '400':
+          description: task_id invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Fallo del upstream de recsys
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /pois/distance:
     get:
       operationId: getPoisDistance
@@ -7691,6 +7739,18 @@ components:
           additionalProperties: true
       description: 'Envoltorio {data: ...} usado por la mayoria de rutas POST/PUT/DELETE de este backend
         (verificado via grep req.body.data en los handlers).'
+    PlanStatusResult:
+      type: object
+      properties:
+        status:
+          type: string
+        data:
+          type: object
+          additionalProperties: true
+          description: 'Passthrough crudo del cuerpo que devuelve el upstream de recsys (`{task_id,
+            status, result}`), sin remapear.'
+      description: Respuesta compartida por GET /widget/plan-status/{task_id} y GET /recsys/plan-status/{task_id}
+        (fetchPlanStatus, Repository/widget/API.js:20).
     Provider:
       type: object
       description: Fila de `provider` tal como la devuelve getFilteredProviders (Repository/provider/DAL.js:43).
