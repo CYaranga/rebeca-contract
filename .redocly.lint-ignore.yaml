@@ -1,0 +1,7 @@
+# This file instructs Redocly's linter to ignore the rules contained for specific parts of your API.
+# See https://redocly.com/docs/cli/ for more information.
+openapi.yaml:
+  no-ambiguous-paths:
+    - '#/paths/~1business-identity~1agents~1{id}'
+    - '#/paths/~1logs~1{id}~1replays'
+    - '#/paths/~1logs~1replays~1{id}'

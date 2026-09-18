@@ -616,4 +616,70 @@ export const handlers = [
   http.get("*/maps/geocode", () => HttpResponse.json({})),
   // getMapsStatic
   http.get("*/maps/static", () => HttpResponse.json({})),
+  // postLogsBatch
+  http.post("*/logs/batch", () => HttpResponse.json({"accepted":3,"rejected":1})),
+  // getLogs
+  http.get("*/logs", () => HttpResponse.json({"data":[{"id":918234,"created_at":"2026-09-18T14:02:11.000Z","environment":"prod","source":"app-ios","channel":"app","level":"error","category":"http","message":"GET /package/details -> 500","metadata":null,"user_id":"4821","provider_id":null,"device_id":"dev-9f2a","session_id":"sess-77c1","trace_id":"trace-4b90","request_id":"req-a10f","http_method":"GET","endpoint":"/package/details","status_code":500,"duration_ms":812,"request_data":null,"response_data":null,"app_version":"4.12.0","os_version":"iOS 18.1","device_model":"iPhone15,3","network_type":"wifi","fingerprint":"a1b2c3d4","breadcrumbs":[]}],"cursor":"918233"})),
+  // getLog
+  http.get("*/logs/:id", () => HttpResponse.json({"id":918234,"created_at":"2026-09-18T14:02:11.000Z","environment":"prod","source":"app-ios","channel":"app","level":"error","category":"http","message":"GET /package/details -> 500","metadata":null,"user_id":"4821","provider_id":null,"device_id":"dev-9f2a","session_id":"sess-77c1","trace_id":"trace-4b90","request_id":"req-a10f","http_method":"GET","endpoint":"/package/details","status_code":500,"duration_ms":812,"request_data":null,"response_data":null,"app_version":"4.12.0","os_version":"iOS 18.1","device_model":"iPhone15,3","network_type":"wifi","fingerprint":"a1b2c3d4","breadcrumbs":[]})),
+  // deleteLog
+  http.delete("*/logs/:id", () => HttpResponse.json({})),
+  // postLogsBulkDelete
+  http.post("*/logs/bulk-delete", () => HttpResponse.json({"deleted":3})),
+  // getLogsTail
+  http.get("*/logs/tail", () => HttpResponse.json({"data":[],"cursor":null})),
+  // getSessionTimeline
+  http.get("*/logs/sessions/:id/timeline", () => HttpResponse.json({"session_id":"sess-77c1","entries":[]})),
+  // getTrace
+  http.get("*/logs/trace/:trace_id", () => HttpResponse.json({"trace_id":"trace-4b90","entries":[],"azure_kql_link":null})),
+  // getUserLogProfile
+  http.get("*/logs/users/:id/profile", () => HttpResponse.json({"user_id":"4821","devices":["dev-9f2a"],"app_versions":["4.12.0"],"recent_sessions":["sess-77c1"],"top_errors":[]})),
+  // getUsersRich
+  http.get("*/logs/users/rich", () => HttpResponse.json([{"user_id":"4821","devices":["dev-9f2a"],"app_versions":["4.12.0"],"recent_sessions":["sess-77c1"],"top_errors":[]}])),
+  // getLogsDevices
+  http.get("*/logs/devices", () => HttpResponse.json(["iPhone15,3","Pixel 8"])),
+  // getLogsSources
+  http.get("*/logs/sources", () => HttpResponse.json(["app-ios","front-admin"])),
+  // getLogsCategories
+  http.get("*/logs/categories", () => HttpResponse.json(["http","auth"])),
+  // getErrorGroups
+  http.get("*/logs/errors/groups", () => HttpResponse.json([{"fingerprint":"a1b2c3d4","status":"open","assigned_to":null,"note":null,"updated_at":"2026-09-18T14:02:11.000Z","updated_by":null,"count":42,"last_seen":"2026-09-18T14:02:11.000Z"}])),
+  // patchErrorGroupState
+  http.patch("*/logs/errors/groups/:fingerprint/state", () => HttpResponse.json({"fingerprint":"a1b2c3d4","status":"resolved","assigned_to":"sergio@rebeca.travel","note":"Corregido en 4.12.1","updated_at":"2026-09-18T15:00:00.000Z","updated_by":"sergio@rebeca.travel","count":42,"last_seen":"2026-09-18T14:02:11.000Z"})),
+  // getStats
+  http.get("*/logs/stats", () => HttpResponse.json({"total":72000,"error_rate":0.006,"by_endpoint":[{"endpoint":"/package/details","count":1200,"p50":120,"p95":480,"p99":900}]})),
+  // getStatsTimeseries
+  http.get("*/logs/stats/timeseries", () => HttpResponse.json({"range":"24h","points":[{"ts":"2026-09-18T14:00:00.000Z","count":3100,"error_count":19}]})),
+  // getBehaviourEvents
+  http.get("*/logs/behaviour/events", () => HttpResponse.json([{"id":5501,"created_at":"2026-09-18T14:02:11.000Z","user_id":"4821","action":"tap","subject":"package_card","app_version":"4.12.0","metadata":null}])),
+  // getBehaviourTopActions
+  http.get("*/logs/behaviour/top-actions", () => HttpResponse.json([{"action":"tap","subject":"package_card","count":3120}])),
+  // getBehaviourByVersion
+  http.get("*/logs/behaviour/by-version", () => HttpResponse.json([{"app_version":"4.12.0","action":"tap","subject":"package_card","count":1800}])),
+  // postBugs
+  http.post("*/logs/bugs", () => HttpResponse.json({"id":501,"environment":"prod","source":"app-ios","user_id":"4821","session_id":"sess-77c1","severity":"high","description":"La app se cierra al abrir el detalle del paquete","device_model":"iPhone15,3","os_version":"iOS 18.1","app_version":"4.12.0","breadcrumbs":[],"related_log_ids":[918234],"screenshot_blob":null,"status":"new","assigned_to":null,"note":null,"created_at":"2026-09-18T14:05:00.000Z"})),
+  // getBugs
+  http.get("*/logs/bugs", () => HttpResponse.json([{"id":501,"environment":"prod","source":"app-ios","user_id":"4821","session_id":"sess-77c1","severity":"high","description":"La app se cierra al abrir el detalle del paquete","device_model":"iPhone15,3","os_version":"iOS 18.1","app_version":"4.12.0","breadcrumbs":[],"related_log_ids":[918234],"screenshot_blob":"bug-501.png","status":"new","assigned_to":null,"note":null,"created_at":"2026-09-18T14:05:00.000Z"}])),
+  // getBug
+  http.get("*/logs/bugs/:id", () => HttpResponse.json({"id":501,"environment":"prod","source":"app-ios","user_id":"4821","session_id":"sess-77c1","severity":"high","description":"La app se cierra al abrir el detalle del paquete","device_model":"iPhone15,3","os_version":"iOS 18.1","app_version":"4.12.0","breadcrumbs":[],"related_log_ids":[918234],"screenshot_blob":"bug-501.png","status":"new","assigned_to":null,"note":null,"created_at":"2026-09-18T14:05:00.000Z"})),
+  // patchBug
+  http.patch("*/logs/bugs/:id", () => HttpResponse.json({"id":501,"environment":"prod","source":"app-ios","user_id":"4821","session_id":"sess-77c1","severity":"high","description":"La app se cierra al abrir el detalle del paquete","device_model":"iPhone15,3","os_version":"iOS 18.1","app_version":"4.12.0","breadcrumbs":[],"related_log_ids":[918234],"screenshot_blob":"bug-501.png","status":"triaged","assigned_to":"sergio@rebeca.travel","note":"Reproducido en 4.12.0","created_at":"2026-09-18T14:05:00.000Z"})),
+  // putBugScreenshot
+  http.put("*/logs/bugs/:id/screenshot", () => HttpResponse.json({"id":501,"environment":"prod","source":"app-ios","user_id":"4821","session_id":"sess-77c1","severity":"high","description":"La app se cierra al abrir el detalle del paquete","device_model":"iPhone15,3","os_version":"iOS 18.1","app_version":"4.12.0","breadcrumbs":[],"related_log_ids":[918234],"screenshot_blob":"bug-501.png","status":"new","assigned_to":null,"note":null,"created_at":"2026-09-18T14:05:00.000Z"})),
+  // getBugScreenshot
+  http.get("*/logs/bugs/:id/screenshot", () => HttpResponse.json({})),
+  // postReplay
+  http.post("*/logs/replay", () => HttpResponse.json({"id":12,"parent_log_id":918234,"version":1,"status_code":500,"duration_ms":640,"response_data":null,"error":null,"launched_by":"sergio@rebeca.travel","created_at":"2026-09-18T15:10:00.000Z"})),
+  // getLogReplays
+  http.get("*/logs/:id/replays", () => HttpResponse.json([{"id":12,"parent_log_id":918234,"version":1,"status_code":500,"duration_ms":640,"response_data":null,"error":null,"launched_by":"sergio@rebeca.travel","created_at":"2026-09-18T15:10:00.000Z"}])),
+  // deleteReplay
+  http.delete("*/logs/replays/:id", () => HttpResponse.json({})),
+  // postAuthTokens
+  http.post("*/logs/auth/tokens", () => HttpResponse.json({"id":7,"prefix":"rl_live_9f2a","name":"app-ios prod","type":"emitter","source":"app-ios","user_id":null,"expires_at":null,"last_used":null,"token":"rl_live_9f2a1c7e4b3d6a8f0e2c5b1a9d7f3e6c"})),
+  // getAuthTokens
+  http.get("*/logs/auth/tokens", () => HttpResponse.json([{"id":7,"prefix":"rl_live_9f2a","name":"app-ios prod","type":"emitter","source":"app-ios","user_id":null,"expires_at":null,"last_used":"2026-09-18T14:02:11.000Z"}])),
+  // deleteAuthToken
+  http.delete("*/logs/auth/tokens/:id", () => HttpResponse.json({})),
+  // getAgentTriageSummary
+  http.get("*/logs/agent/triage-summary", () => HttpResponse.json({"generated_at":"2026-09-18T15:30:00.000Z","open_error_groups":4,"open_bugs":2,"top_error_groups":[{"fingerprint":"a1b2c3d4","status":"open","assigned_to":null,"note":null,"updated_at":"2026-09-18T14:02:11.000Z","updated_by":null,"count":42,"last_seen":"2026-09-18T14:02:11.000Z"}],"recent_bugs":[{"id":501,"environment":"prod","source":"app-ios","user_id":"4821","session_id":"sess-77c1","severity":"high","description":"La app se cierra al abrir el detalle del paquete","device_model":"iPhone15,3","os_version":"iOS 18.1","app_version":"4.12.0","breadcrumbs":[],"related_log_ids":[918234],"screenshot_blob":"bug-501.png","status":"new","assigned_to":null,"note":null,"created_at":"2026-09-18T14:05:00.000Z"}]})),
 ];
