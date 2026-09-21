@@ -5,7 +5,9 @@ info:
   description: 'Generado a partir de src/Router/HTTPRouter.js (rebeca-backend) y la coleccion Bruno ''Rebeca
     - API Endpoints Bruno''. Ver x-source en cada operacion para la linea exacta del router. Las rutas
     de logs/errors/bugs/replay/behaviour/trace/users/stats/tokens son contrato adelantado por el
-    architect: su x-source apunta a la spec del vault, aun sin implementar en rebeca-backend. Headers
+    architect: su x-source apunta a la spec del vault, aun sin implementar en rebeca-backend. Lo mismo
+    para tour-routes/tour-route y sus sub-rutas image/translate/import: contrato adelantado del run
+    crud-rutas-turisticas (decisions.md, esquema-prod.md, rutas-excel.md), aun sin implementar. Headers
     de correlacion X-Session-Id/X-Trace-Id (components.parameters XSessionIdHeader/XTraceIdHeader):
     convencion recomendada en toda peticion al backend para que el backend etiquete su propia fila de
     log con sesion/traza; documentados explicitamente solo en las rutas de ingesta de logs/bugs.'
@@ -81,6 +83,8 @@ tags:
 - name: tokens
 - name: topics
 - name: tour
+- name: tour-route
+- name: tour-routes
 - name: trace
 - name: trip
 - name: user
@@ -9422,6 +9426,608 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /tour-routes:
+    get:
+      operationId: listTourRoutes
+      tags:
+      - tour-routes
+      summary: GET /tour-routes
+      description: Listado del admin. Sin texto localizado ni translation_status (igual que GET
+        /packages) — solo columnas planas mas el numero de paradas.
+      x-source: 'contrato adelantado por el architect (calco de packages, HTTPRouter.js:155); aun sin
+        implementar en rebeca-backend'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: is_active
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Filtra por estado. Sin el parametro, devuelve activas e inactivas.
+      - name: destination_id
+        in: query
+        required: false
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TourRouteListItem'
+              example:
+              - tour_route_id: 14
+                title: Tour Reserva Nacional de Paracas
+                destination_id: 3
+                location: 'Peru, Ica, Paracas'
+                is_active: true
+                stop_count: 2
+                image_ref: null
+                thumb_ref: null
+                credit_author: null
+                credit_license: null
+                credit_url: null
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /tour-route:
+    get:
+      operationId: getTourRoute
+      tags:
+      - tour-route
+      summary: GET /tour-route
+      description: Una ruta completa con sus paradas y sus textos por idioma (es/en/pt/it).
+      x-source: 'contrato adelantado por el architect (calco de package, HTTPRouter.js:159); aun sin
+        implementar en rebeca-backend'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: tour_route_id
+        in: query
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TourRouteAdmin'
+              example: &tourRouteAdminExample
+                tour_route_id: 14
+                title: Tour Reserva Nacional de Paracas
+                destination_id: 3
+                location: 'Peru, Ica, Paracas'
+                duration: 240
+                tags:
+                - generic.adventurer
+                - generic.animalfriendly
+                is_active: true
+                image_ref: null
+                thumb_ref: null
+                credit_author: null
+                credit_license: null
+                credit_url: null
+                description-es: Se encuentra a 250 km al Sur de la ciudad de Lima.
+                description-en: It is located 250 km south of Lima.
+                description-pt: null
+                description-it: Si trova a 250 km a sud della citta di Lima.
+                short_description-es: null
+                short_description-en: null
+                short_description-pt: null
+                short_description-it: null
+                availability_hours-es: En la mañana
+                availability_hours-en: In the morning
+                availability_hours-pt: null
+                availability_hours-it: Al mattino
+                translation_status:
+                  description:
+                    es: ready
+                    en: ready
+                    pt: missing
+                    it: ready
+                  short_description:
+                    es: missing
+                    en: missing
+                    pt: missing
+                    it: missing
+                  availability_hours:
+                    es: ready
+                    en: ready
+                    pt: missing
+                    it: ready
+                stops:
+                - tour_stop_id: 501
+                  place_of_interest_id: 4821
+                  poi_name: Museo Julio C. Tello
+                  order_index: 0
+                  description-es: Ubicado dentro de la Reserva Nacional de Paracas, fue inaugurado en 1964.
+                  description-en: null
+                  description-pt: null
+                  description-it: null
+                  short_description-es: null
+                  short_description-en: null
+                  short_description-pt: null
+                  short_description-it: null
+                  translation_status:
+                    description:
+                      es: ready
+                      en: pending
+                      pt: missing
+                      it: missing
+                    short_description:
+                      es: missing
+                      en: missing
+                      pt: missing
+                      it: missing
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No existe una ruta con ese tour_route_id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      operationId: createTourRoute
+      tags:
+      - tour-route
+      summary: POST /tour-route
+      x-source: 'contrato adelantado por el architect (calco de package, HTTPRouter.js:160); aun sin
+        implementar en rebeca-backend'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTourRoutePayload'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TourRouteAdmin'
+              example: *tourRouteAdminExample
+        '400':
+          description: Payload invalido (falta title/destination_id, un tag fuera de generic.*, etc.)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      operationId: updateTourRoute
+      tags:
+      - tour-route
+      summary: PUT /tour-route
+      description: La ausencia de un campo nunca lo borra. Las paradas a eliminar viajan en
+        removed_stops; un id que no pertenece a esta ruta es 400, no un no-op. order_index lo deriva
+        el backend de la posicion de cada parada en el array.
+      x-source: 'contrato adelantado por el architect (calco de package, HTTPRouter.js:161); aun sin
+        implementar en rebeca-backend'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTourRoutePayload'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TourRouteAdmin'
+              example: *tourRouteAdminExample
+        '400':
+          description: Payload invalido, o un id en stops/removed_stops que no pertenece a esta ruta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      operationId: deleteTourRoute
+      tags:
+      - tour-route
+      summary: DELETE /tour-route
+      description: 'Borrado blando: pone is_active=false. No borra en cascada ni las paradas ni los
+        textos.'
+      x-source: 'contrato adelantado por el architect (calco de package, HTTPRouter.js:162); aun sin
+        implementar en rebeca-backend'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteTourRoutePayload'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TourRouteAdmin'
+              example:
+                tour_route_id: 14
+                title: Tour Reserva Nacional de Paracas
+                destination_id: 3
+                location: 'Peru, Ica, Paracas'
+                duration: 240
+                tags:
+                - generic.adventurer
+                is_active: false
+                image_ref: null
+                thumb_ref: null
+                credit_author: null
+                credit_license: null
+                credit_url: null
+                description-es: Se encuentra a 250 km al Sur de la ciudad de Lima.
+                description-en: It is located 250 km south of Lima.
+                description-pt: null
+                description-it: Si trova a 250 km a sud della citta di Lima.
+                short_description-es: null
+                short_description-en: null
+                short_description-pt: null
+                short_description-it: null
+                availability_hours-es: En la mañana
+                availability_hours-en: In the morning
+                availability_hours-pt: null
+                availability_hours-it: Al mattino
+                translation_status:
+                  description:
+                    es: ready
+                    en: ready
+                    pt: missing
+                    it: ready
+                  short_description:
+                    es: missing
+                    en: missing
+                    pt: missing
+                    it: missing
+                  availability_hours:
+                    es: ready
+                    en: ready
+                    pt: missing
+                    it: ready
+                stops:
+                - tour_stop_id: 501
+                  place_of_interest_id: 4821
+                  poi_name: Museo Julio C. Tello
+                  order_index: 0
+                  description-es: Ubicado dentro de la Reserva Nacional de Paracas, fue inaugurado en 1964.
+                  description-en: null
+                  description-pt: null
+                  description-it: null
+                  short_description-es: null
+                  short_description-en: null
+                  short_description-pt: null
+                  short_description-it: null
+                  translation_status:
+                    description:
+                      es: ready
+                      en: pending
+                      pt: missing
+                      it: missing
+                    short_description:
+                      es: missing
+                      en: missing
+                      pt: missing
+                      it: missing
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /tour-route/image:
+    post:
+      operationId: uploadTourRouteImage
+      tags:
+      - tour-route
+      summary: POST /tour-route/image
+      description: 'Portada de la ruta. Una imagen por llamada (calco de package/image,
+        HTTPRouter.js:167-171): multer sin limits configurado, asi que varias imagenes en una sola
+        llamada saturarian la RAM del pod unico.'
+      x-source: 'contrato adelantado por el architect (calco de package/image, HTTPRouter.js:167-171);
+        aun sin implementar en rebeca-backend'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                tour_route_id:
+                  type: integer
+                image:
+                  type: string
+                  format: binary
+                credit_author:
+                  type: string
+                credit_license:
+                  type: string
+                credit_url:
+                  type: string
+                  description: Esquema http/https explicito, o '' para borrar el credito.
+              required:
+              - tour_route_id
+              - image
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+              example:
+                image_ref: routes/14/cover.jpg
+                thumb_ref: routes/14/cover_thumb.jpg
+                credit_author: null
+                credit_license: null
+                credit_url: null
+        '400':
+          description: Imagen invalida, o tour_route_id inexistente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /tour-route/translate:
+    post:
+      operationId: retranslateTourRouteField
+      tags:
+      - tour-route
+      summary: POST /tour-route/translate
+      description: Reintenta la traduccion de UN campo, en UN idioma, de la ruta o de una de sus
+        paradas (calco de package/translate, HTTPRouter.js:177). Es el unico camino para rellenar
+        pt hoy (decisions.md Q13).
+      x-source: 'contrato adelantado por el architect (calco de package/translate, HTTPRouter.js:177);
+        aun sin implementar en rebeca-backend'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RetranslateTourRouteFieldPayload'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResult'
+              example:
+                tour_route_id: 14
+                tour_stop_id: null
+                field: description
+                language_code: pt
+                status: pending
+        '400':
+          description: Campo/idioma invalido, o tour_stop_id que no pertenece a tour_route_id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /tour-route/import/preview:
+    post:
+      operationId: previewTourRouteImport
+      tags:
+      - tour-route
+      summary: POST /tour-route/import/preview
+      description: 'Paso 0, fase 1: analiza el .xlsx (y el .zip de imagenes, si viene) y NO escribe
+        nada. El servidor no guarda estado entre preview e import: el admin vuelve a subir los mismos
+        ficheros en el segundo paso (un solo pod, replicas: 1). Con header_errors no vacio, el resto
+        de la respuesta viene vacio.'
+      x-source: 'contrato adelantado por el architect (decisions.md Q8-Q11, rutas-excel.md); aun sin
+        implementar en rebeca-backend'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: El .xlsx, hoja RUTAS. Cabecera literal en B-J; la columna A se
+                    exceptua.
+                images:
+                  type: string
+                  format: binary
+                  description: .zip opcional con las imagenes que resuelven la columna F.
+                base_language:
+                  type: string
+                  enum:
+                  - es
+                  - en
+                  - pt
+                  - it
+                  default: es
+              required:
+              - file
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TourRouteImportPreviewResult'
+              example:
+                header_errors: []
+                routes:
+                - title: Tour Reserva Nacional de Paracas
+                  destination_guess: 'Peru, Ica, Paracas'
+                  existing_tour_route_id: 14
+                  stops_that_would_be_lost: 2
+                  stops:
+                  - row: 2
+                    name: Museo Julio C. Tello
+                    order_index: 1
+                    match:
+                      kind: exact
+                      poi_id: 4821
+                      poi_name: Museo Julio C. Tello
+                  - row: 3
+                    name: Reserva Nacional De Paracas
+                    order_index: 2
+                    match:
+                      kind: fuzzy
+                      poi_id: 4890
+                      poi_name: Reserva Nacional de Paracas
+                      score: 0.92
+                row_errors:
+                - row: 22
+                  reason: sin nombre de parada
+                images:
+                - path: Fotos.Rebeca/Pisco.Paracas/Museo.Tello.jpg
+                  found_in_zip: true
+                discarded_tags:
+                - tag: Cultura.generic.culture_immersion
+                  count: 1
+        '400':
+          description: Fichero invalido (no es .xlsx/.zip, o excede el limite de tamano de Multer)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /tour-route/import:
+    post:
+      operationId: importTourRoutes
+      tags:
+      - tour-route
+      summary: POST /tour-route/import
+      description: 'Paso 0, fase 2: escribe. Si alguna ruta del fichero ya existe y confirm_overwrite
+        no es true, responde 409 con la misma lista de existing_tour_route_id/stops_that_would_be_lost
+        y no escribe nada. Con confirm_overwrite=true, sobrescribe (Q7, Respuestas de Chris:
+        "Sobrescribir con aviso").'
+      x-source: 'contrato adelantado por el architect (decisions.md Q7-Q10 y Respuestas de Chris); aun
+        sin implementar en rebeca-backend'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                images:
+                  type: string
+                  format: binary
+                base_language:
+                  type: string
+                  enum:
+                  - es
+                  - en
+                  - pt
+                  - it
+                  default: es
+                overrides:
+                  type: string
+                  description: 'JSON: fila (numero, como clave string) -> place_of_interest_id elegido
+                    por el humano para un match fuzzy o none.'
+                  example: '{"22": 4821, "45": 4822}'
+                confirm_overwrite:
+                  type: boolean
+                  default: false
+              required:
+              - file
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TourRouteImportResult'
+              example:
+                created:
+                - tour_route_id: 27
+                  title: Tour Cañón de los Perdidos
+                overwritten: []
+                skipped:
+                - title: Full Day Líneas de Nasca y geoglifos de Palpa
+                  reason: fila 22 sin nombre de parada, no overrides recibido para esa fila
+        '400':
+          description: Fichero invalido, o header_errors no vacio
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Alguna ruta del fichero ya existe y confirm_overwrite no es true. No se escribe
+            nada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TourRouteImportConflict'
+              example:
+                routes:
+                - title: Tour Reserva Nacional de Paracas
+                  existing_tour_route_id: 14
+                  stops_that_would_be_lost: 2
 components:
   securitySchemes:
     bearerAuth:
@@ -10258,3 +10864,619 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/BugReport'
+    TranslationState:
+      type: string
+      enum:
+      - ready
+      - pending
+      - failed
+      - missing
+      description: 'Estado de la traduccion automatica de un campo localizable en un idioma (calco de
+        TranslationState, front-admin/src/features/packages/api.ts:51). `ready`: traducido y al dia.
+        `pending`: en cola — el propio POST/PUT ya lo marca asi cuando el texto fuente cambio. `failed`:
+        tres intentos agotados, requiere POST tour-route/translate. `missing`: sin fila, o fila vacia
+        y nada en cola.'
+    TourRouteLanguageCode:
+      type: string
+      enum:
+      - es
+      - en
+      - pt
+      - it
+      description: Los cuatro idiomas de una ruta turistica y de sus paradas (esquema-prod.md). Hoy la
+        base solo tiene filas es/en/it — pt nace vacio y se rellena con POST tour-route/translate
+        (decisions.md Q13).
+    TourRouteTranslationByLanguage:
+      type: object
+      description: Estado de un campo localizable, uno por idioma. Los cuatro idiomas siempre presentes.
+      properties:
+        es:
+          $ref: '#/components/schemas/TranslationState'
+        en:
+          $ref: '#/components/schemas/TranslationState'
+        pt:
+          $ref: '#/components/schemas/TranslationState'
+        it:
+          $ref: '#/components/schemas/TranslationState'
+      required:
+      - es
+      - en
+      - pt
+      - it
+    TourRouteTranslationStatus:
+      type: object
+      description: Estado de traduccion de cada campo localizable de la ruta.
+      properties:
+        description:
+          $ref: '#/components/schemas/TourRouteTranslationByLanguage'
+        short_description:
+          $ref: '#/components/schemas/TourRouteTranslationByLanguage'
+        availability_hours:
+          $ref: '#/components/schemas/TourRouteTranslationByLanguage'
+      required:
+      - description
+      - short_description
+      - availability_hours
+    TourStopTranslationStatus:
+      type: object
+      description: Estado de traduccion de cada campo localizable de la parada.
+      properties:
+        description:
+          $ref: '#/components/schemas/TourRouteTranslationByLanguage'
+        short_description:
+          $ref: '#/components/schemas/TourRouteTranslationByLanguage'
+      required:
+      - description
+      - short_description
+    TourRouteLocalizedFields:
+      type: object
+      description: 'Texto localizable de la ruta, en el formato plano `<clave>-<idioma>` que
+        saveLocalizedData espera (front-admin/src/features/packages/api.ts:14,32-35). Un idioma
+        ausente o `null`: no hay traduccion todavia.'
+      properties:
+        description-es:
+          type: [string, 'null']
+        description-en:
+          type: [string, 'null']
+        description-pt:
+          type: [string, 'null']
+        description-it:
+          type: [string, 'null']
+        short_description-es:
+          type: [string, 'null']
+        short_description-en:
+          type: [string, 'null']
+        short_description-pt:
+          type: [string, 'null']
+        short_description-it:
+          type: [string, 'null']
+        availability_hours-es:
+          type: [string, 'null']
+        availability_hours-en:
+          type: [string, 'null']
+        availability_hours-pt:
+          type: [string, 'null']
+        availability_hours-it:
+          type: [string, 'null']
+    TourStopLocalizedFields:
+      type: object
+      description: Texto localizable de la parada, mismo formato plano `<clave>-<idioma>` que
+        TourRouteLocalizedFields.
+      properties:
+        description-es:
+          type: [string, 'null']
+        description-en:
+          type: [string, 'null']
+        description-pt:
+          type: [string, 'null']
+        description-it:
+          type: [string, 'null']
+        short_description-es:
+          type: [string, 'null']
+        short_description-en:
+          type: [string, 'null']
+        short_description-pt:
+          type: [string, 'null']
+        short_description-it:
+          type: [string, 'null']
+    TourRouteImageCredit:
+      type: object
+      description: 'Atribucion de la portada de la ruta, plana y no localizada — igual que en paquetes
+        (front-admin/src/features/packages/api.ts:71-86). credit_url exige esquema http/https
+        explicito; '''' lo borra.'
+      properties:
+        credit_author:
+          type: [string, 'null']
+        credit_license:
+          type: [string, 'null']
+        credit_url:
+          type: [string, 'null']
+    TourRouteStopAdmin:
+      type: object
+      description: Una parada dentro de una ruta, tal como la devuelve GET/POST/PUT tour-route.
+      allOf:
+      - $ref: '#/components/schemas/TourStopLocalizedFields'
+      - type: object
+        properties:
+          tour_stop_id:
+            type: integer
+          place_of_interest_id:
+            type: integer
+            description: FK al catalogo de POIs (GET /pois?destination_id=), elegido por el editor.
+          poi_name:
+            type: string
+            description: Nombre del POI, denormalizado para pintar la lista sin una consulta aparte.
+          order_index:
+            type: integer
+            description: 0-based, derivado de la posicion en el array al guardar. El cliente nunca lo
+              manda.
+          translation_status:
+            $ref: '#/components/schemas/TourStopTranslationStatus'
+        required:
+        - tour_stop_id
+        - place_of_interest_id
+        - poi_name
+        - order_index
+        - translation_status
+    TourRouteAdmin:
+      type: object
+      description: Una ruta completa con sus paradas, tal como la devuelve GET tour-route y las
+        respuestas de POST/PUT/DELETE tour-route.
+      allOf:
+      - $ref: '#/components/schemas/TourRouteLocalizedFields'
+      - $ref: '#/components/schemas/TourRouteImageCredit'
+      - type: object
+        properties:
+          tour_route_id:
+            type: integer
+          title:
+            type: string
+          destination_id:
+            type: [integer, 'null']
+          location:
+            type: [string, 'null']
+            description: Texto libre. Fallback de las rutas viejas sin destination_id (decisions.md
+              Q12).
+          duration:
+            type: [integer, 'null']
+            description: Minutos.
+          tags:
+            type: array
+            items:
+              type: string
+              pattern: '^generic\.[a-z0-9_]+$'
+            description: Namespace unico admitido (decisions.md Q11); el editor usa un selector
+              cerrado, no texto libre.
+          is_active:
+            type: boolean
+            default: true
+          translation_status:
+            $ref: '#/components/schemas/TourRouteTranslationStatus'
+          stops:
+            type: array
+            items:
+              $ref: '#/components/schemas/TourRouteStopAdmin'
+        required:
+        - tour_route_id
+        - title
+        - is_active
+        - tags
+        - translation_status
+        - stops
+    TourRouteListItem:
+      type: object
+      description: Una fila de GET tour-routes. Sin texto localizado ni translation_status — igual que
+        PackageListItem (front-admin/src/features/packages/api.ts:160-185).
+      allOf:
+      - $ref: '#/components/schemas/TourRouteImageCredit'
+      - type: object
+        properties:
+          tour_route_id:
+            type: integer
+          title:
+            type: string
+          destination_id:
+            type: [integer, 'null']
+          location:
+            type: [string, 'null']
+          is_active:
+            type: boolean
+          stop_count:
+            type: integer
+        required:
+        - tour_route_id
+        - title
+        - is_active
+        - stop_count
+    NewTourRouteStop:
+      type: object
+      description: 'Parada nueva dentro de un POST/PUT tour-route. order_index no se manda: lo deriva
+        el backend de la posicion de esta parada en el array.'
+      allOf:
+      - $ref: '#/components/schemas/TourStopLocalizedFields'
+      - type: object
+        properties:
+          place_of_interest_id:
+            type: integer
+        required:
+        - place_of_interest_id
+    ExistingTourRouteStop:
+      type: object
+      description: Parada existente dentro de un PUT tour-route. La ausencia de un campo no lo borra;
+        solo tour_stop_id es obligatorio.
+      allOf:
+      - $ref: '#/components/schemas/TourStopLocalizedFields'
+      - type: object
+        properties:
+          tour_stop_id:
+            type: integer
+            description: Debe pertenecer a esta ruta; un id ajeno es 400, no un no-op.
+          place_of_interest_id:
+            type: integer
+        required:
+        - tour_stop_id
+    CreateTourRoutePayload:
+      type: object
+      description: Body de POST tour-route. Calco de CreatePackagePayload
+        (front-admin/src/features/packages/api.ts:243-254).
+      allOf:
+      - $ref: '#/components/schemas/TourRouteLocalizedFields'
+      - $ref: '#/components/schemas/TourRouteImageCredit'
+      - type: object
+        properties:
+          title:
+            type: string
+          destination_id:
+            type: integer
+          location:
+            type: [string, 'null']
+          duration:
+            type: [integer, 'null']
+          tags:
+            type: array
+            items:
+              type: string
+              pattern: '^generic\.[a-z0-9_]+$'
+          base_language:
+            type: string
+            enum:
+            - es
+            - en
+            - pt
+            - it
+            default: es
+          is_active:
+            type: boolean
+            default: true
+          stops:
+            type: array
+            items:
+              $ref: '#/components/schemas/NewTourRouteStop'
+        required:
+        - title
+        - destination_id
+    UpdateTourRoutePayload:
+      type: object
+      description: 'Body de PUT tour-route. Calco de UpdatePackagePayload
+        (front-admin/src/features/packages/api.ts:256-264): la ausencia de un campo nunca lo borra.'
+      allOf:
+      - $ref: '#/components/schemas/TourRouteLocalizedFields'
+      - $ref: '#/components/schemas/TourRouteImageCredit'
+      - type: object
+        properties:
+          tour_route_id:
+            type: integer
+          title:
+            type: string
+          destination_id:
+            type: integer
+          location:
+            type: [string, 'null']
+          duration:
+            type: [integer, 'null']
+          tags:
+            type: array
+            items:
+              type: string
+              pattern: '^generic\.[a-z0-9_]+$'
+          is_active:
+            type: boolean
+          stops:
+            type: array
+            items:
+              oneOf:
+              - $ref: '#/components/schemas/NewTourRouteStop'
+              - $ref: '#/components/schemas/ExistingTourRouteStop'
+          removed_stops:
+            type: array
+            items:
+              type: integer
+            description: Ids de paradas a borrar. Un id que no pertenece a esta ruta es 400.
+        required:
+        - tour_route_id
+    DeleteTourRoutePayload:
+      type: object
+      properties:
+        tour_route_id:
+          type: integer
+      required:
+      - tour_route_id
+    RetranslateTourRouteFieldPayload:
+      type: object
+      description: 'Body de POST tour-route/translate. Calco de package/translate
+        (HTTPRouter.js:177): reintenta la traduccion de UN campo, en UN idioma, de una ruta o de una
+        de sus paradas.'
+      properties:
+        tour_route_id:
+          type: integer
+        tour_stop_id:
+          type: [integer, 'null']
+          description: Si se omite, el campo es de la ruta; si se manda, es de esa parada (debe
+            pertenecer a tour_route_id).
+        field:
+          type: string
+          enum:
+          - description
+          - short_description
+          - availability_hours
+          description: availability_hours solo aplica a la ruta, no a una parada.
+        language_code:
+          $ref: '#/components/schemas/TourRouteLanguageCode'
+      required:
+      - tour_route_id
+      - field
+      - language_code
+    TourRouteImportHeaderError:
+      type: object
+      description: Una cabecera de B-J que no casa con la literal esperada (decisions.md Q8). Con esta
+        lista no vacia, el resto de la respuesta del preview viene vacio.
+      properties:
+        column:
+          type: string
+          example: B
+        expected:
+          type: string
+        actual:
+          type: string
+      required:
+      - column
+      - expected
+      - actual
+    TourRouteImportStopMatchExact:
+      type: object
+      properties:
+        kind:
+          type: string
+          const: exact
+        poi_id:
+          type: integer
+        poi_name:
+          type: string
+      required:
+      - kind
+      - poi_id
+      - poi_name
+    TourRouteImportStopMatchFuzzy:
+      type: object
+      properties:
+        kind:
+          type: string
+          const: fuzzy
+        poi_id:
+          type: integer
+        poi_name:
+          type: string
+        score:
+          type: number
+          description: Similitud de texto, 0-1. El admin lo pinta en amarillo (decisions.md Q10).
+      required:
+      - kind
+      - poi_id
+      - poi_name
+      - score
+    TourRouteImportStopMatchNone:
+      type: object
+      properties:
+        kind:
+          type: string
+          const: none
+      required:
+      - kind
+    TourRouteImportStopMatch:
+      description: 'Resultado del match del nombre de la parada (columna H) contra el catalogo de
+        POIs del destino elegido (decisions.md Q10).'
+      oneOf:
+      - $ref: '#/components/schemas/TourRouteImportStopMatchExact'
+      - $ref: '#/components/schemas/TourRouteImportStopMatchFuzzy'
+      - $ref: '#/components/schemas/TourRouteImportStopMatchNone'
+      discriminator:
+        propertyName: kind
+        mapping:
+          exact: '#/components/schemas/TourRouteImportStopMatchExact'
+          fuzzy: '#/components/schemas/TourRouteImportStopMatchFuzzy'
+          none: '#/components/schemas/TourRouteImportStopMatchNone'
+    TourRouteImportStopPreview:
+      type: object
+      properties:
+        row:
+          type: integer
+          description: Fila del Excel, 1-based.
+        name:
+          type: string
+          description: Columna H.
+        order_index:
+          type: integer
+          description: Columna J.
+        match:
+          $ref: '#/components/schemas/TourRouteImportStopMatch'
+      required:
+      - row
+      - name
+      - order_index
+      - match
+    TourRouteImportRowError:
+      type: object
+      description: 'Fila invalida: sin nombre de parada, orden duplicado, etc. (decisions.md Q10 —
+        fila mal rellenada, no se modela como parada alternativa).'
+      properties:
+        row:
+          type: integer
+        reason:
+          type: string
+      required:
+      - row
+      - reason
+    TourRouteImportImageRef:
+      type: object
+      description: Un valor de la columna F (rutas de imagen separadas por comas), resuelto contra el
+        .zip.
+      properties:
+        path:
+          type: string
+        found_in_zip:
+          type: boolean
+      required:
+      - path
+      - found_in_zip
+    TourRouteImportDiscardedTag:
+      type: object
+      description: Tag de la columna G descartado por no casar `^generic\.[a-z0-9_]+$` (decisions.md
+        Q11).
+      properties:
+        tag:
+          type: string
+        count:
+          type: integer
+      required:
+      - tag
+      - count
+    TourRouteImportRoutePreview:
+      type: object
+      properties:
+        title:
+          type: string
+        destination_guess:
+          type: string
+          description: Columna B, texto libre.
+        existing_tour_route_id:
+          type: [integer, 'null']
+        stops_that_would_be_lost:
+          type: integer
+          description: Paradas que tiene HOY la ruta existente, si la hay; 0 si es una ruta nueva.
+        stops:
+          type: array
+          items:
+            $ref: '#/components/schemas/TourRouteImportStopPreview'
+      required:
+      - title
+      - destination_guess
+      - existing_tour_route_id
+      - stops_that_would_be_lost
+      - stops
+    TourRouteImportPreviewResult:
+      type: object
+      description: 'Respuesta de POST tour-route/import/preview. No escribe nada.'
+      properties:
+        header_errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/TourRouteImportHeaderError'
+        routes:
+          type: array
+          items:
+            $ref: '#/components/schemas/TourRouteImportRoutePreview'
+        row_errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/TourRouteImportRowError'
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/TourRouteImportImageRef'
+        discarded_tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/TourRouteImportDiscardedTag'
+      required:
+      - header_errors
+      - routes
+      - row_errors
+      - images
+      - discarded_tags
+    TourRouteImportConflictRoute:
+      type: object
+      properties:
+        title:
+          type: string
+        existing_tour_route_id:
+          type: integer
+        stops_that_would_be_lost:
+          type: integer
+      required:
+      - title
+      - existing_tour_route_id
+      - stops_that_would_be_lost
+    TourRouteImportConflict:
+      type: object
+      description: 'Respuesta 409 de POST tour-route/import: alguna ruta ya existe y confirm_overwrite
+        no es true. No escribe nada (decisions.md Q7, Respuestas de Chris).'
+      properties:
+        routes:
+          type: array
+          items:
+            $ref: '#/components/schemas/TourRouteImportConflictRoute'
+      required:
+      - routes
+    TourRouteImportCreated:
+      type: object
+      properties:
+        tour_route_id:
+          type: integer
+        title:
+          type: string
+      required:
+      - tour_route_id
+      - title
+    TourRouteImportOverwritten:
+      type: object
+      properties:
+        tour_route_id:
+          type: integer
+        title:
+          type: string
+        stops_replaced:
+          type: integer
+      required:
+      - tour_route_id
+      - title
+      - stops_replaced
+    TourRouteImportSkipped:
+      type: object
+      properties:
+        title:
+          type: string
+        reason:
+          type: string
+      required:
+      - title
+      - reason
+    TourRouteImportResult:
+      type: object
+      description: Respuesta 200 de POST tour-route/import.
+      properties:
+        created:
+          type: array
+          items:
+            $ref: '#/components/schemas/TourRouteImportCreated'
+        overwritten:
+          type: array
+          items:
+            $ref: '#/components/schemas/TourRouteImportOverwritten'
+        skipped:
+          type: array
+          items:
+            $ref: '#/components/schemas/TourRouteImportSkipped'
+      required:
+      - created
+      - overwritten
+      - skipped

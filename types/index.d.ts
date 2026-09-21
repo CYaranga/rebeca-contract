@@ -5200,6 +5200,135 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/tour-routes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /tour-routes
+         * @description Listado del admin. Sin texto localizado ni translation_status (igual que GET /packages) — solo columnas planas mas el numero de paradas.
+         */
+        get: operations["listTourRoutes"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/tour-route": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /tour-route
+         * @description Una ruta completa con sus paradas y sus textos por idioma (es/en/pt/it).
+         */
+        get: operations["getTourRoute"];
+        /**
+         * PUT /tour-route
+         * @description La ausencia de un campo nunca lo borra. Las paradas a eliminar viajan en removed_stops; un id que no pertenece a esta ruta es 400, no un no-op. order_index lo deriva el backend de la posicion de cada parada en el array.
+         */
+        put: operations["updateTourRoute"];
+        /** POST /tour-route */
+        post: operations["createTourRoute"];
+        /**
+         * DELETE /tour-route
+         * @description Borrado blando: pone is_active=false. No borra en cascada ni las paradas ni los textos.
+         */
+        delete: operations["deleteTourRoute"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/tour-route/image": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * POST /tour-route/image
+         * @description Portada de la ruta. Una imagen por llamada (calco de package/image, HTTPRouter.js:167-171): multer sin limits configurado, asi que varias imagenes en una sola llamada saturarian la RAM del pod unico.
+         */
+        post: operations["uploadTourRouteImage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/tour-route/translate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * POST /tour-route/translate
+         * @description Reintenta la traduccion de UN campo, en UN idioma, de la ruta o de una de sus paradas (calco de package/translate, HTTPRouter.js:177). Es el unico camino para rellenar pt hoy (decisions.md Q13).
+         */
+        post: operations["retranslateTourRouteField"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/tour-route/import/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * POST /tour-route/import/preview
+         * @description Paso 0, fase 1: analiza el .xlsx (y el .zip de imagenes, si viene) y NO escribe nada. El servidor no guarda estado entre preview e import: el admin vuelve a subir los mismos ficheros en el segundo paso (un solo pod, replicas: 1). Con header_errors no vacio, el resto de la respuesta viene vacio.
+         */
+        post: operations["previewTourRouteImport"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/tour-route/import": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * POST /tour-route/import
+         * @description Paso 0, fase 2: escribe. Si alguna ruta del fichero ya existe y confirm_overwrite no es true, responde 409 con la misma lista de existing_tour_route_id/stops_that_would_be_lost y no escribe nada. Con confirm_overwrite=true, sobrescribe (Q7, Respuestas de Chris: "Sobrescribir con aviso").
+         */
+        post: operations["importTourRoutes"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -5623,6 +5752,261 @@ export interface components {
             open_bugs?: number;
             top_error_groups?: components["schemas"]["ErrorGroup"][];
             recent_bugs?: components["schemas"]["BugReport"][];
+        };
+        /**
+         * @description Estado de la traduccion automatica de un campo localizable en un idioma (calco de TranslationState, front-admin/src/features/packages/api.ts:51). `ready`: traducido y al dia. `pending`: en cola — el propio POST/PUT ya lo marca asi cuando el texto fuente cambio. `failed`: tres intentos agotados, requiere POST tour-route/translate. `missing`: sin fila, o fila vacia y nada en cola.
+         * @enum {string}
+         */
+        TranslationState: "ready" | "pending" | "failed" | "missing";
+        /**
+         * @description Los cuatro idiomas de una ruta turistica y de sus paradas (esquema-prod.md). Hoy la base solo tiene filas es/en/it — pt nace vacio y se rellena con POST tour-route/translate (decisions.md Q13).
+         * @enum {string}
+         */
+        TourRouteLanguageCode: "es" | "en" | "pt" | "it";
+        /** @description Estado de un campo localizable, uno por idioma. Los cuatro idiomas siempre presentes. */
+        TourRouteTranslationByLanguage: {
+            es: components["schemas"]["TranslationState"];
+            en: components["schemas"]["TranslationState"];
+            pt: components["schemas"]["TranslationState"];
+            it: components["schemas"]["TranslationState"];
+        };
+        /** @description Estado de traduccion de cada campo localizable de la ruta. */
+        TourRouteTranslationStatus: {
+            description: components["schemas"]["TourRouteTranslationByLanguage"];
+            short_description: components["schemas"]["TourRouteTranslationByLanguage"];
+            availability_hours: components["schemas"]["TourRouteTranslationByLanguage"];
+        };
+        /** @description Estado de traduccion de cada campo localizable de la parada. */
+        TourStopTranslationStatus: {
+            description: components["schemas"]["TourRouteTranslationByLanguage"];
+            short_description: components["schemas"]["TourRouteTranslationByLanguage"];
+        };
+        /** @description Texto localizable de la ruta, en el formato plano `<clave>-<idioma>` que saveLocalizedData espera (front-admin/src/features/packages/api.ts:14,32-35). Un idioma ausente o `null`: no hay traduccion todavia. */
+        TourRouteLocalizedFields: {
+            "description-es"?: string | null;
+            "description-en"?: string | null;
+            "description-pt"?: string | null;
+            "description-it"?: string | null;
+            "short_description-es"?: string | null;
+            "short_description-en"?: string | null;
+            "short_description-pt"?: string | null;
+            "short_description-it"?: string | null;
+            "availability_hours-es"?: string | null;
+            "availability_hours-en"?: string | null;
+            "availability_hours-pt"?: string | null;
+            "availability_hours-it"?: string | null;
+        };
+        /** @description Texto localizable de la parada, mismo formato plano `<clave>-<idioma>` que TourRouteLocalizedFields. */
+        TourStopLocalizedFields: {
+            "description-es"?: string | null;
+            "description-en"?: string | null;
+            "description-pt"?: string | null;
+            "description-it"?: string | null;
+            "short_description-es"?: string | null;
+            "short_description-en"?: string | null;
+            "short_description-pt"?: string | null;
+            "short_description-it"?: string | null;
+        };
+        /** @description Atribucion de la portada de la ruta, plana y no localizada — igual que en paquetes (front-admin/src/features/packages/api.ts:71-86). credit_url exige esquema http/https explicito; '' lo borra. */
+        TourRouteImageCredit: {
+            credit_author?: string | null;
+            credit_license?: string | null;
+            credit_url?: string | null;
+        };
+        /** @description Una parada dentro de una ruta, tal como la devuelve GET/POST/PUT tour-route. */
+        TourRouteStopAdmin: components["schemas"]["TourStopLocalizedFields"] & {
+            tour_stop_id: number;
+            /** @description FK al catalogo de POIs (GET /pois?destination_id=), elegido por el editor. */
+            place_of_interest_id: number;
+            /** @description Nombre del POI, denormalizado para pintar la lista sin una consulta aparte. */
+            poi_name: string;
+            /** @description 0-based, derivado de la posicion en el array al guardar. El cliente nunca lo manda. */
+            order_index: number;
+            translation_status: components["schemas"]["TourStopTranslationStatus"];
+        };
+        /** @description Una ruta completa con sus paradas, tal como la devuelve GET tour-route y las respuestas de POST/PUT/DELETE tour-route. */
+        TourRouteAdmin: components["schemas"]["TourRouteLocalizedFields"] & components["schemas"]["TourRouteImageCredit"] & {
+            tour_route_id: number;
+            title: string;
+            destination_id?: number | null;
+            /** @description Texto libre. Fallback de las rutas viejas sin destination_id (decisions.md Q12). */
+            location?: string | null;
+            /** @description Minutos. */
+            duration?: number | null;
+            /** @description Namespace unico admitido (decisions.md Q11); el editor usa un selector cerrado, no texto libre. */
+            tags: string[];
+            /** @default true */
+            is_active: boolean;
+            translation_status: components["schemas"]["TourRouteTranslationStatus"];
+            stops: components["schemas"]["TourRouteStopAdmin"][];
+        };
+        /** @description Una fila de GET tour-routes. Sin texto localizado ni translation_status — igual que PackageListItem (front-admin/src/features/packages/api.ts:160-185). */
+        TourRouteListItem: components["schemas"]["TourRouteImageCredit"] & {
+            tour_route_id: number;
+            title: string;
+            destination_id?: number | null;
+            location?: string | null;
+            is_active: boolean;
+            stop_count: number;
+        };
+        /** @description Parada nueva dentro de un POST/PUT tour-route. order_index no se manda: lo deriva el backend de la posicion de esta parada en el array. */
+        NewTourRouteStop: components["schemas"]["TourStopLocalizedFields"] & {
+            place_of_interest_id: number;
+        };
+        /** @description Parada existente dentro de un PUT tour-route. La ausencia de un campo no lo borra; solo tour_stop_id es obligatorio. */
+        ExistingTourRouteStop: components["schemas"]["TourStopLocalizedFields"] & {
+            /** @description Debe pertenecer a esta ruta; un id ajeno es 400, no un no-op. */
+            tour_stop_id: number;
+            place_of_interest_id?: number;
+        };
+        /** @description Body de POST tour-route. Calco de CreatePackagePayload (front-admin/src/features/packages/api.ts:243-254). */
+        CreateTourRoutePayload: components["schemas"]["TourRouteLocalizedFields"] & components["schemas"]["TourRouteImageCredit"] & {
+            title: string;
+            destination_id: number;
+            location?: string | null;
+            duration?: number | null;
+            tags?: string[];
+            /**
+             * @default es
+             * @enum {string}
+             */
+            base_language: "es" | "en" | "pt" | "it";
+            /** @default true */
+            is_active: boolean;
+            stops?: components["schemas"]["NewTourRouteStop"][];
+        };
+        /** @description Body de PUT tour-route. Calco de UpdatePackagePayload (front-admin/src/features/packages/api.ts:256-264): la ausencia de un campo nunca lo borra. */
+        UpdateTourRoutePayload: components["schemas"]["TourRouteLocalizedFields"] & components["schemas"]["TourRouteImageCredit"] & {
+            tour_route_id: number;
+            title?: string;
+            destination_id?: number;
+            location?: string | null;
+            duration?: number | null;
+            tags?: string[];
+            is_active?: boolean;
+            stops?: (components["schemas"]["NewTourRouteStop"] | components["schemas"]["ExistingTourRouteStop"])[];
+            /** @description Ids de paradas a borrar. Un id que no pertenece a esta ruta es 400. */
+            removed_stops?: number[];
+        };
+        DeleteTourRoutePayload: {
+            tour_route_id: number;
+        };
+        /** @description Body de POST tour-route/translate. Calco de package/translate (HTTPRouter.js:177): reintenta la traduccion de UN campo, en UN idioma, de una ruta o de una de sus paradas. */
+        RetranslateTourRouteFieldPayload: {
+            tour_route_id: number;
+            /** @description Si se omite, el campo es de la ruta; si se manda, es de esa parada (debe pertenecer a tour_route_id). */
+            tour_stop_id?: number | null;
+            /**
+             * @description availability_hours solo aplica a la ruta, no a una parada.
+             * @enum {string}
+             */
+            field: "description" | "short_description" | "availability_hours";
+            language_code: components["schemas"]["TourRouteLanguageCode"];
+        };
+        /** @description Una cabecera de B-J que no casa con la literal esperada (decisions.md Q8). Con esta lista no vacia, el resto de la respuesta del preview viene vacio. */
+        TourRouteImportHeaderError: {
+            /** @example B */
+            column: string;
+            expected: string;
+            actual: string;
+        };
+        TourRouteImportStopMatchExact: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "exact";
+            poi_id: number;
+            poi_name: string;
+        };
+        TourRouteImportStopMatchFuzzy: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "fuzzy";
+            poi_id: number;
+            poi_name: string;
+            /** @description Similitud de texto, 0-1. El admin lo pinta en amarillo (decisions.md Q10). */
+            score: number;
+        };
+        TourRouteImportStopMatchNone: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "none";
+        };
+        /** @description Resultado del match del nombre de la parada (columna H) contra el catalogo de POIs del destino elegido (decisions.md Q10). */
+        TourRouteImportStopMatch: components["schemas"]["TourRouteImportStopMatchExact"] | components["schemas"]["TourRouteImportStopMatchFuzzy"] | components["schemas"]["TourRouteImportStopMatchNone"];
+        TourRouteImportStopPreview: {
+            /** @description Fila del Excel, 1-based. */
+            row: number;
+            /** @description Columna H. */
+            name: string;
+            /** @description Columna J. */
+            order_index: number;
+            match: components["schemas"]["TourRouteImportStopMatch"];
+        };
+        /** @description Fila invalida: sin nombre de parada, orden duplicado, etc. (decisions.md Q10 — fila mal rellenada, no se modela como parada alternativa). */
+        TourRouteImportRowError: {
+            row: number;
+            reason: string;
+        };
+        /** @description Un valor de la columna F (rutas de imagen separadas por comas), resuelto contra el .zip. */
+        TourRouteImportImageRef: {
+            path: string;
+            found_in_zip: boolean;
+        };
+        /** @description Tag de la columna G descartado por no casar `^generic\.[a-z0-9_]+$` (decisions.md Q11). */
+        TourRouteImportDiscardedTag: {
+            tag: string;
+            count: number;
+        };
+        TourRouteImportRoutePreview: {
+            title: string;
+            /** @description Columna B, texto libre. */
+            destination_guess: string;
+            existing_tour_route_id: number | null;
+            /** @description Paradas que tiene HOY la ruta existente, si la hay; 0 si es una ruta nueva. */
+            stops_that_would_be_lost: number;
+            stops: components["schemas"]["TourRouteImportStopPreview"][];
+        };
+        /** @description Respuesta de POST tour-route/import/preview. No escribe nada. */
+        TourRouteImportPreviewResult: {
+            header_errors: components["schemas"]["TourRouteImportHeaderError"][];
+            routes: components["schemas"]["TourRouteImportRoutePreview"][];
+            row_errors: components["schemas"]["TourRouteImportRowError"][];
+            images: components["schemas"]["TourRouteImportImageRef"][];
+            discarded_tags: components["schemas"]["TourRouteImportDiscardedTag"][];
+        };
+        TourRouteImportConflictRoute: {
+            title: string;
+            existing_tour_route_id: number;
+            stops_that_would_be_lost: number;
+        };
+        /** @description Respuesta 409 de POST tour-route/import: alguna ruta ya existe y confirm_overwrite no es true. No escribe nada (decisions.md Q7, Respuestas de Chris). */
+        TourRouteImportConflict: {
+            routes: components["schemas"]["TourRouteImportConflictRoute"][];
+        };
+        TourRouteImportCreated: {
+            tour_route_id: number;
+            title: string;
+        };
+        TourRouteImportOverwritten: {
+            tour_route_id: number;
+            title: string;
+            stops_replaced: number;
+        };
+        TourRouteImportSkipped: {
+            title: string;
+            reason: string;
+        };
+        /** @description Respuesta 200 de POST tour-route/import. */
+        TourRouteImportResult: {
+            created: components["schemas"]["TourRouteImportCreated"][];
+            overwritten: components["schemas"]["TourRouteImportOverwritten"][];
+            skipped: components["schemas"]["TourRouteImportSkipped"][];
         };
     };
     responses: never;
@@ -16237,6 +16621,854 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    listTourRoutes: {
+        parameters: {
+            query?: {
+                /** @description Filtra por estado. Sin el parametro, devuelve activas e inactivas. */
+                is_active?: boolean;
+                destination_id?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example [
+                     *       {
+                     *         "tour_route_id": 14,
+                     *         "title": "Tour Reserva Nacional de Paracas",
+                     *         "destination_id": 3,
+                     *         "location": "Peru, Ica, Paracas",
+                     *         "is_active": true,
+                     *         "stop_count": 2,
+                     *         "image_ref": null,
+                     *         "thumb_ref": null,
+                     *         "credit_author": null,
+                     *         "credit_license": null,
+                     *         "credit_url": null
+                     *       }
+                     *     ]
+                     */
+                    "application/json": components["schemas"]["TourRouteListItem"][];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getTourRoute: {
+        parameters: {
+            query: {
+                tour_route_id: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "tour_route_id": 14,
+                     *       "title": "Tour Reserva Nacional de Paracas",
+                     *       "destination_id": 3,
+                     *       "location": "Peru, Ica, Paracas",
+                     *       "duration": 240,
+                     *       "tags": [
+                     *         "generic.adventurer",
+                     *         "generic.animalfriendly"
+                     *       ],
+                     *       "is_active": true,
+                     *       "image_ref": null,
+                     *       "thumb_ref": null,
+                     *       "credit_author": null,
+                     *       "credit_license": null,
+                     *       "credit_url": null,
+                     *       "description-es": "Se encuentra a 250 km al Sur de la ciudad de Lima.",
+                     *       "description-en": "It is located 250 km south of Lima.",
+                     *       "description-pt": null,
+                     *       "description-it": "Si trova a 250 km a sud della citta di Lima.",
+                     *       "short_description-es": null,
+                     *       "short_description-en": null,
+                     *       "short_description-pt": null,
+                     *       "short_description-it": null,
+                     *       "availability_hours-es": "En la mañana",
+                     *       "availability_hours-en": "In the morning",
+                     *       "availability_hours-pt": null,
+                     *       "availability_hours-it": "Al mattino",
+                     *       "translation_status": {
+                     *         "description": {
+                     *           "es": "ready",
+                     *           "en": "ready",
+                     *           "pt": "missing",
+                     *           "it": "ready"
+                     *         },
+                     *         "short_description": {
+                     *           "es": "missing",
+                     *           "en": "missing",
+                     *           "pt": "missing",
+                     *           "it": "missing"
+                     *         },
+                     *         "availability_hours": {
+                     *           "es": "ready",
+                     *           "en": "ready",
+                     *           "pt": "missing",
+                     *           "it": "ready"
+                     *         }
+                     *       },
+                     *       "stops": [
+                     *         {
+                     *           "tour_stop_id": 501,
+                     *           "place_of_interest_id": 4821,
+                     *           "poi_name": "Museo Julio C. Tello",
+                     *           "order_index": 0,
+                     *           "description-es": "Ubicado dentro de la Reserva Nacional de Paracas, fue inaugurado en 1964.",
+                     *           "description-en": null,
+                     *           "description-pt": null,
+                     *           "description-it": null,
+                     *           "short_description-es": null,
+                     *           "short_description-en": null,
+                     *           "short_description-pt": null,
+                     *           "short_description-it": null,
+                     *           "translation_status": {
+                     *             "description": {
+                     *               "es": "ready",
+                     *               "en": "pending",
+                     *               "pt": "missing",
+                     *               "it": "missing"
+                     *             },
+                     *             "short_description": {
+                     *               "es": "missing",
+                     *               "en": "missing",
+                     *               "pt": "missing",
+                     *               "it": "missing"
+                     *             }
+                     *           }
+                     *         }
+                     *       ]
+                     *     }
+                     */
+                    "application/json": components["schemas"]["TourRouteAdmin"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description No existe una ruta con ese tour_route_id */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    updateTourRoute: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateTourRoutePayload"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "tour_route_id": 14,
+                     *       "title": "Tour Reserva Nacional de Paracas",
+                     *       "destination_id": 3,
+                     *       "location": "Peru, Ica, Paracas",
+                     *       "duration": 240,
+                     *       "tags": [
+                     *         "generic.adventurer",
+                     *         "generic.animalfriendly"
+                     *       ],
+                     *       "is_active": true,
+                     *       "image_ref": null,
+                     *       "thumb_ref": null,
+                     *       "credit_author": null,
+                     *       "credit_license": null,
+                     *       "credit_url": null,
+                     *       "description-es": "Se encuentra a 250 km al Sur de la ciudad de Lima.",
+                     *       "description-en": "It is located 250 km south of Lima.",
+                     *       "description-pt": null,
+                     *       "description-it": "Si trova a 250 km a sud della citta di Lima.",
+                     *       "short_description-es": null,
+                     *       "short_description-en": null,
+                     *       "short_description-pt": null,
+                     *       "short_description-it": null,
+                     *       "availability_hours-es": "En la mañana",
+                     *       "availability_hours-en": "In the morning",
+                     *       "availability_hours-pt": null,
+                     *       "availability_hours-it": "Al mattino",
+                     *       "translation_status": {
+                     *         "description": {
+                     *           "es": "ready",
+                     *           "en": "ready",
+                     *           "pt": "missing",
+                     *           "it": "ready"
+                     *         },
+                     *         "short_description": {
+                     *           "es": "missing",
+                     *           "en": "missing",
+                     *           "pt": "missing",
+                     *           "it": "missing"
+                     *         },
+                     *         "availability_hours": {
+                     *           "es": "ready",
+                     *           "en": "ready",
+                     *           "pt": "missing",
+                     *           "it": "ready"
+                     *         }
+                     *       },
+                     *       "stops": [
+                     *         {
+                     *           "tour_stop_id": 501,
+                     *           "place_of_interest_id": 4821,
+                     *           "poi_name": "Museo Julio C. Tello",
+                     *           "order_index": 0,
+                     *           "description-es": "Ubicado dentro de la Reserva Nacional de Paracas, fue inaugurado en 1964.",
+                     *           "description-en": null,
+                     *           "description-pt": null,
+                     *           "description-it": null,
+                     *           "short_description-es": null,
+                     *           "short_description-en": null,
+                     *           "short_description-pt": null,
+                     *           "short_description-it": null,
+                     *           "translation_status": {
+                     *             "description": {
+                     *               "es": "ready",
+                     *               "en": "pending",
+                     *               "pt": "missing",
+                     *               "it": "missing"
+                     *             },
+                     *             "short_description": {
+                     *               "es": "missing",
+                     *               "en": "missing",
+                     *               "pt": "missing",
+                     *               "it": "missing"
+                     *             }
+                     *           }
+                     *         }
+                     *       ]
+                     *     }
+                     */
+                    "application/json": components["schemas"]["TourRouteAdmin"];
+                };
+            };
+            /** @description Payload invalido, o un id en stops/removed_stops que no pertenece a esta ruta */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    createTourRoute: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateTourRoutePayload"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "tour_route_id": 14,
+                     *       "title": "Tour Reserva Nacional de Paracas",
+                     *       "destination_id": 3,
+                     *       "location": "Peru, Ica, Paracas",
+                     *       "duration": 240,
+                     *       "tags": [
+                     *         "generic.adventurer",
+                     *         "generic.animalfriendly"
+                     *       ],
+                     *       "is_active": true,
+                     *       "image_ref": null,
+                     *       "thumb_ref": null,
+                     *       "credit_author": null,
+                     *       "credit_license": null,
+                     *       "credit_url": null,
+                     *       "description-es": "Se encuentra a 250 km al Sur de la ciudad de Lima.",
+                     *       "description-en": "It is located 250 km south of Lima.",
+                     *       "description-pt": null,
+                     *       "description-it": "Si trova a 250 km a sud della citta di Lima.",
+                     *       "short_description-es": null,
+                     *       "short_description-en": null,
+                     *       "short_description-pt": null,
+                     *       "short_description-it": null,
+                     *       "availability_hours-es": "En la mañana",
+                     *       "availability_hours-en": "In the morning",
+                     *       "availability_hours-pt": null,
+                     *       "availability_hours-it": "Al mattino",
+                     *       "translation_status": {
+                     *         "description": {
+                     *           "es": "ready",
+                     *           "en": "ready",
+                     *           "pt": "missing",
+                     *           "it": "ready"
+                     *         },
+                     *         "short_description": {
+                     *           "es": "missing",
+                     *           "en": "missing",
+                     *           "pt": "missing",
+                     *           "it": "missing"
+                     *         },
+                     *         "availability_hours": {
+                     *           "es": "ready",
+                     *           "en": "ready",
+                     *           "pt": "missing",
+                     *           "it": "ready"
+                     *         }
+                     *       },
+                     *       "stops": [
+                     *         {
+                     *           "tour_stop_id": 501,
+                     *           "place_of_interest_id": 4821,
+                     *           "poi_name": "Museo Julio C. Tello",
+                     *           "order_index": 0,
+                     *           "description-es": "Ubicado dentro de la Reserva Nacional de Paracas, fue inaugurado en 1964.",
+                     *           "description-en": null,
+                     *           "description-pt": null,
+                     *           "description-it": null,
+                     *           "short_description-es": null,
+                     *           "short_description-en": null,
+                     *           "short_description-pt": null,
+                     *           "short_description-it": null,
+                     *           "translation_status": {
+                     *             "description": {
+                     *               "es": "ready",
+                     *               "en": "pending",
+                     *               "pt": "missing",
+                     *               "it": "missing"
+                     *             },
+                     *             "short_description": {
+                     *               "es": "missing",
+                     *               "en": "missing",
+                     *               "pt": "missing",
+                     *               "it": "missing"
+                     *             }
+                     *           }
+                     *         }
+                     *       ]
+                     *     }
+                     */
+                    "application/json": components["schemas"]["TourRouteAdmin"];
+                };
+            };
+            /** @description Payload invalido (falta title/destination_id, un tag fuera de generic.*, etc.) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    deleteTourRoute: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteTourRoutePayload"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "tour_route_id": 14,
+                     *       "title": "Tour Reserva Nacional de Paracas",
+                     *       "destination_id": 3,
+                     *       "location": "Peru, Ica, Paracas",
+                     *       "duration": 240,
+                     *       "tags": [
+                     *         "generic.adventurer"
+                     *       ],
+                     *       "is_active": false,
+                     *       "image_ref": null,
+                     *       "thumb_ref": null,
+                     *       "credit_author": null,
+                     *       "credit_license": null,
+                     *       "credit_url": null,
+                     *       "description-es": "Se encuentra a 250 km al Sur de la ciudad de Lima.",
+                     *       "description-en": "It is located 250 km south of Lima.",
+                     *       "description-pt": null,
+                     *       "description-it": "Si trova a 250 km a sud della citta di Lima.",
+                     *       "short_description-es": null,
+                     *       "short_description-en": null,
+                     *       "short_description-pt": null,
+                     *       "short_description-it": null,
+                     *       "availability_hours-es": "En la mañana",
+                     *       "availability_hours-en": "In the morning",
+                     *       "availability_hours-pt": null,
+                     *       "availability_hours-it": "Al mattino",
+                     *       "translation_status": {
+                     *         "description": {
+                     *           "es": "ready",
+                     *           "en": "ready",
+                     *           "pt": "missing",
+                     *           "it": "ready"
+                     *         },
+                     *         "short_description": {
+                     *           "es": "missing",
+                     *           "en": "missing",
+                     *           "pt": "missing",
+                     *           "it": "missing"
+                     *         },
+                     *         "availability_hours": {
+                     *           "es": "ready",
+                     *           "en": "ready",
+                     *           "pt": "missing",
+                     *           "it": "ready"
+                     *         }
+                     *       },
+                     *       "stops": [
+                     *         {
+                     *           "tour_stop_id": 501,
+                     *           "place_of_interest_id": 4821,
+                     *           "poi_name": "Museo Julio C. Tello",
+                     *           "order_index": 0,
+                     *           "description-es": "Ubicado dentro de la Reserva Nacional de Paracas, fue inaugurado en 1964.",
+                     *           "description-en": null,
+                     *           "description-pt": null,
+                     *           "description-it": null,
+                     *           "short_description-es": null,
+                     *           "short_description-en": null,
+                     *           "short_description-pt": null,
+                     *           "short_description-it": null,
+                     *           "translation_status": {
+                     *             "description": {
+                     *               "es": "ready",
+                     *               "en": "pending",
+                     *               "pt": "missing",
+                     *               "it": "missing"
+                     *             },
+                     *             "short_description": {
+                     *               "es": "missing",
+                     *               "en": "missing",
+                     *               "pt": "missing",
+                     *               "it": "missing"
+                     *             }
+                     *           }
+                     *         }
+                     *       ]
+                     *     }
+                     */
+                    "application/json": components["schemas"]["TourRouteAdmin"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    uploadTourRouteImage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    tour_route_id: number;
+                    /** Format: binary */
+                    image: string;
+                    credit_author?: string;
+                    credit_license?: string;
+                    /** @description Esquema http/https explicito, o '' para borrar el credito. */
+                    credit_url?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "image_ref": "routes/14/cover.jpg",
+                     *       "thumb_ref": "routes/14/cover_thumb.jpg",
+                     *       "credit_author": null,
+                     *       "credit_license": null,
+                     *       "credit_url": null
+                     *     }
+                     */
+                    "application/json": components["schemas"]["GenericResult"];
+                };
+            };
+            /** @description Imagen invalida, o tour_route_id inexistente */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    retranslateTourRouteField: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RetranslateTourRouteFieldPayload"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "tour_route_id": 14,
+                     *       "tour_stop_id": null,
+                     *       "field": "description",
+                     *       "language_code": "pt",
+                     *       "status": "pending"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["GenericResult"];
+                };
+            };
+            /** @description Campo/idioma invalido, o tour_stop_id que no pertenece a tour_route_id */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    previewTourRouteImport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /**
+                     * Format: binary
+                     * @description El .xlsx, hoja RUTAS. Cabecera literal en B-J; la columna A se exceptua.
+                     */
+                    file: string;
+                    /**
+                     * Format: binary
+                     * @description .zip opcional con las imagenes que resuelven la columna F.
+                     */
+                    images?: string;
+                    /**
+                     * @default es
+                     * @enum {string}
+                     */
+                    base_language?: "es" | "en" | "pt" | "it";
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "header_errors": [],
+                     *       "routes": [
+                     *         {
+                     *           "title": "Tour Reserva Nacional de Paracas",
+                     *           "destination_guess": "Peru, Ica, Paracas",
+                     *           "existing_tour_route_id": 14,
+                     *           "stops_that_would_be_lost": 2,
+                     *           "stops": [
+                     *             {
+                     *               "row": 2,
+                     *               "name": "Museo Julio C. Tello",
+                     *               "order_index": 1,
+                     *               "match": {
+                     *                 "kind": "exact",
+                     *                 "poi_id": 4821,
+                     *                 "poi_name": "Museo Julio C. Tello"
+                     *               }
+                     *             },
+                     *             {
+                     *               "row": 3,
+                     *               "name": "Reserva Nacional De Paracas",
+                     *               "order_index": 2,
+                     *               "match": {
+                     *                 "kind": "fuzzy",
+                     *                 "poi_id": 4890,
+                     *                 "poi_name": "Reserva Nacional de Paracas",
+                     *                 "score": 0.92
+                     *               }
+                     *             }
+                     *           ]
+                     *         }
+                     *       ],
+                     *       "row_errors": [
+                     *         {
+                     *           "row": 22,
+                     *           "reason": "sin nombre de parada"
+                     *         }
+                     *       ],
+                     *       "images": [
+                     *         {
+                     *           "path": "Fotos.Rebeca/Pisco.Paracas/Museo.Tello.jpg",
+                     *           "found_in_zip": true
+                     *         }
+                     *       ],
+                     *       "discarded_tags": [
+                     *         {
+                     *           "tag": "Cultura.generic.culture_immersion",
+                     *           "count": 1
+                     *         }
+                     *       ]
+                     *     }
+                     */
+                    "application/json": components["schemas"]["TourRouteImportPreviewResult"];
+                };
+            };
+            /** @description Fichero invalido (no es .xlsx/.zip, o excede el limite de tamano de Multer) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    importTourRoutes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file: string;
+                    /** Format: binary */
+                    images?: string;
+                    /**
+                     * @default es
+                     * @enum {string}
+                     */
+                    base_language?: "es" | "en" | "pt" | "it";
+                    /**
+                     * @description JSON: fila (numero, como clave string) -> place_of_interest_id elegido por el humano para un match fuzzy o none.
+                     * @example {"22": 4821, "45": 4822}
+                     */
+                    overrides?: string;
+                    /** @default false */
+                    confirm_overwrite?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "created": [
+                     *         {
+                     *           "tour_route_id": 27,
+                     *           "title": "Tour Cañón de los Perdidos"
+                     *         }
+                     *       ],
+                     *       "overwritten": [],
+                     *       "skipped": [
+                     *         {
+                     *           "title": "Full Day Líneas de Nasca y geoglifos de Palpa",
+                     *           "reason": "fila 22 sin nombre de parada, no overrides recibido para esa fila"
+                     *         }
+                     *       ]
+                     *     }
+                     */
+                    "application/json": components["schemas"]["TourRouteImportResult"];
+                };
+            };
+            /** @description Fichero invalido, o header_errors no vacio */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Alguna ruta del fichero ya existe y confirm_overwrite no es true. No se escribe nada. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "routes": [
+                     *         {
+                     *           "title": "Tour Reserva Nacional de Paracas",
+                     *           "existing_tour_route_id": 14,
+                     *           "stops_that_would_be_lost": 2
+                     *         }
+                     *       ]
+                     *     }
+                     */
+                    "application/json": components["schemas"]["TourRouteImportConflict"];
                 };
             };
         };
