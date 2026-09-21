@@ -5884,6 +5884,10 @@ export interface components {
             duration?: number | null;
             tags?: string[];
             is_active?: boolean;
+            /** @description Portada de la ruta. Ausente: no se toca la portada. Presente con valor `null`: se borra la portada (image_ref y thumb_ref se limpian juntos). Para reemplazarla por otra imagen, usar POST tour-route/image; este campo solo borra, no sube. */
+            image_ref?: string | null;
+            /** @description Miniatura de la portada; viaja siempre junto a image_ref y con la misma regla: ausente no toca, `null` borra. */
+            thumb_ref?: string | null;
             stops?: (components["schemas"]["NewTourRouteStop"] | components["schemas"]["ExistingTourRouteStop"])[];
             /** @description Ids de paradas a borrar. Un id que no pertenece a esta ruta es 400. */
             removed_stops?: number[];

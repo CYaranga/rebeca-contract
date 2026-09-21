@@ -11181,6 +11181,16 @@ components:
               pattern: '^generic\.[a-z0-9_]+$'
           is_active:
             type: boolean
+          image_ref:
+            type: [string, 'null']
+            description: 'Portada de la ruta. Ausente: no se toca la portada. Presente con valor
+              `null`: se borra la portada (image_ref y thumb_ref se limpian juntos). Para
+              reemplazarla por otra imagen, usar POST tour-route/image; este campo solo borra, no
+              sube.'
+          thumb_ref:
+            type: [string, 'null']
+            description: 'Miniatura de la portada; viaja siempre junto a image_ref y con la misma
+              regla: ausente no toca, `null` borra.'
           stops:
             type: array
             items:
