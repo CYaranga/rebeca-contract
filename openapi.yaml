@@ -9568,6 +9568,62 @@ paths:
                       en: missing
                       pt: missing
                       it: missing
+                  poi:
+                    description-es: Museo dedicado a la cultura Paracas, con la coleccion de textiles
+                      y craneos deformados hallados por Julio C. Tello.
+                    description-en: Museum dedicated to the Paracas culture.
+                    description-pt: Museu dedicado a cultura Paracas.
+                    description-it: Museo dedicato alla cultura Paracas.
+                    short_description-es: Museo arqueologico
+                    short_description-en: Archaeological museum
+                    short_description-pt: Museu arqueologico
+                    short_description-it: Museo archeologico
+                    availability_hours-es: Martes a domingo, 9:00 a 17:00
+                    availability_hours-en: Tuesday to Sunday, 9am to 5pm
+                    availability_hours-pt: Terca a domingo, 9:00 as 17:00
+                    availability_hours-it: Da martedi a domenica, 9:00-17:00
+                    images:
+                    - image_ref: pois/4821/1.jpg
+                      thumb_ref: pois/4821/1_thumb.jpg
+                    - image_ref: pois/4821/2.jpg
+                      thumb_ref: null
+                - tour_stop_id: 502
+                  place_of_interest_id: 4903
+                  poi_name: Playa Roja
+                  order_index: 1
+                  description-es: null
+                  description-en: null
+                  description-pt: null
+                  description-it: null
+                  short_description-es: null
+                  short_description-en: null
+                  short_description-pt: null
+                  short_description-it: null
+                  translation_status:
+                    description:
+                      es: missing
+                      en: missing
+                      pt: missing
+                      it: missing
+                    short_description:
+                      es: missing
+                      en: missing
+                      pt: missing
+                      it: missing
+                  poi:
+                    description-es: Playa de arena roja formada por la erosion de rocas volcanicas.
+                    description-en: null
+                    description-pt: null
+                    description-it: null
+                    short_description-es: null
+                    short_description-en: null
+                    short_description-pt: null
+                    short_description-it: null
+                    availability_hours-es: null
+                    availability_hours-en: null
+                    availability_hours-pt: null
+                    availability_hours-it: null
+                    images: []
         '401':
           description: Unauthorized
           content:
@@ -9743,6 +9799,20 @@ paths:
                       en: missing
                       pt: missing
                       it: missing
+                  poi:
+                    description-es: null
+                    description-en: null
+                    description-pt: null
+                    description-it: null
+                    short_description-es: null
+                    short_description-en: null
+                    short_description-pt: null
+                    short_description-it: null
+                    availability_hours-es: null
+                    availability_hours-en: null
+                    availability_hours-pt: null
+                    availability_hours-it: null
+                    images: []
         '401':
           description: Unauthorized
           content:
@@ -10991,6 +11061,53 @@ components:
           type: [string, 'null']
         credit_url:
           type: [string, 'null']
+    TourStopPoiInfo:
+      type: object
+      description: 'Ficha del POI de la parada, SOLO LECTURA (GET tour-route). El dueno de este
+        texto es el catalogo de POIs (poi_localized/poi_images), no la ruta: el editor de rutas lo
+        muestra, nunca lo escribe. No entra en ningun payload de escritura — UpdateTourRoutePayload
+        y equivalentes lo ignoran si llega.'
+      properties:
+        description-es:
+          type: [string, 'null']
+        description-en:
+          type: [string, 'null']
+        description-pt:
+          type: [string, 'null']
+        description-it:
+          type: [string, 'null']
+        short_description-es:
+          type: [string, 'null']
+        short_description-en:
+          type: [string, 'null']
+        short_description-pt:
+          type: [string, 'null']
+        short_description-it:
+          type: [string, 'null']
+        availability_hours-es:
+          type: [string, 'null']
+        availability_hours-en:
+          type: [string, 'null']
+        availability_hours-pt:
+          type: [string, 'null']
+        availability_hours-it:
+          type: [string, 'null']
+        images:
+          type: array
+          description: poi_images del POI, en el orden que devuelve Postgres. Siempre presente
+            (array vacio si el POI no tiene imagenes).
+          items:
+            type: object
+            properties:
+              image_ref:
+                type: [string, 'null']
+              thumb_ref:
+                type: [string, 'null']
+            required:
+            - image_ref
+            - thumb_ref
+      required:
+      - images
     TourRouteStopAdmin:
       type: object
       description: Una parada dentro de una ruta, tal como la devuelve GET/POST/PUT tour-route.
@@ -11012,12 +11129,15 @@ components:
               manda.
           translation_status:
             $ref: '#/components/schemas/TourStopTranslationStatus'
+          poi:
+            $ref: '#/components/schemas/TourStopPoiInfo'
         required:
         - tour_stop_id
         - place_of_interest_id
         - poi_name
         - order_index
         - translation_status
+        - poi
     TourRouteAdmin:
       type: object
       description: Una ruta completa con sus paradas, tal como la devuelve GET tour-route y las
