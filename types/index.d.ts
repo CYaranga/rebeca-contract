@@ -5813,6 +5813,26 @@ export interface components {
             credit_license?: string | null;
             credit_url?: string | null;
         };
+        /** @description Ficha del POI de la parada, SOLO LECTURA (GET tour-route). El dueno de este texto es el catalogo de POIs (poi_localized/poi_images), no la ruta: el editor de rutas lo muestra, nunca lo escribe. No entra en ningun payload de escritura — UpdateTourRoutePayload y equivalentes lo ignoran si llega. */
+        TourStopPoiInfo: {
+            "description-es"?: string | null;
+            "description-en"?: string | null;
+            "description-pt"?: string | null;
+            "description-it"?: string | null;
+            "short_description-es"?: string | null;
+            "short_description-en"?: string | null;
+            "short_description-pt"?: string | null;
+            "short_description-it"?: string | null;
+            "availability_hours-es"?: string | null;
+            "availability_hours-en"?: string | null;
+            "availability_hours-pt"?: string | null;
+            "availability_hours-it"?: string | null;
+            /** @description poi_images del POI, en el orden que devuelve Postgres. Siempre presente (array vacio si el POI no tiene imagenes). */
+            images: {
+                image_ref: string | null;
+                thumb_ref: string | null;
+            }[];
+        };
         /** @description Una parada dentro de una ruta, tal como la devuelve GET/POST/PUT tour-route. */
         TourRouteStopAdmin: components["schemas"]["TourStopLocalizedFields"] & {
             tour_stop_id: number;
@@ -5823,6 +5843,7 @@ export interface components {
             /** @description 0-based, derivado de la posicion en el array al guardar. El cliente nunca lo manda. */
             order_index: number;
             translation_status: components["schemas"]["TourStopTranslationStatus"];
+            poi: components["schemas"]["TourStopPoiInfo"];
         };
         /** @description Una ruta completa con sus paradas, tal como la devuelve GET tour-route y las respuestas de POST/PUT/DELETE tour-route. */
         TourRouteAdmin: components["schemas"]["TourRouteLocalizedFields"] & components["schemas"]["TourRouteImageCredit"] & {
@@ -16772,6 +16793,73 @@ export interface operations {
                      *               "pt": "missing",
                      *               "it": "missing"
                      *             }
+                     *           },
+                     *           "poi": {
+                     *             "description-es": "Museo dedicado a la cultura Paracas, con la coleccion de textiles y craneos deformados hallados por Julio C. Tello.",
+                     *             "description-en": "Museum dedicated to the Paracas culture.",
+                     *             "description-pt": "Museu dedicado a cultura Paracas.",
+                     *             "description-it": "Museo dedicato alla cultura Paracas.",
+                     *             "short_description-es": "Museo arqueologico",
+                     *             "short_description-en": "Archaeological museum",
+                     *             "short_description-pt": "Museu arqueologico",
+                     *             "short_description-it": "Museo archeologico",
+                     *             "availability_hours-es": "Martes a domingo, 9:00 a 17:00",
+                     *             "availability_hours-en": "Tuesday to Sunday, 9am to 5pm",
+                     *             "availability_hours-pt": "Terca a domingo, 9:00 as 17:00",
+                     *             "availability_hours-it": "Da martedi a domenica, 9:00-17:00",
+                     *             "images": [
+                     *               {
+                     *                 "image_ref": "pois/4821/1.jpg",
+                     *                 "thumb_ref": "pois/4821/1_thumb.jpg"
+                     *               },
+                     *               {
+                     *                 "image_ref": "pois/4821/2.jpg",
+                     *                 "thumb_ref": null
+                     *               }
+                     *             ]
+                     *           }
+                     *         },
+                     *         {
+                     *           "tour_stop_id": 502,
+                     *           "place_of_interest_id": 4903,
+                     *           "poi_name": "Playa Roja",
+                     *           "order_index": 1,
+                     *           "description-es": null,
+                     *           "description-en": null,
+                     *           "description-pt": null,
+                     *           "description-it": null,
+                     *           "short_description-es": null,
+                     *           "short_description-en": null,
+                     *           "short_description-pt": null,
+                     *           "short_description-it": null,
+                     *           "translation_status": {
+                     *             "description": {
+                     *               "es": "missing",
+                     *               "en": "missing",
+                     *               "pt": "missing",
+                     *               "it": "missing"
+                     *             },
+                     *             "short_description": {
+                     *               "es": "missing",
+                     *               "en": "missing",
+                     *               "pt": "missing",
+                     *               "it": "missing"
+                     *             }
+                     *           },
+                     *           "poi": {
+                     *             "description-es": "Playa de arena roja formada por la erosion de rocas volcanicas.",
+                     *             "description-en": null,
+                     *             "description-pt": null,
+                     *             "description-it": null,
+                     *             "short_description-es": null,
+                     *             "short_description-en": null,
+                     *             "short_description-pt": null,
+                     *             "short_description-it": null,
+                     *             "availability_hours-es": null,
+                     *             "availability_hours-en": null,
+                     *             "availability_hours-pt": null,
+                     *             "availability_hours-it": null,
+                     *             "images": []
                      *           }
                      *         }
                      *       ]
@@ -16895,6 +16983,73 @@ export interface operations {
                      *               "pt": "missing",
                      *               "it": "missing"
                      *             }
+                     *           },
+                     *           "poi": {
+                     *             "description-es": "Museo dedicado a la cultura Paracas, con la coleccion de textiles y craneos deformados hallados por Julio C. Tello.",
+                     *             "description-en": "Museum dedicated to the Paracas culture.",
+                     *             "description-pt": "Museu dedicado a cultura Paracas.",
+                     *             "description-it": "Museo dedicato alla cultura Paracas.",
+                     *             "short_description-es": "Museo arqueologico",
+                     *             "short_description-en": "Archaeological museum",
+                     *             "short_description-pt": "Museu arqueologico",
+                     *             "short_description-it": "Museo archeologico",
+                     *             "availability_hours-es": "Martes a domingo, 9:00 a 17:00",
+                     *             "availability_hours-en": "Tuesday to Sunday, 9am to 5pm",
+                     *             "availability_hours-pt": "Terca a domingo, 9:00 as 17:00",
+                     *             "availability_hours-it": "Da martedi a domenica, 9:00-17:00",
+                     *             "images": [
+                     *               {
+                     *                 "image_ref": "pois/4821/1.jpg",
+                     *                 "thumb_ref": "pois/4821/1_thumb.jpg"
+                     *               },
+                     *               {
+                     *                 "image_ref": "pois/4821/2.jpg",
+                     *                 "thumb_ref": null
+                     *               }
+                     *             ]
+                     *           }
+                     *         },
+                     *         {
+                     *           "tour_stop_id": 502,
+                     *           "place_of_interest_id": 4903,
+                     *           "poi_name": "Playa Roja",
+                     *           "order_index": 1,
+                     *           "description-es": null,
+                     *           "description-en": null,
+                     *           "description-pt": null,
+                     *           "description-it": null,
+                     *           "short_description-es": null,
+                     *           "short_description-en": null,
+                     *           "short_description-pt": null,
+                     *           "short_description-it": null,
+                     *           "translation_status": {
+                     *             "description": {
+                     *               "es": "missing",
+                     *               "en": "missing",
+                     *               "pt": "missing",
+                     *               "it": "missing"
+                     *             },
+                     *             "short_description": {
+                     *               "es": "missing",
+                     *               "en": "missing",
+                     *               "pt": "missing",
+                     *               "it": "missing"
+                     *             }
+                     *           },
+                     *           "poi": {
+                     *             "description-es": "Playa de arena roja formada por la erosion de rocas volcanicas.",
+                     *             "description-en": null,
+                     *             "description-pt": null,
+                     *             "description-it": null,
+                     *             "short_description-es": null,
+                     *             "short_description-en": null,
+                     *             "short_description-pt": null,
+                     *             "short_description-it": null,
+                     *             "availability_hours-es": null,
+                     *             "availability_hours-en": null,
+                     *             "availability_hours-pt": null,
+                     *             "availability_hours-it": null,
+                     *             "images": []
                      *           }
                      *         }
                      *       ]
@@ -17018,6 +17173,73 @@ export interface operations {
                      *               "pt": "missing",
                      *               "it": "missing"
                      *             }
+                     *           },
+                     *           "poi": {
+                     *             "description-es": "Museo dedicado a la cultura Paracas, con la coleccion de textiles y craneos deformados hallados por Julio C. Tello.",
+                     *             "description-en": "Museum dedicated to the Paracas culture.",
+                     *             "description-pt": "Museu dedicado a cultura Paracas.",
+                     *             "description-it": "Museo dedicato alla cultura Paracas.",
+                     *             "short_description-es": "Museo arqueologico",
+                     *             "short_description-en": "Archaeological museum",
+                     *             "short_description-pt": "Museu arqueologico",
+                     *             "short_description-it": "Museo archeologico",
+                     *             "availability_hours-es": "Martes a domingo, 9:00 a 17:00",
+                     *             "availability_hours-en": "Tuesday to Sunday, 9am to 5pm",
+                     *             "availability_hours-pt": "Terca a domingo, 9:00 as 17:00",
+                     *             "availability_hours-it": "Da martedi a domenica, 9:00-17:00",
+                     *             "images": [
+                     *               {
+                     *                 "image_ref": "pois/4821/1.jpg",
+                     *                 "thumb_ref": "pois/4821/1_thumb.jpg"
+                     *               },
+                     *               {
+                     *                 "image_ref": "pois/4821/2.jpg",
+                     *                 "thumb_ref": null
+                     *               }
+                     *             ]
+                     *           }
+                     *         },
+                     *         {
+                     *           "tour_stop_id": 502,
+                     *           "place_of_interest_id": 4903,
+                     *           "poi_name": "Playa Roja",
+                     *           "order_index": 1,
+                     *           "description-es": null,
+                     *           "description-en": null,
+                     *           "description-pt": null,
+                     *           "description-it": null,
+                     *           "short_description-es": null,
+                     *           "short_description-en": null,
+                     *           "short_description-pt": null,
+                     *           "short_description-it": null,
+                     *           "translation_status": {
+                     *             "description": {
+                     *               "es": "missing",
+                     *               "en": "missing",
+                     *               "pt": "missing",
+                     *               "it": "missing"
+                     *             },
+                     *             "short_description": {
+                     *               "es": "missing",
+                     *               "en": "missing",
+                     *               "pt": "missing",
+                     *               "it": "missing"
+                     *             }
+                     *           },
+                     *           "poi": {
+                     *             "description-es": "Playa de arena roja formada por la erosion de rocas volcanicas.",
+                     *             "description-en": null,
+                     *             "description-pt": null,
+                     *             "description-it": null,
+                     *             "short_description-es": null,
+                     *             "short_description-en": null,
+                     *             "short_description-pt": null,
+                     *             "short_description-it": null,
+                     *             "availability_hours-es": null,
+                     *             "availability_hours-en": null,
+                     *             "availability_hours-pt": null,
+                     *             "availability_hours-it": null,
+                     *             "images": []
                      *           }
                      *         }
                      *       ]
@@ -17140,6 +17362,21 @@ export interface operations {
                      *               "pt": "missing",
                      *               "it": "missing"
                      *             }
+                     *           },
+                     *           "poi": {
+                     *             "description-es": null,
+                     *             "description-en": null,
+                     *             "description-pt": null,
+                     *             "description-it": null,
+                     *             "short_description-es": null,
+                     *             "short_description-en": null,
+                     *             "short_description-pt": null,
+                     *             "short_description-it": null,
+                     *             "availability_hours-es": null,
+                     *             "availability_hours-en": null,
+                     *             "availability_hours-pt": null,
+                     *             "availability_hours-it": null,
+                     *             "images": []
                      *           }
                      *         }
                      *       ]
