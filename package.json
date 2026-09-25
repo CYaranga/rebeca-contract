@@ -1,6 +1,6 @@
 {
   "name": "rebeca-contract",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "Contrato del API de Rebeca: openapi.yaml + tipos TypeScript generados + mocks MSW. Se consume por versión: npm i github:CYaranga/rebeca-contract#v1.0.0",
   "type": "module",
   "files": ["openapi.yaml", "types", "mocks"],
