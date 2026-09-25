@@ -4,7 +4,7 @@ info:
   version: 1.7.0
   description: 'API publica de Rebeca para integradores. Flujo: 1) `POST /session` con tu API key
     (`X-Api-Key`) devuelve un token de usuario final de 30 minutos; 2) el resto de rutas usan ese
-    token en `Authorization: Bearer`. Las claves `rk_live_` son solo de servidor; las `rk_pub_`
+    token en `Authorization: Bearer`. Las claves `rbk_live_` son solo de servidor; las `rbk_pub_`
     pueden ir en el navegador y exigen que el `Origin` este en la lista permitida del negocio. Los
     cuerpos de las peticiones son planos (sin sobre `data`). Las respuestas correctas usan `{
     status: "success", data }` y los errores `{ errors: [{ type, msg }] }`.'
@@ -23,7 +23,7 @@ paths:
       tags:
         - v4
       summary: Crea (o renueva) la sesion de un usuario final anonimo
-      description: "Unica ruta que usa la API key. Con `rk_live_` (servidor) o `rk_pub_` (navegador; el
+      description: "Unica ruta que usa la API key. Con `rbk_live_` (servidor) o `rbk_pub_` (navegador; el
         `Origin` debe estar en la allowlist del negocio). Devuelve el token de usuario final (30
         min) para el resto de rutas. Para renovar sobre el mismo anonimo, enviar el token anterior
         (aunque haya caducado) en `Authorization: Bearer`."
@@ -1073,7 +1073,7 @@ components:
       type: apiKey
       in: header
       name: X-Api-Key
-      description: API key del negocio (`rk_live_EXAMPLE...` servidor, `rk_pub_EXAMPLE...` navegador).
+      description: API key del negocio (`rbk_live_EXAMPLE...` servidor, `rbk_pub_EXAMPLE...` navegador).
         Solo se usa en POST /session.
     bearerUserToken:
       type: http

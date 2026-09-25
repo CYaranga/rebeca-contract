@@ -12265,7 +12265,7 @@ components:
         prefix:
           type: string
           description: Primeros 12 caracteres visibles
-          example: rk_live_EXAM
+          example: rbk_live_EXAM
         created_at:
           type: string
           format: date-time
@@ -12290,7 +12290,7 @@ components:
         secret:
           type: string
           description: Solo se devuelve aqui, una vez.
-          example: rk_live_EXAMPLE-not-a-real-key
+          example: rbk_live_EXAMPLE-not-a-real-key
     PublicApiOrigin:
       type: object
       required:

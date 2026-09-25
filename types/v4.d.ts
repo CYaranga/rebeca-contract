@@ -15,7 +15,7 @@ export interface paths {
         put?: never;
         /**
          * Crea (o renueva) la sesion de un usuario final anonimo
-         * @description Unica ruta que usa la API key. Con `rk_live_` (servidor) o `rk_pub_` (navegador; el `Origin` debe estar en la allowlist del negocio). Devuelve el token de usuario final (30 min) para el resto de rutas. Para renovar sobre el mismo anonimo, enviar el token anterior (aunque haya caducado) en `Authorization: Bearer`.
+         * @description Unica ruta que usa la API key. Con `rbk_live_` (servidor) o `rbk_pub_` (navegador; el `Origin` debe estar en la allowlist del negocio). Devuelve el token de usuario final (30 min) para el resto de rutas. Para renovar sobre el mismo anonimo, enviar el token anterior (aunque haya caducado) en `Authorization: Bearer`.
          */
         post: operations["createSession"];
         delete?: never;

@@ -6192,7 +6192,7 @@ export interface components {
             mode: "secret" | "publishable";
             /**
              * @description Primeros 12 caracteres visibles
-             * @example rk_live_EXAM
+             * @example rbk_live_EXAM
              */
             prefix: string;
             /** Format: date-time */
@@ -6206,7 +6206,7 @@ export interface components {
             key: components["schemas"]["PublicApiKey"];
             /**
              * @description Solo se devuelve aqui, una vez.
-             * @example rk_live_EXAMPLE-not-a-real-key
+             * @example rbk_live_EXAMPLE-not-a-real-key
              */
             secret: string;
         };
