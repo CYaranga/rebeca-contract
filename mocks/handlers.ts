@@ -700,4 +700,28 @@ export const handlers = [
   http.post("*/tour-route/import/preview", () => HttpResponse.json({"header_errors":[],"routes":[{"title":"Tour Reserva Nacional de Paracas","destination_guess":"Peru, Ica, Paracas","existing_tour_route_id":14,"stops_that_would_be_lost":2,"stops":[{"row":2,"name":"Museo Julio C. Tello","order_index":1,"match":{"kind":"exact","poi_id":4821,"poi_name":"Museo Julio C. Tello"}},{"row":3,"name":"Reserva Nacional De Paracas","order_index":2,"match":{"kind":"fuzzy","poi_id":4890,"poi_name":"Reserva Nacional de Paracas","score":0.92}}]}],"row_errors":[{"row":22,"reason":"sin nombre de parada"}],"images":[{"path":"Fotos.Rebeca/Pisco.Paracas/Museo.Tello.jpg","found_in_zip":true}],"discarded_tags":[{"tag":"Cultura.generic.culture_immersion","count":1}]})),
   // importTourRoutes
   http.post("*/tour-route/import", () => HttpResponse.json({"created":[{"tour_route_id":27,"title":"Tour Cañón de los Perdidos"}],"overwritten":[],"skipped":[{"title":"Full Day Líneas de Nasca y geoglifos de Palpa","reason":"fila 22 sin nombre de parada, no overrides recibido para esa fila"}]})),
+  // listPublicApiKeys
+  http.get("*/public-api/keys", () => HttpResponse.json({})),
+  // createPublicApiKey
+  http.post("*/public-api/keys", () => HttpResponse.json({})),
+  // rotatePublicApiKey
+  http.post("*/public-api/keys/:id/rotate", () => HttpResponse.json({})),
+  // revokePublicApiKey
+  http.delete("*/public-api/keys/:id", () => HttpResponse.json({})),
+  // listPublicApiOrigins
+  http.get("*/public-api/origins", () => HttpResponse.json({})),
+  // addPublicApiOrigin
+  http.post("*/public-api/origins", () => HttpResponse.json({})),
+  // deletePublicApiOrigin
+  http.delete("*/public-api/origins/:id", () => HttpResponse.json({})),
+  // listPublicApiAgents
+  http.get("*/public-api/agents", () => HttpResponse.json({})),
+  // setPublicApiAgent
+  http.put("*/public-api/agents", () => HttpResponse.json({})),
+  // getPublicApiUsage
+  http.get("*/public-api/usage", () => HttpResponse.json({})),
+  // getPublicApiQuota
+  http.get("*/public-api/quota", () => HttpResponse.json({})),
+  // setPublicApiQuota
+  http.put("*/public-api/quota", () => HttpResponse.json({})),
 ];
