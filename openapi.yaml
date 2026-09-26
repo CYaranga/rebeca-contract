@@ -8053,7 +8053,14 @@ paths:
           type: string
       - name: search
         in: query
+        description: 'Busca por ILIKE (sin distinguir mayusculas) en message, endpoint, request_data, response_data y metadata (texto JSON). Los campos libres se truncan a 4096 caracteres en la ingesta.'
         required: false
+        schema:
+          type: string
+      - name: thread_id
+        in: query
+        required: false
+        description: 'Devuelve todas las filas de los trace_id/request_id asociados a ese hilo de chat (resueltos desde las filas cuyo metadata trae ese thread_id). Combinable con el resto de filtros y con la misma paginacion por cursor. Requiere permiso ''Logs access''.'
         schema:
           type: string
       - name: start
@@ -8268,11 +8275,90 @@ paths:
       tags:
       - logs
       summary: GET /logs/tail
-      description: 'Polling incremental (ADR 2026-08-16, spec:257).'
+      description: 'Polling incremental (ADR 2026-08-16, spec:257). Acepta los mismos filtros que GET /logs (excepto limit y cursor), ademas de after.'
       x-source: 'spec Logs en Postgres y panel de trazabilidad.md:257; aun sin implementar en backend'
       security:
       - bearerAuth: []
       parameters:
+      - name: environment
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/LogEnvironment'
+      - name: source
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/LogSource'
+      - name: channel
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/LogChannel'
+      - name: level
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/LogLevel'
+      - name: category
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: user_id
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: device_id
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: session_id
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: trace_id
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: fingerprint
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: app_version
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: search
+        in: query
+        description: 'Busca por ILIKE (sin distinguir mayusculas) en message, endpoint, request_data, response_data y metadata (texto JSON). Los campos libres se truncan a 4096 caracteres en la ingesta.'
+        required: false
+        schema:
+          type: string
+      - name: thread_id
+        in: query
+        required: false
+        description: 'Devuelve todas las filas de los trace_id/request_id asociados a ese hilo de chat (resueltos desde las filas cuyo metadata trae ese thread_id). Combinable con el resto de filtros y con la misma paginacion por cursor. Requiere permiso ''Logs access''.'
+        schema:
+          type: string
+      - name: start
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: end
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
       - name: after
         in: query
         required: false

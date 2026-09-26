@@ -4746,7 +4746,7 @@ export interface paths {
         };
         /**
          * GET /logs/tail
-         * @description Polling incremental (ADR 2026-08-16, spec:257).
+         * @description Polling incremental (ADR 2026-08-16, spec:257). Acepta los mismos filtros que GET /logs (excepto limit y cursor), ademas de after.
          */
         get: operations["getLogsTail"];
         put?: never;
@@ -15259,7 +15259,10 @@ export interface operations {
                 trace_id?: string;
                 fingerprint?: string;
                 app_version?: string;
+                /** @description Busca por ILIKE (sin distinguir mayusculas) en message, endpoint, request_data, response_data y metadata (texto JSON). Los campos libres se truncan a 4096 caracteres en la ingesta. */
                 search?: string;
+                /** @description Devuelve todas las filas de los trace_id/request_id asociados a ese hilo de chat (resueltos desde las filas cuyo metadata trae ese thread_id). Combinable con el resto de filtros y con la misma paginacion por cursor. Requiere permiso 'Logs access'. */
+                thread_id?: string;
                 start?: string;
                 end?: string;
                 limit?: number;
@@ -15483,6 +15486,23 @@ export interface operations {
     getLogsTail: {
         parameters: {
             query?: {
+                environment?: components["schemas"]["LogEnvironment"];
+                source?: components["schemas"]["LogSource"];
+                channel?: components["schemas"]["LogChannel"];
+                level?: components["schemas"]["LogLevel"];
+                category?: string;
+                user_id?: string;
+                device_id?: string;
+                session_id?: string;
+                trace_id?: string;
+                fingerprint?: string;
+                app_version?: string;
+                /** @description Busca por ILIKE (sin distinguir mayusculas) en message, endpoint, request_data, response_data y metadata (texto JSON). Los campos libres se truncan a 4096 caracteres en la ingesta. */
+                search?: string;
+                /** @description Devuelve todas las filas de los trace_id/request_id asociados a ese hilo de chat (resueltos desde las filas cuyo metadata trae ese thread_id). Combinable con el resto de filtros y con la misma paginacion por cursor. Requiere permiso 'Logs access'. */
+                thread_id?: string;
+                start?: string;
+                end?: string;
                 /** @description id de la ultima fila ya vista por el cliente */
                 after?: number;
             };
