@@ -1,21 +1,22 @@
 {
   "name": "rebeca-contract",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "description": "Contrato del API de Rebeca: openapi.yaml + tipos TypeScript generados + mocks MSW. Se consume por versión: npm i github:CYaranga/rebeca-contract#v1.0.0",
   "type": "module",
-  "files": ["openapi.yaml", "types", "mocks"],
+  "files": ["openapi.yaml", "v4", "types", "mocks"],
   "exports": {
     ".": { "types": "./types/index.d.ts" },
     "./types": { "types": "./types/index.d.ts" },
     "./mocks": { "types": "./mocks/handlers.ts", "default": "./mocks/handlers.ts" },
-    "./openapi.yaml": "./openapi.yaml"
+    "./openapi.yaml": "./openapi.yaml",
+    "./v4/openapi.yaml": "./v4/openapi.yaml"
   },
   "scripts": {
     "build": "npm run build:types && npm run build:mocks && npm run check",
-    "build:types": "openapi-typescript openapi.yaml -o types/index.d.ts",
+    "build:types": "openapi-typescript openapi.yaml -o types/index.d.ts && openapi-typescript v4/openapi.yaml -o types/v4.d.ts",
     "build:mocks": "node scripts/gen-mocks.mjs",
     "check": "tsc --noEmit -p tsconfig.json",
-    "lint": "redocly lint openapi.yaml --skip-rule operation-4xx-response --skip-rule no-unused-components --skip-rule operation-description --skip-rule tag-description --skip-rule info-license"
+    "lint": "redocly lint openapi.yaml v4/openapi.yaml --skip-rule operation-4xx-response --skip-rule no-unused-components --skip-rule operation-description --skip-rule tag-description --skip-rule info-license"
   },
   "peerDependencies": { "msw": ">=2" },
   "peerDependenciesMeta": { "msw": { "optional": true } },

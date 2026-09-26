@@ -68,6 +68,7 @@ tags:
 - name: provider-agent
 - name: provider-channels
 - name: provider-widget-config
+- name: PublicApiAdmin
 - name: qr
 - name: ready_live
 - name: recsys
@@ -10184,6 +10185,608 @@ paths:
                 - title: Tour Reserva Nacional de Paracas
                   existing_tour_route_id: 14
                   stops_that_would_be_lost: 2
+  /public-api/keys:
+    get:
+      operationId: listPublicApiKeys
+      tags:
+        - PublicApiAdmin
+      summary: GET /public-api/keys
+      security:
+        - bearerAuth: []
+      parameters:
+        - &a4
+          name: prov_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: business_id
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PublicApiSuccess"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/PublicApiKey"
+        "400":
+          description: Validacion fallida
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+        "401": &a1
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403": &a2
+          description: "Scope no nulo: solo admins internos"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+        "500":
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+    post:
+      operationId: createPublicApiKey
+      tags:
+        - PublicApiAdmin
+      summary: POST /public-api/keys
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - prov_id
+                - name
+                - mode
+              properties:
+                prov_id:
+                  type: integer
+                name:
+                  type: string
+                mode:
+                  type: string
+                  enum:
+                    - secret
+                    - publishable
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PublicApiSuccess"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/PublicApiKeyWithSecret"
+        "400":
+          description: Validacion fallida
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+        "401": *a1
+        "403": *a2
+        "404":
+          description: Negocio inexistente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+        "500":
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+  /public-api/keys/{id}/rotate:
+    post:
+      operationId: rotatePublicApiKey
+      tags:
+        - PublicApiAdmin
+      summary: POST /public-api/keys/:id/rotate
+      security:
+        - bearerAuth: []
+      parameters:
+        - &a3
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PublicApiSuccess"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/PublicApiKeyWithSecret"
+        "400":
+          description: Validacion fallida
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+        "401": *a1
+        "403": *a2
+        "404":
+          description: Key no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+        "409":
+          description: Key ya revocada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+        "500":
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+  /public-api/keys/{id}:
+    delete:
+      operationId: revokePublicApiKey
+      tags:
+        - PublicApiAdmin
+      summary: DELETE /public-api/keys/:id
+      security:
+        - bearerAuth: []
+      parameters:
+        - *a3
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PublicApiSuccess"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          key:
+                            $ref: "#/components/schemas/PublicApiKey"
+        "400":
+          description: Validacion fallida
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+        "401": *a1
+        "403": *a2
+        "404":
+          description: Key no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+        "409":
+          description: Key ya revocada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+        "500":
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+  /public-api/origins:
+    get:
+      operationId: listPublicApiOrigins
+      tags:
+        - PublicApiAdmin
+      summary: GET /public-api/origins
+      security:
+        - bearerAuth: []
+      parameters:
+        - *a4
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PublicApiSuccess"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/PublicApiOrigin"
+        "400":
+          description: Validacion fallida
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+        "401": *a1
+        "403": *a2
+        "500":
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+    post:
+      operationId: addPublicApiOrigin
+      tags:
+        - PublicApiAdmin
+      summary: POST /public-api/origins
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - prov_id
+                - origin
+              properties:
+                prov_id:
+                  type: integer
+                origin:
+                  type: string
+                  description: Normalizado scheme://host[:port]
+                  example: https://example.com
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PublicApiSuccess"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          origin:
+                            $ref: "#/components/schemas/PublicApiOrigin"
+        "400":
+          description: Validacion fallida
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+        "401": *a1
+        "403": *a2
+        "404":
+          description: Negocio inexistente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+        "500":
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+  /public-api/origins/{id}:
+    delete:
+      operationId: deletePublicApiOrigin
+      tags:
+        - PublicApiAdmin
+      summary: DELETE /public-api/origins/:id
+      security:
+        - bearerAuth: []
+      parameters:
+        - *a3
+      responses:
+        "204":
+          description: Eliminado
+        "400":
+          description: Validacion fallida
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+        "401": *a1
+        "403": *a2
+        "404":
+          description: Origen no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+        "500":
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+  /public-api/agents:
+    get:
+      operationId: listPublicApiAgents
+      tags:
+        - PublicApiAdmin
+      summary: GET /public-api/agents
+      security:
+        - bearerAuth: []
+      parameters:
+        - *a4
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PublicApiSuccess"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          endpoints:
+                            type: array
+                            items:
+                              $ref: "#/components/schemas/PublicApiEndpointAgent"
+        "400":
+          description: Validacion fallida
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+        "401": *a1
+        "403": *a2
+        "500":
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+    put:
+      operationId: setPublicApiAgent
+      tags:
+        - PublicApiAdmin
+      summary: PUT /public-api/agents
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - prov_id
+                - endpoint
+                - agent_id
+              properties:
+                prov_id:
+                  type: integer
+                endpoint:
+                  type: string
+                  example: chat
+                agent_id:
+                  type:
+                    - string
+                    - "null"
+                  description: null vuelve al agente por defecto
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PublicApiSuccess"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          endpoint:
+                            type: string
+                          agent_id:
+                            type:
+                              - string
+                              - "null"
+        "400":
+          description: Validacion fallida
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+        "401": *a1
+        "403": *a2
+        "404":
+          description: Negocio inexistente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+        "503":
+          description: "Foundry no responde, no se pudo verificar el agente. Reintenta"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+        "500":
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+  /public-api/usage:
+    get:
+      operationId: getPublicApiUsage
+      tags:
+        - PublicApiAdmin
+      summary: GET /public-api/usage
+      security:
+        - bearerAuth: []
+      parameters:
+        - *a4
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Suma de todas las keys del negocio
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PublicApiSuccess"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/PublicApiUsageRow"
+        "400":
+          description: Validacion fallida
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+        "401": *a1
+        "403": *a2
+        "500":
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+  /public-api/quota:
+    get:
+      operationId: getPublicApiQuota
+      tags:
+        - PublicApiAdmin
+      summary: GET /public-api/quota
+      security:
+        - bearerAuth: []
+      parameters:
+        - *a4
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PublicApiSuccess"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/PublicApiQuota"
+        "400":
+          description: Validacion fallida
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+        "401": *a1
+        "403": *a2
+        "500":
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+    put:
+      operationId: setPublicApiQuota
+      tags:
+        - PublicApiAdmin
+      summary: PUT /public-api/quota
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - prov_id
+              properties:
+                prov_id:
+                  type: integer
+                daily_quota:
+                  type:
+                    - integer
+                    - "null"
+                  minimum: 0
+                  description: null u omitido borra la cuota propia del negocio (sin cuota propia = valores por defecto, 5000 peticiones/dia por negocio para keys publicables, contando solo keys publicables; sin limite para secret)
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PublicApiSuccess"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/PublicApiQuota"
+        "400":
+          description: Validacion fallida
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+        "401": *a1
+        "403": *a2
+        "404":
+          description: Negocio inexistente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
+        "500":
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicApiErrorResponse"
 components:
   securitySchemes:
     bearerAuth:
@@ -11696,3 +12299,142 @@ components:
       - created
       - overwritten
       - skipped
+    PublicApiSuccess:
+      type: object
+      required:
+        - status
+        - data
+      properties:
+        status:
+          type: string
+          enum:
+            - success
+        data: {}
+    PublicApiErrorResponse:
+      type: object
+      required:
+        - errors
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            required:
+              - type
+              - msg
+            properties:
+              type:
+                type: string
+              msg:
+                type: string
+    PublicApiKey:
+      type: object
+      required:
+        - id
+        - prov_id
+        - name
+        - mode
+        - prefix
+        - created_at
+      properties:
+        id:
+          type: integer
+        prov_id:
+          type: integer
+        name:
+          type: string
+        mode:
+          type: string
+          enum:
+            - secret
+            - publishable
+        prefix:
+          type: string
+          description: Primeros 12 caracteres visibles
+          example: rbk_live_EXAM
+        created_at:
+          type: string
+          format: date-time
+        last_used_at:
+          type:
+            - string
+            - "null"
+          format: date-time
+        revoked_at:
+          type:
+            - string
+            - "null"
+          format: date-time
+    PublicApiKeyWithSecret:
+      type: object
+      required:
+        - key
+        - secret
+      properties:
+        key:
+          $ref: "#/components/schemas/PublicApiKey"
+        secret:
+          type: string
+          description: Solo se devuelve aqui, una vez.
+          example: rbk_live_EXAMPLE-not-a-real-key
+    PublicApiOrigin:
+      type: object
+      required:
+        - id
+        - prov_id
+        - origin
+        - created_at
+      properties:
+        id:
+          type: integer
+        prov_id:
+          type: integer
+        origin:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+    PublicApiEndpointAgent:
+      type: object
+      required:
+        - endpoint
+        - agent_id
+        - default_agent_id
+      properties:
+        endpoint:
+          type: string
+        agent_id:
+          type:
+            - string
+            - "null"
+        default_agent_id:
+          type:
+            - string
+            - "null"
+    PublicApiUsageRow:
+      type: object
+      required:
+        - day
+        - endpoint
+        - count
+      properties:
+        day:
+          type: string
+          format: date
+        endpoint:
+          type: string
+        count:
+          type: integer
+    PublicApiQuota:
+      type: object
+      required:
+        - prov_id
+        - daily_quota
+      properties:
+        prov_id:
+          type: integer
+        daily_quota:
+          type:
+            - integer
+            - "null"
+          description: null = sin cuota propia = valores por defecto (5000/dia por negocio para keys publicables, contando solo keys publicables; sin limite para secret)
