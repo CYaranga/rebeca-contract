@@ -269,7 +269,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Estado de la generacion asincrona de un itinerario */
+        /**
+         * Estado de la generacion asincrona de un itinerario
+         * @description Solo responde al usuario final que recibio ese `task_id` en su chat (mismo negocio). Cualquier otro caso (task_id de otro usuario, de otro negocio o inexistente) responde `404` con el mismo cuerpo.
+         */
         get: operations["getPlanStatus"];
         put?: never;
         post?: never;
@@ -416,6 +419,386 @@ export interface components {
                 [key: string]: unknown;
             };
         };
+        /** @description Sin campos de datos; el resultado es el `status` de la respuesta. */
+        EmptyData: Record<string, never>;
+        ImageRefs: {
+            image_ref?: string;
+            thumb_ref?: string;
+        };
+        /** @description Atribucion de la imagen (parte de los campos de credito de paquetes y rutas). */
+        Credit: {
+            credit_author?: string;
+            credit_license?: string;
+            credit_url?: string;
+        };
+        /** @description Nodo de destino. `children`/`destinations` repiten este mismo esquema (arbol). */
+        Destination: {
+            destination_id?: number;
+            name?: string;
+            parent_destination_id?: number | null;
+            is_country?: boolean;
+            image_ref?: string;
+            thumb_ref?: string;
+            flag_ref?: string;
+            latitude?: number;
+            longitude?: number;
+            timezone?: string;
+            images?: string[];
+            children?: components["schemas"]["Destination"][];
+            destinations?: components["schemas"]["Destination"][];
+        } & {
+            [key: string]: string;
+        };
+        /** @description Lugar de interes. */
+        Poi: {
+            place_of_interest_id?: string;
+            name?: string;
+            category?: string;
+            sub_categories?: string[];
+            tags?: string[];
+            location?: string;
+            address?: string;
+            latitude?: number;
+            longitude?: number;
+            entrypoint_latitude?: number;
+            entrypoint_longitude?: number;
+            destination_id?: number;
+            destination_name?: string;
+            company_name?: string;
+            website?: string;
+            phone_number?: string;
+            duration?: number;
+            visit_start_time?: string;
+            matterport_vr_ref?: string;
+            matterport_image_ref?: string;
+            thumb_ref?: string;
+            image_ref?: string;
+            images?: string[];
+            description?: string;
+            short_description?: string;
+            availability_hours?: string;
+            matterport_description?: string;
+            tips?: {
+                message?: string;
+            }[];
+            distance?: number;
+            score?: number;
+            in_favourites?: boolean;
+        };
+        RouteStop: {
+            tour_stop_id?: number;
+            tour_route_id?: number;
+            place_of_interest_id?: string;
+            order_index?: number;
+            name?: string;
+            latitude?: number;
+            longitude?: number;
+            thumb_ref?: string;
+            narration?: string;
+            description?: string;
+            short_description?: string;
+            in_favourites?: boolean;
+        };
+        /** @description Ruta turistica. */
+        Route: {
+            tour_route_id?: number;
+            title?: string;
+            location?: string;
+            duration?: number;
+            tags?: string[];
+            destination_id?: number;
+            destination_name?: string;
+            image_ref?: string;
+            thumb_ref?: string;
+            credit_author?: string;
+            credit_license?: string;
+            credit_url?: string;
+            description?: string;
+            short_description?: string;
+            availability_hours?: string;
+            stops?: components["schemas"]["RouteStop"][];
+            images?: components["schemas"]["ImageRefs"][];
+        };
+        PersonalizedPoisData: {
+            recommended_pois?: components["schemas"]["Poi"][];
+            nearby_pois?: components["schemas"]["Poi"][];
+            routes?: components["schemas"]["Route"][];
+        };
+        ProfileData: {
+            profile?: {
+                favourite_pois?: string[];
+                interaction_level?: string;
+                total_engagement_points?: number;
+                engagement_level_index?: number;
+                engagement_level_name?: string;
+            };
+            preferences?: {
+                sub_categories?: string[];
+                weights?: number[];
+            };
+        };
+        Lodging: {
+            activity_id?: number;
+            title?: string;
+            thumb_ref?: string;
+            image_ref?: string;
+            address?: string;
+            latitude?: number;
+            longitude?: number;
+            category?: string;
+            subcategory?: string;
+            website?: string;
+            video_ref?: string;
+            company_name?: string;
+        };
+        LodgingData: {
+            lodging?: components["schemas"]["Lodging"][];
+        };
+        LanguageServed: {
+            description?: string;
+            short_description?: string;
+            label?: string;
+            value?: string;
+        };
+        /** @description Paquete conectado. */
+        Package: {
+            provider_package_id?: number;
+            destination_id?: number;
+            name?: string;
+            base_language?: string;
+            thumb_ref?: string;
+            image_ref?: string;
+            credit_author?: string;
+            credit_license?: string;
+            credit_url?: string;
+            description?: string;
+            stop_count?: number;
+            is_unlocked?: boolean;
+            language_served?: components["schemas"]["LanguageServed"];
+        };
+        PackagesData: {
+            packages?: components["schemas"]["Package"][];
+        };
+        /** @description Parada de un paquete. */
+        PackageStop: {
+            provider_package_stop_id?: number;
+            provider_package_id?: number;
+            order_index?: number;
+            name?: string;
+            latitude?: number;
+            longitude?: number;
+            radius_m?: number;
+            thumb_ref?: string;
+            image_ref?: string;
+            credit_author?: string;
+            credit_license?: string;
+            credit_url?: string;
+            qr_slug?: string;
+            description?: string;
+            short_description?: string;
+            package_name?: string;
+            base_language?: string;
+            destination_id?: number;
+            is_unlocked?: boolean;
+            language_served?: components["schemas"]["LanguageServed"];
+            facts?: {
+                fact_id?: number;
+                order_index?: number;
+                label?: string;
+                value?: string;
+                language_served?: components["schemas"]["LanguageServed"];
+            }[];
+            media?: {
+                media_id?: number;
+                image_ref?: string;
+                thumb_ref?: string;
+                credit_author?: string;
+                credit_license?: string;
+                credit_url?: string;
+            }[];
+        };
+        PackageDetailsData: {
+            package?: components["schemas"]["Package"];
+            stops?: components["schemas"]["PackageStop"][];
+        };
+        PackageStopData: {
+            stop?: components["schemas"]["PackageStop"];
+            unavailable?: boolean;
+            package?: {
+                provider_package_id?: number;
+                name?: string;
+            };
+        };
+        TripCreatedData: {
+            user_trip_id?: number;
+        };
+        /** @description Actividades propuestas para el viaje (POI y ventana horaria). */
+        PlanningTaskData: {
+            place_of_interest_id?: string;
+            start_timestamp?: string;
+            end_timestamp?: string;
+        }[];
+        Leg: {
+            distance?: number;
+            duration?: number;
+            is_approx?: boolean;
+        };
+        /** @description Actividad de un dia; mezcla POI del viaje y actividades externas (`external_activity_id`). */
+        DayActivity: {
+            user_poi_activity_id?: number;
+            place_of_interest_id?: string;
+            destination_id?: number;
+            name?: string;
+            latitude?: number;
+            longitude?: number;
+            tags?: string[];
+            category?: string;
+            sub_categories?: string[];
+            description?: string;
+            start_timestamp?: string;
+            end_timestamp?: string;
+            timezone?: string;
+            thumb_ref?: string;
+            image_ref?: string;
+            driving?: components["schemas"]["Leg"];
+            walking?: components["schemas"]["Leg"];
+            external_activity_id?: number;
+            location?: string;
+            note?: string;
+            color?: string;
+        };
+        TripSummary: {
+            user_trip_id?: number;
+            start_date?: string;
+            end_date?: string;
+            destination_id?: number;
+            number_of_people?: number;
+            trip_purpose?: string;
+            destination?: components["schemas"]["Destination"];
+        };
+        TripDay: {
+            date?: string;
+            activities?: components["schemas"]["DayActivity"][];
+        };
+        ScheduleData: {
+            trip?: components["schemas"]["TripSummary"];
+            trip_activities?: components["schemas"]["TripDay"][];
+            /** @description Solo forma; la API v4 no crea actividades de proveedor. */
+            trip_booked_activities?: {
+                booked_activities?: {
+                    activity_id?: number;
+                    checked_in?: boolean;
+                    checked_out?: boolean;
+                    start_timestamp?: string;
+                    end_timestamp?: string;
+                }[];
+                activities?: {
+                    activity_id?: number;
+                    title?: string;
+                    category?: string;
+                    latitude?: number;
+                    longitude?: number;
+                    duration?: number;
+                    timezone_offset?: number;
+                    desc?: string;
+                    short_desc?: string;
+                    images?: string[];
+                }[];
+            };
+        };
+        Label: {
+            key?: string;
+            /** @description Texto en el language_code pedido */
+            text?: string;
+            /** @description Solo para group_code tag */
+            image_ref?: string;
+        };
+        AppConfigData: {
+            partner_gate_enabled?: boolean;
+            approved_partners?: string[];
+        };
+        PlanItem: {
+            item_id?: string;
+            score?: number;
+            meta?: {
+                name?: string;
+                score?: number;
+                time_h?: number;
+                category?: string;
+                duration?: number;
+                location?: string;
+                breakfast?: boolean;
+                hidden_gem?: boolean;
+                locomotion?: string;
+                must_visit?: boolean;
+                destination?: string;
+                distance_km?: number;
+                instagrammer?: boolean;
+            };
+        };
+        PlanStatusData: {
+            task_id?: string;
+            status?: string;
+            /** @description Un dia por clave (`day_0`, `day_1`, ...) con sus items. */
+            result?: {
+                [key: string]: components["schemas"]["PlanItem"][];
+            };
+        };
+        /** @description Accion del agente. Solo salen las acciones listadas en `name`; el resto se descarta. */
+        ChatAction: {
+            /** @enum {string} */
+            name: "speak" | "text" | "redirect" | "raw_data" | "gesture" | "changeRebecaDress";
+            /** @description Segun `name`: `speak` {text, language_code}; `text` {text}; `redirect` {destiny}; `gesture` {gestures}; `changeRebecaDress` {destination_id}; `raw_data` {data}, donde `data` (objeto o lista) es la union de los campos de `ChatRawData`. */
+            parameters?: {
+                text?: string;
+                language_code?: string;
+                destiny?: string;
+                gestures?: string[];
+                destination_id?: number;
+                data?: components["schemas"]["ChatRawData"] | components["schemas"]["ChatRawData"][];
+            };
+        };
+        /** @description Contenido de una accion `raw_data` (fichas de destino, plan asincrono, POI, alojamiento, itinerario). */
+        ChatRawData: {
+            title?: string;
+            text?: string;
+            description?: string;
+            image?: string;
+            images?: string[];
+            thumb_ref?: string;
+            thumb_refs?: string[];
+            video_ref?: string;
+            video_refs?: string[];
+            videos?: string[];
+            /** @description Id para consultar `GET /plan-status/{task_id}`. */
+            task_id?: string;
+            status?: string;
+            destination_id?: number;
+            categories?: string[];
+            tags?: string[];
+            pois?: components["schemas"]["Poi"][];
+            accommodation_name?: string;
+            accommodation_code?: string;
+            accommodation_description?: string;
+            accommodation_spaces?: number;
+            accommodation_items?: string[];
+            price?: number;
+            availability?: boolean;
+            latitude?: number;
+            longitude?: number;
+            trip?: components["schemas"]["TripSummary"];
+            trip_activities?: components["schemas"]["TripDay"][];
+            plan?: {
+                trip?: components["schemas"]["TripSummary"];
+                trip_activities?: components["schemas"]["TripDay"][];
+            };
+        };
+        /** @description Respuesta del agente. Solo salen los campos listados. */
+        ChatData: {
+            actions?: components["schemas"]["ChatAction"][];
+            /** @description Identificador del hilo de la conversacion. */
+            thread_id?: string;
+        };
     };
     responses: {
         /** @description Validacion fallida */
@@ -478,7 +861,7 @@ export interface components {
                 "application/json": components["schemas"]["ErrorResponse"];
             };
         };
-        /** @description Recurso no encontrado (un viaje ajeno o inexistente responde igual) */
+        /** @description Recurso no encontrado (un viaje o task_id ajeno o inexistente responde igual) */
         NotFound: {
             headers: {
                 [name: string]: unknown;
@@ -538,7 +921,7 @@ export interface components {
                 "application/json": components["schemas"]["ErrorResponse"];
             };
         };
-        /** @description Cuota diaria superada */
+        /** @description Cuota diaria superada (5000/dia por negocio para claves publicables sin cuota propia) */
         TooManyRequests: {
             headers: {
                 /** @description Segundos hasta que se reinicia la cuota (medianoche UTC). */
@@ -637,9 +1020,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Success"] & {
-                        data?: {
-                            [key: string]: unknown;
-                        };
+                        data?: components["schemas"]["ChatData"];
                     };
                 };
             };
@@ -675,9 +1056,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Success"] & {
-                        data?: {
-                            [key: string]: unknown;
-                        }[];
+                        data?: components["schemas"]["Destination"][];
                     };
                 };
             };
@@ -710,9 +1089,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Success"] & {
-                        data?: {
-                            [key: string]: unknown;
-                        };
+                        data?: components["schemas"]["Destination"];
                     };
                 };
             };
@@ -755,9 +1132,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Success"] & {
-                        data?: {
-                            [key: string]: unknown;
-                        }[];
+                        data?: components["schemas"]["Poi"][];
                     };
                 };
             };
@@ -794,9 +1169,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Success"] & {
-                        data?: {
-                            [key: string]: unknown;
-                        };
+                        data?: components["schemas"]["Poi"];
                     };
                 };
             };
@@ -833,9 +1206,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Success"] & {
-                        data?: {
-                            [key: string]: unknown;
-                        }[];
+                        data?: components["schemas"]["PersonalizedPoisData"];
                     };
                 };
             };
@@ -875,9 +1246,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Success"] & {
-                        data?: {
-                            [key: string]: unknown;
-                        }[];
+                        data?: components["schemas"]["Route"][];
                     };
                 };
             };
@@ -913,9 +1282,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Success"] & {
-                        data?: {
-                            [key: string]: unknown;
-                        };
+                        data?: components["schemas"]["EmptyData"];
                     };
                 };
             };
@@ -942,9 +1309,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Success"] & {
-                        data?: {
-                            [key: string]: unknown;
-                        };
+                        data?: components["schemas"]["ProfileData"];
                     };
                 };
             };
@@ -974,9 +1339,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Success"] & {
-                        data?: {
-                            [key: string]: unknown;
-                        }[];
+                        data?: components["schemas"]["LodgingData"];
                     };
                 };
             };
@@ -1011,9 +1374,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Success"] & {
-                        data?: {
-                            [key: string]: unknown;
-                        }[];
+                        data?: components["schemas"]["PackagesData"];
                     };
                 };
             };
@@ -1048,9 +1409,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Success"] & {
-                        data?: {
-                            [key: string]: unknown;
-                        };
+                        data?: components["schemas"]["PackageDetailsData"];
                     };
                 };
             };
@@ -1085,9 +1444,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Success"] & {
-                        data?: {
-                            [key: string]: unknown;
-                        };
+                        data?: components["schemas"]["PackageStopData"];
                     };
                 };
             };
@@ -1147,7 +1504,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description Id devuelto al pedir el plan. */
+                /** @description Id que el agente devolvio en el chat de este usuario (accion `raw_data`). */
                 task_id: string;
             };
             cookie?: never;
@@ -1161,15 +1518,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Success"] & {
-                        data?: {
-                            task_id?: string;
-                            status?: string;
-                            result?: {
-                                [key: string]: unknown;
-                            };
-                        } & {
-                            [key: string]: unknown;
-                        };
+                        data?: components["schemas"]["PlanStatusData"];
                     };
                 };
             };
@@ -1212,11 +1561,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Success"] & {
-                        data?: {
-                            user_trip_id?: number;
-                        } & {
-                            [key: string]: unknown;
-                        };
+                        data?: components["schemas"]["TripCreatedData"];
                     };
                 };
             };
@@ -1257,16 +1602,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Tarea de planificacion (consulta /plan-status/{task_id}) */
+            /** @description Actividades propuestas */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": components["schemas"]["Success"] & {
-                        data?: {
-                            [key: string]: unknown;
-                        };
+                        data?: components["schemas"]["PlanningTaskData"];
                     };
                 };
             };
@@ -1305,9 +1648,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Success"] & {
-                        data?: {
-                            [key: string]: unknown;
-                        };
+                        data?: components["schemas"]["ScheduleData"];
                     };
                 };
             };
@@ -1351,9 +1692,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Success"] & {
-                        data?: {
-                            [key: string]: unknown;
-                        };
+                        data?: components["schemas"]["EmptyData"];
                     };
                 };
             };
@@ -1395,9 +1734,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Success"] & {
-                        data?: {
-                            [key: string]: unknown;
-                        };
+                        data?: components["schemas"]["EmptyData"];
                     };
                 };
             };
@@ -1436,9 +1773,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Success"] & {
-                        data?: {
-                            [key: string]: unknown;
-                        };
+                        data?: components["schemas"]["EmptyData"];
                     };
                 };
             };
@@ -1475,9 +1810,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Success"] & {
-                        data?: {
-                            [key: string]: unknown;
-                        };
+                        data?: components["schemas"]["Label"][];
                     };
                 };
             };
@@ -1504,9 +1837,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Success"] & {
-                        data?: {
-                            [key: string]: unknown;
-                        };
+                        data?: components["schemas"]["AppConfigData"];
                     };
                 };
             };

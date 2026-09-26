@@ -10754,7 +10754,7 @@ paths:
                     - integer
                     - "null"
                   minimum: 0
-                  description: null u omitido = sin limite
+                  description: null u omitido borra la cuota propia del negocio (sin cuota propia = valores por defecto, 5000 peticiones/dia por negocio para keys publicables, contando solo keys publicables; sin limite para secret)
       responses:
         "200":
           description: OK
@@ -12437,4 +12437,4 @@ components:
           type:
             - integer
             - "null"
-          description: null = sin limite
+          description: null = sin cuota propia = valores por defecto (5000/dia por negocio para keys publicables, contando solo keys publicables; sin limite para secret)

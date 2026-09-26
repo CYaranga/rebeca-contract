@@ -1,13 +1,24 @@
 openapi: 3.1.0
 info:
   title: Rebeca API publica v4
-  version: 1.7.0
+  version: 1.8.0
   description: 'API publica de Rebeca para integradores. Flujo: 1) `POST /session` con tu API key
     (`X-Api-Key`) devuelve un token de usuario final de 30 minutos; 2) el resto de rutas usan ese
     token en `Authorization: Bearer`. Las claves `rbk_live_` son solo de servidor; las `rbk_pub_`
     pueden ir en el navegador y exigen que el `Origin` este en la lista permitida del negocio. Los
     cuerpos de las peticiones son planos (sin sobre `data`). Las respuestas correctas usan `{
-    status: "success", data }` y los errores `{ errors: [{ type, msg }] }`.'
+    status: "success", data }` y los errores `{ errors: [{ type, msg }] }`.
+
+
+    **Campos de respuesta (lista blanca).** La API responde solo con los campos documentados en
+    cada esquema; un campo que no figura aqui no se devuelve, aunque exista en el sistema.
+
+
+    **Cuota diaria.** Se cuenta por negocio y dia UTC. Sin cuota propia del negocio (valor nulo o vacio), aplican los
+    valores por defecto: las claves `rbk_pub_` tienen 5000 peticiones al dia por negocio (el limite
+    cuenta solo el uso de claves publicables) y las `rbk_live_` no tienen limite. Si el negocio
+    tiene una cuota propia, manda esa cuota. Al superarla: `429` con cabecera
+    `Retry-After`.'
 servers:
   - url: https://rebeca.app/api/dev/v4
     description: dev
@@ -109,8 +120,7 @@ paths:
                   - type: object
                     properties:
                       data:
-                        type: object
-                        additionalProperties: true
+                        $ref: "#/components/schemas/ChatData"
         "400": &a1
           $ref: "#/components/responses/BadRequest"
         "401": &a2
@@ -158,8 +168,7 @@ paths:
                       data:
                         type: array
                         items:
-                          type: object
-                          additionalProperties: true
+                          $ref: "#/components/schemas/Destination"
         "400": *a1
         "401": *a2
         "403": *a3
@@ -193,8 +202,7 @@ paths:
                   - type: object
                     properties:
                       data:
-                        type: object
-                        additionalProperties: true
+                        $ref: "#/components/schemas/Destination"
         "400": *a1
         "401": *a2
         "403": *a3
@@ -244,8 +252,7 @@ paths:
                       data:
                         type: array
                         items:
-                          type: object
-                          additionalProperties: true
+                          $ref: "#/components/schemas/Poi"
         "400": *a1
         "401": *a2
         "403": *a3
@@ -286,8 +293,7 @@ paths:
                   - type: object
                     properties:
                       data:
-                        type: object
-                        additionalProperties: true
+                        $ref: "#/components/schemas/Poi"
         "400": *a1
         "401": *a2
         "403": *a3
@@ -328,10 +334,7 @@ paths:
                   - type: object
                     properties:
                       data:
-                        type: array
-                        items:
-                          type: object
-                          additionalProperties: true
+                        $ref: "#/components/schemas/PersonalizedPoisData"
         "400": *a1
         "401": *a2
         "403": *a3
@@ -380,8 +383,7 @@ paths:
                       data:
                         type: array
                         items:
-                          type: object
-                          additionalProperties: true
+                          $ref: "#/components/schemas/Route"
         "400": *a1
         "401": *a2
         "403": *a3
@@ -421,8 +423,7 @@ paths:
                   - type: object
                     properties:
                       data:
-                        type: object
-                        additionalProperties: true
+                        $ref: "#/components/schemas/EmptyData"
         "400": *a1
         "401": *a2
         "403": *a3
@@ -449,8 +450,7 @@ paths:
                   - type: object
                     properties:
                       data:
-                        type: object
-                        additionalProperties: true
+                        $ref: "#/components/schemas/ProfileData"
         "400": *a1
         "401": *a2
         "403": *a3
@@ -483,10 +483,7 @@ paths:
                   - type: object
                     properties:
                       data:
-                        type: array
-                        items:
-                          type: object
-                          additionalProperties: true
+                        $ref: "#/components/schemas/LodgingData"
         "400": *a1
         "401": *a2
         "403": *a3
@@ -527,10 +524,7 @@ paths:
                   - type: object
                     properties:
                       data:
-                        type: array
-                        items:
-                          type: object
-                          additionalProperties: true
+                        $ref: "#/components/schemas/PackagesData"
         "400": *a1
         "401": *a2
         "403": *a3
@@ -564,8 +558,7 @@ paths:
                   - type: object
                     properties:
                       data:
-                        type: object
-                        additionalProperties: true
+                        $ref: "#/components/schemas/PackageDetailsData"
         "400": *a1
         "401": *a2
         "403": *a3
@@ -599,8 +592,7 @@ paths:
                   - type: object
                     properties:
                       data:
-                        type: object
-                        additionalProperties: true
+                        $ref: "#/components/schemas/PackageStopData"
         "400": *a1
         "401": *a2
         "403": *a3
@@ -664,13 +656,16 @@ paths:
       tags:
         - v4
       summary: Estado de la generacion asincrona de un itinerario
+      description: Solo responde al usuario final que recibio ese `task_id` en su chat (mismo negocio).
+        Cualquier otro caso (task_id de otro usuario, de otro negocio o inexistente) responde `404`
+        con el mismo cuerpo.
       security:
         - bearerUserToken: []
       parameters:
         - name: task_id
           in: path
           required: true
-          description: Id devuelto al pedir el plan.
+          description: Id que el agente devolvio en el chat de este usuario (accion `raw_data`).
           schema:
             type: string
       responses:
@@ -684,16 +679,7 @@ paths:
                   - type: object
                     properties:
                       data:
-                        type: object
-                        properties:
-                          task_id:
-                            type: string
-                          status:
-                            type: string
-                          result:
-                            type: object
-                            additionalProperties: true
-                        additionalProperties: true
+                        $ref: "#/components/schemas/PlanStatusData"
         "400": *a1
         "401": *a2
         "403": *a3
@@ -744,11 +730,7 @@ paths:
                   - type: object
                     properties:
                       data:
-                        type: object
-                        properties:
-                          user_trip_id:
-                            type: integer
-                        additionalProperties: true
+                        $ref: "#/components/schemas/TripCreatedData"
         "400": *a1
         "401": *a2
         "403": *a3
@@ -794,7 +776,7 @@ paths:
           example: true
       responses:
         "200":
-          description: Tarea de planificacion (consulta /plan-status/{task_id})
+          description: Actividades propuestas
           content:
             application/json:
               schema:
@@ -803,8 +785,7 @@ paths:
                   - type: object
                     properties:
                       data:
-                        type: object
-                        additionalProperties: true
+                        $ref: "#/components/schemas/PlanningTaskData"
         "400": *a1
         "401": *a2
         "403": *a3
@@ -854,8 +835,7 @@ paths:
                   - type: object
                     properties:
                       data:
-                        type: object
-                        additionalProperties: true
+                        $ref: "#/components/schemas/EmptyData"
         "400": *a1
         "401": *a2
         "403": *a3
@@ -891,8 +871,7 @@ paths:
                   - type: object
                     properties:
                       data:
-                        type: object
-                        additionalProperties: true
+                        $ref: "#/components/schemas/ScheduleData"
         "400": *a1
         "401": *a2
         "403": *a3
@@ -943,8 +922,7 @@ paths:
                   - type: object
                     properties:
                       data:
-                        type: object
-                        additionalProperties: true
+                        $ref: "#/components/schemas/EmptyData"
         "400": *a1
         "401": *a2
         "403": *a3
@@ -991,8 +969,7 @@ paths:
                   - type: object
                     properties:
                       data:
-                        type: object
-                        additionalProperties: true
+                        $ref: "#/components/schemas/EmptyData"
         "400": *a1
         "401": *a2
         "403": *a3
@@ -1031,8 +1008,9 @@ paths:
                   - type: object
                     properties:
                       data:
-                        type: object
-                        additionalProperties: true
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Label"
         "400": *a1
         "401": *a2
         "403": *a3
@@ -1059,8 +1037,7 @@ paths:
                   - type: object
                     properties:
                       data:
-                        type: object
-                        additionalProperties: true
+                        $ref: "#/components/schemas/AppConfigData"
         "400": *a1
         "401": *a2
         "403": *a3
@@ -1136,6 +1113,850 @@ components:
           type: object
           additionalProperties: true
           description: Configuracion publica del negocio.
+    EmptyData:
+      type: object
+      additionalProperties: false
+      description: Sin campos de datos; el resultado es el `status` de la respuesta.
+    ImageRefs:
+      type: object
+      additionalProperties: false
+      properties:
+        image_ref:
+          type: string
+        thumb_ref:
+          type: string
+    Credit:
+      type: object
+      additionalProperties: false
+      description: Atribucion de la imagen (parte de los campos de credito de paquetes y rutas).
+      properties:
+        credit_author:
+          type: string
+        credit_license:
+          type: string
+        credit_url:
+          type: string
+    Destination:
+      type: object
+      description: Nodo de destino. `children`/`destinations` repiten este mismo esquema (arbol).
+      additionalProperties: false
+      properties:
+        destination_id:
+          type: integer
+        name:
+          type: string
+        parent_destination_id:
+          type:
+            - integer
+            - "null"
+        is_country:
+          type: boolean
+        image_ref:
+          type: string
+        thumb_ref:
+          type: string
+        flag_ref:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        timezone:
+          type: string
+        images:
+          type: array
+          items:
+            type: string
+        children:
+          type: array
+          items:
+            $ref: "#/components/schemas/Destination"
+        destinations:
+          type: array
+          items:
+            $ref: "#/components/schemas/Destination"
+      patternProperties:
+        "^(destination_description|destination_short_description)-[a-z]{2}$":
+          type: string
+          description: Descripcion por idioma, p. ej. `destination_description-es`.
+    Poi:
+      type: object
+      description: Lugar de interes.
+      additionalProperties: false
+      properties:
+        place_of_interest_id:
+          type: string
+        name:
+          type: string
+        category:
+          type: string
+        sub_categories:
+          type: array
+          items:
+            type: string
+        tags:
+          type: array
+          items:
+            type: string
+        location:
+          type: string
+        address:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        entrypoint_latitude:
+          type: number
+        entrypoint_longitude:
+          type: number
+        destination_id:
+          type: integer
+        destination_name:
+          type: string
+        company_name:
+          type: string
+        website:
+          type: string
+        phone_number:
+          type: string
+        duration:
+          type: number
+        visit_start_time:
+          type: string
+        matterport_vr_ref:
+          type: string
+        matterport_image_ref:
+          type: string
+        thumb_ref:
+          type: string
+        image_ref:
+          type: string
+        images:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+        short_description:
+          type: string
+        availability_hours:
+          type: string
+        matterport_description:
+          type: string
+        tips:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              message:
+                type: string
+        distance:
+          type: number
+        score:
+          type: number
+        in_favourites:
+          type: boolean
+    RouteStop:
+      type: object
+      additionalProperties: false
+      properties:
+        tour_stop_id:
+          type: integer
+        tour_route_id:
+          type: integer
+        place_of_interest_id:
+          type: string
+        order_index:
+          type: integer
+        name:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        thumb_ref:
+          type: string
+        narration:
+          type: string
+        description:
+          type: string
+        short_description:
+          type: string
+        in_favourites:
+          type: boolean
+    Route:
+      type: object
+      description: Ruta turistica.
+      additionalProperties: false
+      properties:
+        tour_route_id:
+          type: integer
+        title:
+          type: string
+        location:
+          type: string
+        duration:
+          type: number
+        tags:
+          type: array
+          items:
+            type: string
+        destination_id:
+          type: integer
+        destination_name:
+          type: string
+        image_ref:
+          type: string
+        thumb_ref:
+          type: string
+        credit_author:
+          type: string
+        credit_license:
+          type: string
+        credit_url:
+          type: string
+        description:
+          type: string
+        short_description:
+          type: string
+        availability_hours:
+          type: string
+        stops:
+          type: array
+          items:
+            $ref: "#/components/schemas/RouteStop"
+        images:
+          type: array
+          items:
+            $ref: "#/components/schemas/ImageRefs"
+    PersonalizedPoisData:
+      type: object
+      additionalProperties: false
+      properties:
+        recommended_pois:
+          type: array
+          items:
+            $ref: "#/components/schemas/Poi"
+        nearby_pois:
+          type: array
+          items:
+            $ref: "#/components/schemas/Poi"
+        routes:
+          type: array
+          items:
+            $ref: "#/components/schemas/Route"
+    ProfileData:
+      type: object
+      additionalProperties: false
+      properties:
+        profile:
+          type: object
+          additionalProperties: false
+          properties:
+            favourite_pois:
+              type: array
+              items:
+                type: string
+            interaction_level:
+              type: string
+            total_engagement_points:
+              type: number
+            engagement_level_index:
+              type: integer
+            engagement_level_name:
+              type: string
+        preferences:
+          type: object
+          additionalProperties: false
+          properties:
+            sub_categories:
+              type: array
+              items:
+                type: string
+            weights:
+              type: array
+              items:
+                type: number
+    Lodging:
+      type: object
+      additionalProperties: false
+      properties:
+        activity_id:
+          type: integer
+        title:
+          type: string
+        thumb_ref:
+          type: string
+        image_ref:
+          type: string
+        address:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        category:
+          type: string
+        subcategory:
+          type: string
+        website:
+          type: string
+        video_ref:
+          type: string
+        company_name:
+          type: string
+    LodgingData:
+      type: object
+      additionalProperties: false
+      properties:
+        lodging:
+          type: array
+          items:
+            $ref: "#/components/schemas/Lodging"
+    LanguageServed:
+      type: object
+      additionalProperties: false
+      properties:
+        description:
+          type: string
+        short_description:
+          type: string
+        label:
+          type: string
+        value:
+          type: string
+    Package:
+      type: object
+      description: Paquete conectado.
+      additionalProperties: false
+      properties:
+        provider_package_id:
+          type: integer
+        destination_id:
+          type: integer
+        name:
+          type: string
+        base_language:
+          type: string
+        thumb_ref:
+          type: string
+        image_ref:
+          type: string
+        credit_author:
+          type: string
+        credit_license:
+          type: string
+        credit_url:
+          type: string
+        description:
+          type: string
+        stop_count:
+          type: integer
+        is_unlocked:
+          type: boolean
+        language_served:
+          $ref: "#/components/schemas/LanguageServed"
+    PackagesData:
+      type: object
+      additionalProperties: false
+      properties:
+        packages:
+          type: array
+          items:
+            $ref: "#/components/schemas/Package"
+    PackageStop:
+      type: object
+      description: Parada de un paquete.
+      additionalProperties: false
+      properties:
+        provider_package_stop_id:
+          type: integer
+        provider_package_id:
+          type: integer
+        order_index:
+          type: integer
+        name:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        radius_m:
+          type: number
+        thumb_ref:
+          type: string
+        image_ref:
+          type: string
+        credit_author:
+          type: string
+        credit_license:
+          type: string
+        credit_url:
+          type: string
+        qr_slug:
+          type: string
+        description:
+          type: string
+        short_description:
+          type: string
+        package_name:
+          type: string
+        base_language:
+          type: string
+        destination_id:
+          type: integer
+        is_unlocked:
+          type: boolean
+        language_served:
+          $ref: "#/components/schemas/LanguageServed"
+        facts:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              fact_id:
+                type: integer
+              order_index:
+                type: integer
+              label:
+                type: string
+              value:
+                type: string
+              language_served:
+                $ref: "#/components/schemas/LanguageServed"
+        media:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              media_id:
+                type: integer
+              image_ref:
+                type: string
+              thumb_ref:
+                type: string
+              credit_author:
+                type: string
+              credit_license:
+                type: string
+              credit_url:
+                type: string
+    PackageDetailsData:
+      type: object
+      additionalProperties: false
+      properties:
+        package:
+          $ref: "#/components/schemas/Package"
+        stops:
+          type: array
+          items:
+            $ref: "#/components/schemas/PackageStop"
+    PackageStopData:
+      type: object
+      additionalProperties: false
+      properties:
+        stop:
+          $ref: "#/components/schemas/PackageStop"
+        unavailable:
+          type: boolean
+        package:
+          type: object
+          additionalProperties: false
+          properties:
+            provider_package_id:
+              type: integer
+            name:
+              type: string
+    TripCreatedData:
+      type: object
+      additionalProperties: false
+      properties:
+        user_trip_id:
+          type: integer
+    PlanningTaskData:
+      type: array
+      description: Actividades propuestas para el viaje (POI y ventana horaria).
+      items:
+        type: object
+        additionalProperties: false
+        properties:
+          place_of_interest_id:
+            type: string
+          start_timestamp:
+            type: string
+          end_timestamp:
+            type: string
+    Leg:
+      type: object
+      additionalProperties: false
+      properties:
+        distance:
+          type: number
+        duration:
+          type: number
+        is_approx:
+          type: boolean
+    DayActivity:
+      type: object
+      description: Actividad de un dia; mezcla POI del viaje y actividades externas (`external_activity_id`).
+      additionalProperties: false
+      properties:
+        user_poi_activity_id:
+          type: integer
+        place_of_interest_id:
+          type: string
+        destination_id:
+          type: integer
+        name:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        tags:
+          type: array
+          items:
+            type: string
+        category:
+          type: string
+        sub_categories:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+        start_timestamp:
+          type: string
+        end_timestamp:
+          type: string
+        timezone:
+          type: string
+        thumb_ref:
+          type: string
+        image_ref:
+          type: string
+        driving:
+          $ref: "#/components/schemas/Leg"
+        walking:
+          $ref: "#/components/schemas/Leg"
+        external_activity_id:
+          type: integer
+        location:
+          type: string
+        note:
+          type: string
+        color:
+          type: string
+    TripSummary:
+      type: object
+      additionalProperties: false
+      properties:
+        user_trip_id:
+          type: integer
+        start_date:
+          type: string
+        end_date:
+          type: string
+        destination_id:
+          type: integer
+        number_of_people:
+          type: integer
+        trip_purpose:
+          type: string
+        destination:
+          $ref: "#/components/schemas/Destination"
+    TripDay:
+      type: object
+      additionalProperties: false
+      properties:
+        date:
+          type: string
+        activities:
+          type: array
+          items:
+            $ref: "#/components/schemas/DayActivity"
+    ScheduleData:
+      type: object
+      additionalProperties: false
+      properties:
+        trip:
+          $ref: "#/components/schemas/TripSummary"
+        trip_activities:
+          type: array
+          items:
+            $ref: "#/components/schemas/TripDay"
+        trip_booked_activities:
+          type: object
+          description: Solo forma; la API v4 no crea actividades de proveedor.
+          additionalProperties: false
+          properties:
+            booked_activities:
+              type: array
+              items:
+                type: object
+                additionalProperties: false
+                properties:
+                  activity_id:
+                    type: integer
+                  checked_in:
+                    type: boolean
+                  checked_out:
+                    type: boolean
+                  start_timestamp:
+                    type: string
+                  end_timestamp:
+                    type: string
+            activities:
+              type: array
+              items:
+                type: object
+                additionalProperties: false
+                properties:
+                  activity_id:
+                    type: integer
+                  title:
+                    type: string
+                  category:
+                    type: string
+                  latitude:
+                    type: number
+                  longitude:
+                    type: number
+                  duration:
+                    type: number
+                  timezone_offset:
+                    type: number
+                  desc:
+                    type: string
+                  short_desc:
+                    type: string
+                  images:
+                    type: array
+                    items:
+                      type: string
+    Label:
+      type: object
+      additionalProperties: false
+      properties:
+        key:
+          type: string
+        text:
+          type: string
+          description: Texto en el language_code pedido
+        image_ref:
+          type: string
+          description: Solo para group_code tag
+    AppConfigData:
+      type: object
+      additionalProperties: false
+      properties:
+        partner_gate_enabled:
+          type: boolean
+        approved_partners:
+          type: array
+          items:
+            type: string
+    PlanItem:
+      type: object
+      additionalProperties: false
+      properties:
+        item_id:
+          type: string
+        score:
+          type: number
+        meta:
+          type: object
+          additionalProperties: false
+          properties:
+            name:
+              type: string
+            score:
+              type: number
+            time_h:
+              type: number
+            category:
+              type: string
+            duration:
+              type: number
+            location:
+              type: string
+            breakfast:
+              type: boolean
+            hidden_gem:
+              type: boolean
+            locomotion:
+              type: string
+            must_visit:
+              type: boolean
+            destination:
+              type: string
+            distance_km:
+              type: number
+            instagrammer:
+              type: boolean
+    PlanStatusData:
+      type: object
+      additionalProperties: false
+      properties:
+        task_id:
+          type: string
+        status:
+          type: string
+        result:
+          type: object
+          description: Un dia por clave (`day_0`, `day_1`, ...) con sus items.
+          additionalProperties: false
+          patternProperties:
+            "^day_[0-9]+$":
+              type: array
+              items:
+                $ref: "#/components/schemas/PlanItem"
+    ChatAction:
+      type: object
+      description: Accion del agente. Solo salen las acciones listadas en `name`; el resto se descarta.
+      required:
+        - name
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          enum:
+            - speak
+            - text
+            - redirect
+            - raw_data
+            - gesture
+            - changeRebecaDress
+        parameters:
+          type: object
+          description: >-
+            Segun `name`: `speak` {text, language_code}; `text` {text}; `redirect` {destiny};
+            `gesture` {gestures}; `changeRebecaDress` {destination_id}; `raw_data` {data}, donde
+            `data` (objeto o lista) es la union de los campos de `ChatRawData`.
+          additionalProperties: false
+          properties:
+            text:
+              type: string
+            language_code:
+              type: string
+            destiny:
+              type: string
+            gestures:
+              type: array
+              items:
+                type: string
+            destination_id:
+              type: integer
+            data:
+              oneOf:
+                - $ref: "#/components/schemas/ChatRawData"
+                - type: array
+                  items:
+                    $ref: "#/components/schemas/ChatRawData"
+    ChatRawData:
+      type: object
+      description: Contenido de una accion `raw_data` (fichas de destino, plan asincrono, POI, alojamiento, itinerario).
+      additionalProperties: false
+      properties:
+        title:
+          type: string
+        text:
+          type: string
+        description:
+          type: string
+        image:
+          type: string
+        images:
+          type: array
+          items:
+            type: string
+        thumb_ref:
+          type: string
+        thumb_refs:
+          type: array
+          items:
+            type: string
+        video_ref:
+          type: string
+        video_refs:
+          type: array
+          items:
+            type: string
+        videos:
+          type: array
+          items:
+            type: string
+        task_id:
+          type: string
+          description: Id para consultar `GET /plan-status/{task_id}`.
+        status:
+          type: string
+        destination_id:
+          type: integer
+        categories:
+          type: array
+          items:
+            type: string
+        tags:
+          type: array
+          items:
+            type: string
+        pois:
+          type: array
+          items:
+            $ref: "#/components/schemas/Poi"
+        accommodation_name:
+          type: string
+        accommodation_code:
+          type: string
+        accommodation_description:
+          type: string
+        accommodation_spaces:
+          type: number
+        accommodation_items:
+          type: array
+          items:
+            type: string
+        price:
+          type: number
+        availability:
+          type: boolean
+        latitude:
+          type: number
+        longitude:
+          type: number
+        trip:
+          $ref: "#/components/schemas/TripSummary"
+        trip_activities:
+          type: array
+          items:
+            $ref: "#/components/schemas/TripDay"
+        plan:
+          type: object
+          additionalProperties: false
+          properties:
+            trip:
+              $ref: "#/components/schemas/TripSummary"
+            trip_activities:
+              type: array
+              items:
+                $ref: "#/components/schemas/TripDay"
+    ChatData:
+      type: object
+      description: Respuesta del agente. Solo salen los campos listados.
+      additionalProperties: false
+      properties:
+        actions:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChatAction"
+        thread_id:
+          type: string
+          description: Identificador del hilo de la conversacion.
   responses:
     BadRequest:
       description: Validacion fallida
@@ -1171,7 +1992,7 @@ components:
               - type: origin
                 msg: Origin not allowed
     NotFound:
-      description: Recurso no encontrado (un viaje ajeno o inexistente responde igual)
+      description: Recurso no encontrado (un viaje o task_id ajeno o inexistente responde igual)
       content:
         application/json:
           schema:
@@ -1204,7 +2025,7 @@ components:
               - type: generic
                 msg: An error occurred! Try again later
     TooManyRequests:
-      description: Cuota diaria superada
+      description: Cuota diaria superada (5000/dia por negocio para claves publicables sin cuota propia)
       headers:
         Retry-After:
           description: Segundos hasta que se reinicia la cuota (medianoche UTC).

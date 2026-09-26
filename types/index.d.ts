@@ -6230,7 +6230,7 @@ export interface components {
         };
         PublicApiQuota: {
             prov_id: number;
-            /** @description null = sin limite */
+            /** @description null = sin cuota propia = valores por defecto (5000/dia por negocio para keys publicables, contando solo keys publicables; sin limite para secret) */
             daily_quota: number | null;
         };
     };
@@ -18722,7 +18722,7 @@ export interface operations {
             content: {
                 "application/json": {
                     prov_id: number;
-                    /** @description null u omitido = sin limite */
+                    /** @description null u omitido borra la cuota propia del negocio (sin cuota propia = valores por defecto, 5000 peticiones/dia por negocio para keys publicables, contando solo keys publicables; sin limite para secret) */
                     daily_quota?: number | null;
                 };
             };
