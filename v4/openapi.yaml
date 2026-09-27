@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Rebeca API publica v4
-  version: 1.8.0
+  version: 1.9.0
   description: 'API publica de Rebeca para integradores. Flujo: 1) `POST /session` con tu API key
     (`X-Api-Key`) devuelve un token de usuario final de 30 minutos; 2) el resto de rutas usan ese
     token en `Authorization: Bearer`. Las claves `rbk_live_` son solo de servidor; las `rbk_pub_`
@@ -306,6 +306,11 @@ paths:
       tags:
         - v4
       summary: Lugares recomendados para el usuario
+      description: 'Las rutas de `data.routes` siguen la misma regla de visibilidad que `GET /routes`:
+        sea S el destino pedido (con sus descendientes, como hoy); una ruta sale si su
+        `destination_id` esta en S o alguna de sus paradas tiene un POI cuyo destino esta en S. No
+        se sube a ancestros; los POIs con destino nulo no cuentan; una ruta con `destination_id`
+        nulo puede salir por sus paradas. Se devuelve la ruta completa, sin recortar paradas.'
       security:
         - bearerUserToken: []
       requestBody:
@@ -347,6 +352,12 @@ paths:
       tags:
         - v4
       summary: Rutas turisticas
+      description: 'Sea S el conjunto de destinos pedido (con `destination_id`, ese id y sus
+        descendientes, como hoy; con `destination_ids`, los ids tal cual, sin expandir). Una ruta
+        sale si su `destination_id` esta en S o alguna de sus paradas tiene un POI cuyo destino
+        esta en S; no se sube a ancestros. Los POIs con destino nulo no cuentan; una ruta con
+        `destination_id` nulo puede salir por sus paradas. Se devuelve la ruta completa, sin
+        recortar paradas.'
       security:
         - bearerUserToken: []
       parameters:
@@ -1305,6 +1316,16 @@ components:
             type: string
         destination_id:
           type: integer
+          description: Destino principal de la ruta, ancla del listado del admin y del import. Ya
+            no decide por si solo la visibilidad (ver `destination_ids`).
+        destination_ids:
+          type: array
+          items:
+            type: integer
+          description: Destinos donde aparece la ruta, distintos y no nulos, de los POIs de sus
+            paradas, ordenados ascendente. Si queda vacio, es `[destination_id]` cuando no es
+            nulo, si no, lista vacia. El destino principal no se añade cuando hay paradas con
+            destino propio.
         destination_name:
           type: string
         image_ref:
@@ -1331,6 +1352,8 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/ImageRefs"
+      required:
+        - destination_ids
     PersonalizedPoisData:
       type: object
       additionalProperties: false
