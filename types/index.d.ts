@@ -5955,6 +5955,12 @@ export interface components {
         };
         /** @description Ficha del POI de la parada, SOLO LECTURA (GET tour-route). El dueno de este texto es el catalogo de POIs (poi_localized/poi_images), no la ruta: el editor de rutas lo muestra, nunca lo escribe. No entra en ningun payload de escritura — UpdateTourRoutePayload y equivalentes lo ignoran si llega. */
         TourStopPoiInfo: {
+            /** @description Destino al que pertenece el POI de la parada, para que el editor de rutas pinte y etiquete paradas de destinos distintos al principal. Solo lectura. */
+            destination_id?: number | null;
+            /** @description Coordenada del POI de la parada, para que el editor de rutas lo pinte en el mapa. Solo lectura. */
+            latitude?: number | null;
+            /** @description Coordenada del POI de la parada, para que el editor de rutas lo pinte en el mapa. Solo lectura. */
+            longitude?: number | null;
             "description-es"?: string | null;
             "description-en"?: string | null;
             "description-pt"?: string | null;
