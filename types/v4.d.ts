@@ -118,7 +118,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Lugares recomendados para el usuario */
+        /**
+         * Lugares recomendados para el usuario
+         * @description Las rutas de `data.routes` siguen la misma regla de visibilidad que `GET /routes`: sea S el destino pedido (con sus descendientes, como hoy); una ruta sale si su `destination_id` esta en S o alguna de sus paradas tiene un POI cuyo destino esta en S. No se sube a ancestros; los POIs con destino nulo no cuentan; una ruta con `destination_id` nulo puede salir por sus paradas. Se devuelve la ruta completa, sin recortar paradas.
+         */
         post: operations["getPersonalizedPois"];
         delete?: never;
         options?: never;
@@ -133,7 +136,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Rutas turisticas */
+        /**
+         * Rutas turisticas
+         * @description Sea S el conjunto de destinos pedido (con `destination_id`, ese id y sus descendientes, como hoy; con `destination_ids`, los ids tal cual, sin expandir). Una ruta sale si su `destination_id` esta en S o alguna de sus paradas tiene un POI cuyo destino esta en S; no se sube a ancestros. Los POIs con destino nulo no cuentan; una ruta con `destination_id` nulo puede salir por sus paradas. Se devuelve la ruta completa, sin recortar paradas.
+         */
         get: operations["listRoutes"];
         put?: never;
         post?: never;
@@ -506,7 +512,10 @@ export interface components {
             location?: string;
             duration?: number;
             tags?: string[];
+            /** @description Destino principal de la ruta, ancla del listado del admin y del import. Ya no decide por si solo la visibilidad (ver `destination_ids`). */
             destination_id?: number;
+            /** @description Destinos donde aparece la ruta, distintos y no nulos, de los POIs de sus paradas, ordenados ascendente. Si queda vacio, es `[destination_id]` cuando no es nulo, si no, lista vacia. El destino principal no se añade cuando hay paradas con destino propio. */
+            destination_ids: number[];
             destination_name?: string;
             image_ref?: string;
             thumb_ref?: string;

@@ -11757,6 +11757,18 @@ components:
         muestra, nunca lo escribe. No entra en ningun payload de escritura — UpdateTourRoutePayload
         y equivalentes lo ignoran si llega.'
       properties:
+        destination_id:
+          type: [integer, 'null']
+          description: Destino al que pertenece el POI de la parada, para que el editor de rutas
+            pinte y etiquete paradas de destinos distintos al principal. Solo lectura.
+        latitude:
+          type: [number, 'null']
+          description: Coordenada del POI de la parada, para que el editor de rutas lo pinte en el
+            mapa. Solo lectura.
+        longitude:
+          type: [number, 'null']
+          description: Coordenada del POI de la parada, para que el editor de rutas lo pinte en el
+            mapa. Solo lectura.
         description-es:
           type: [string, 'null']
         description-en:
