@@ -692,7 +692,7 @@ export interface components {
         ScheduleData: {
             trip?: components["schemas"]["TripSummary"];
             trip_activities?: components["schemas"]["TripDay"][];
-            /** @description Solo forma; la API v4 no crea actividades de proveedor. */
+            /** @description Solo forma; esta API no crea actividades de proveedor. */
             trip_booked_activities?: {
                 booked_activities?: {
                     activity_id?: number;
@@ -964,7 +964,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: {
-                /** @description Token v4 previo (puede estar caducado) para renovar sobre el mismo usuario anonimo. */
+                /** @description Token previo de esta API (puede estar caducado) para renovar sobre el mismo usuario anonimo. */
                 Authorization?: string;
             };
             path?: never;

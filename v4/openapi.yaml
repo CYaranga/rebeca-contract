@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
-  title: Rebeca API publica v4
-  version: 1.9.0
+  title: Rebeca API publica v1
+  version: 1.10.0
   description: 'API publica de Rebeca para integradores. Flujo: 1) `POST /session` con tu API key
     (`X-Api-Key`) devuelve un token de usuario final de 30 minutos; 2) el resto de rutas usan ese
     token en `Authorization: Bearer`. Las claves `rbk_live_` son solo de servidor; las `rbk_pub_`
@@ -20,19 +20,19 @@ info:
     tiene una cuota propia, manda esa cuota. Al superarla: `429` con cabecera
     `Retry-After`.'
 servers:
-  - url: https://rebeca.app/api/dev/v4
+  - url: https://rebeca.app/api/dev/public/v1
     description: dev
-  - url: https://rebeca.app/api/v4
+  - url: https://rebeca.app/api/public/v1
     description: prod
 tags:
-  - name: v4
-    description: API publica v4
+  - name: public
+    description: API publica v1
 paths:
   /session:
     post:
       operationId: createSession
       tags:
-        - v4
+        - public
       summary: Crea (o renueva) la sesion de un usuario final anonimo
       description: "Unica ruta que usa la API key. Con `rbk_live_` (servidor) o `rbk_pub_` (navegador; el
         `Origin` debe estar en la allowlist del negocio). Devuelve el token de usuario final (30
@@ -44,7 +44,7 @@ paths:
         - name: Authorization
           in: header
           required: false
-          description: Token v4 previo (puede estar caducado) para renovar sobre el mismo usuario anonimo.
+          description: Token previo de esta API (puede estar caducado) para renovar sobre el mismo usuario anonimo.
           schema:
             type: string
             example: Bearer eyJhbGciOi...
@@ -81,7 +81,7 @@ paths:
     post:
       operationId: chat
       tags:
-        - v4
+        - public
       summary: Pregunta al agente del negocio
       security:
         - bearerUserToken: []
@@ -137,7 +137,7 @@ paths:
     get:
       operationId: listDestinations
       tags:
-        - v4
+        - public
       summary: Lista de destinos
       security:
         - bearerUserToken: []
@@ -179,7 +179,7 @@ paths:
     get:
       operationId: getDestination
       tags:
-        - v4
+        - public
       summary: Detalle de un destino
       security:
         - bearerUserToken: []
@@ -213,7 +213,7 @@ paths:
     get:
       operationId: listPois
       tags:
-        - v4
+        - public
       summary: Lugares de interes
       security:
         - bearerUserToken: []
@@ -263,7 +263,7 @@ paths:
     post:
       operationId: getPoiDetails
       tags:
-        - v4
+        - public
       summary: Detalle de un lugar de interes
       security:
         - bearerUserToken: []
@@ -304,7 +304,7 @@ paths:
     post:
       operationId: getPersonalizedPois
       tags:
-        - v4
+        - public
       summary: Lugares recomendados para el usuario
       description: 'Las rutas de `data.routes` siguen la misma regla de visibilidad que `GET /routes`:
         sea S el destino pedido (con sus descendientes, como hoy); una ruta sale si su
@@ -350,7 +350,7 @@ paths:
     get:
       operationId: listRoutes
       tags:
-        - v4
+        - public
       summary: Rutas turisticas
       description: 'Sea S el conjunto de destinos pedido (con `destination_id`, ese id y sus
         descendientes, como hoy; con `destination_ids`, los ids tal cual, sin expandir). Una ruta
@@ -405,7 +405,7 @@ paths:
     post:
       operationId: setFavourite
       tags:
-        - v4
+        - public
       summary: Marca o desmarca un lugar como favorito
       security:
         - bearerUserToken: []
@@ -445,7 +445,7 @@ paths:
     get:
       operationId: getProfile
       tags:
-        - v4
+        - public
       summary: Perfil del usuario (favoritos)
       security:
         - bearerUserToken: []
@@ -472,7 +472,7 @@ paths:
     get:
       operationId: listLodging
       tags:
-        - v4
+        - public
       summary: Alojamientos conectados
       security:
         - bearerUserToken: []
@@ -505,7 +505,7 @@ paths:
     get:
       operationId: listPackages
       tags:
-        - v4
+        - public
       summary: Paquetes conectados
       security:
         - bearerUserToken: []
@@ -546,7 +546,7 @@ paths:
     get:
       operationId: getPackageDetails
       tags:
-        - v4
+        - public
       summary: Detalle de un paquete
       security:
         - bearerUserToken: []
@@ -580,7 +580,7 @@ paths:
     get:
       operationId: getPackageStop
       tags:
-        - v4
+        - public
       summary: Parada de un paquete por QR
       security:
         - bearerUserToken: []
@@ -614,7 +614,7 @@ paths:
     post:
       operationId: geocode
       tags:
-        - v4
+        - public
       summary: Convierte una direccion en coordenadas
       security:
         - bearerUserToken: []
@@ -665,7 +665,7 @@ paths:
     get:
       operationId: getPlanStatus
       tags:
-        - v4
+        - public
       summary: Estado de la generacion asincrona de un itinerario
       description: Solo responde al usuario final que recibio ese `task_id` en su chat (mismo negocio).
         Cualquier otro caso (task_id de otro usuario, de otro negocio o inexistente) responde `404`
@@ -703,7 +703,7 @@ paths:
     post:
       operationId: createTrip
       tags:
-        - v4
+        - public
       summary: Crea un viaje
       security:
         - bearerUserToken: []
@@ -752,7 +752,7 @@ paths:
     get:
       operationId: generatePlanning
       tags:
-        - v4
+        - public
       summary: Genera el itinerario de un viaje (asincrono)
       security:
         - bearerUserToken: []
@@ -809,7 +809,7 @@ paths:
     post:
       operationId: setSchedule
       tags:
-        - v4
+        - public
       summary: Guarda las actividades del itinerario de un viaje
       security:
         - bearerUserToken: []
@@ -858,7 +858,7 @@ paths:
     get:
       operationId: getSchedule
       tags:
-        - v4
+        - public
       summary: Lee el itinerario de un viaje
       security:
         - bearerUserToken: []
@@ -894,7 +894,7 @@ paths:
     put:
       operationId: addScheduleActivity
       tags:
-        - v4
+        - public
       summary: Anade una actividad externa al itinerario
       security:
         - bearerUserToken: []
@@ -946,7 +946,7 @@ paths:
     post:
       operationId: addPreferences
       tags:
-        - v4
+        - public
       summary: Registra preferencias del usuario
       security:
         - bearerUserToken: []
@@ -991,7 +991,7 @@ paths:
     post:
       operationId: localizeLabels
       tags:
-        - v4
+        - public
       summary: Textos localizados por grupo
       security:
         - bearerUserToken: []
@@ -1032,7 +1032,7 @@ paths:
     get:
       operationId: getAppConfig
       tags:
-        - v4
+        - public
       summary: Configuracion publica de la app
       security:
         - bearerUserToken: []
@@ -1714,7 +1714,7 @@ components:
             $ref: "#/components/schemas/TripDay"
         trip_booked_activities:
           type: object
-          description: Solo forma; la API v4 no crea actividades de proveedor.
+          description: Solo forma; esta API no crea actividades de proveedor.
           additionalProperties: false
           properties:
             booked_activities:
