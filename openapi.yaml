@@ -97,6 +97,8 @@ tags:
 - name: whatsapp
 - name: widget
 - name: widget_auth
+- name: admin-catalog
+- name: catalog
 paths:
   /admins/add:
     post:
@@ -160,7 +162,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericResult'
+                $ref: '#/components/schemas/AdminLoginResponse'
   /admins/edit:
     post:
       operationId: editAdmin
@@ -10787,6 +10789,481 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PublicApiErrorResponse"
+  /admin/catalog/sheet:
+    get:
+      operationId: getCatalogSheet
+      tags:
+      - admin-catalog
+      summary: GET /admin/catalog/sheet
+      description: 'Borrador de la hoja de precios del negocio. Devuelve `cells` tal cual los escribio
+        el proveedor y, aparte, `values`/`errors` que calcula SIEMPRE el servidor (el navegador no
+        manda valores calculados). Admin con alcance: se usa su provider_id y business_id se ignora.
+        Admin sin alcance: business_id obligatorio, sin el responde 400.'
+      x-source: 'contrato adelantado por el architect (run catalogo-tramos-regalos, decisions.md
+        Q4/Q6); aun sin implementar en rebeca-backend'
+      security:
+      - bearerAuth: []
+      parameters:
+      - $ref: '#/components/parameters/CatalogBusinessIdQuery'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogSheetDraft'
+              example:
+                cells:
+                  B9: Box Ejecutiva
+                  G9: 20
+                  C9: =+D9+0.3
+                values:
+                  B9: Box Ejecutiva
+                  G9: 20
+                  C9: 20.3
+                errors: {}
+                updated_at: '2026-09-30T12:00:00Z'
+        '400':
+          description: Falta business_id (admin sin alcance)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      operationId: putCatalogSheet
+      tags:
+      - admin-catalog
+      summary: PUT /admin/catalog/sheet
+      description: 'Reemplaza el borrador. `cells` es un mapa disperso con solo lo que escribe el
+        proveedor (valores literales o formulas que empiezan por =). Responde el borrador con
+        values/errors recalculados. No inserta ni borra filas (decisions.md Q12).'
+      x-source: 'contrato adelantado por el architect (run catalogo-tramos-regalos, decisions.md
+        Q4/Q6); aun sin implementar en rebeca-backend'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                business_id:
+                  type: integer
+                  description: Solo para admins sin alcance (obligatorio); con alcance se ignora.
+                cells:
+                  $ref: '#/components/schemas/CatalogSheetCells'
+              required:
+              - cells
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogSheetDraft'
+        '400':
+          description: cells invalido, o falta business_id (admin sin alcance)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /admin/catalog/sheet/publish:
+    post:
+      operationId: publishCatalogSheet
+      tags:
+      - admin-catalog
+      summary: POST /admin/catalog/sheet/publish
+      description: 'Valida el borrador y lo publica a product/precios. Con errores responde 400 y
+        `errors` lista celda -> motivo; no se publica nada.'
+      x-source: 'contrato adelantado por el architect (run catalogo-tramos-regalos, decisions.md
+        Q6); aun sin implementar en rebeca-backend'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                business_id:
+                  type: integer
+                  description: Solo para admins sin alcance (obligatorio); con alcance se ignora.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  published_at:
+                    type: string
+                    format: date-time
+                  product_count:
+                    type: integer
+                  price_count:
+                    type: integer
+                required:
+                - published_at
+                - product_count
+                - price_count
+              example:
+                published_at: '2026-09-30T12:00:00Z'
+                product_count: 21
+                price_count: 189
+        '400':
+          description: El borrador tiene errores (o falta business_id para admin sin alcance)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CatalogSheetError'
+                required:
+                - error
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /admin/catalog/products:
+    get:
+      operationId: listCatalogProducts
+      tags:
+      - admin-catalog
+      summary: GET /admin/catalog/products
+      description: 'Productos del catalogo del negocio con su margen por tramo (vista de admin: aqui
+        si hay cost_base, suggested_price y margin).'
+      x-source: 'contrato adelantado por el architect (run catalogo-tramos-regalos, decisions.md
+        Q6); aun sin implementar en rebeca-backend'
+      security:
+      - bearerAuth: []
+      parameters:
+      - $ref: '#/components/parameters/CatalogBusinessIdQuery'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CatalogAdminProduct'
+              example:
+              - product_id: 1
+                name: Caja de regalo
+                content: null
+                image_ref: null
+                thumb_ref: null
+                add_igv: true
+                is_active: true
+                sheet_binding:
+                  row: 5
+                tiers:
+                - min_quantity: 1
+                  cost_base: 10
+                  suggested_price: 14
+                  margin: 0.29
+        '400':
+          description: Falta business_id (admin sin alcance)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      operationId: createCatalogProduct
+      tags:
+      - admin-catalog
+      summary: POST /admin/catalog/products
+      description: Crea un producto vinculado a un bloque de la hoja (sheet_binding).
+      x-source: 'contrato adelantado por el architect (run catalogo-tramos-regalos, decisions.md
+        Q5/Q6); aun sin implementar en rebeca-backend'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                business_id:
+                  type: integer
+                  description: Solo para admins sin alcance (obligatorio); con alcance se ignora.
+                name:
+                  type: string
+                sheet_binding:
+                  $ref: '#/components/schemas/CatalogSheetBinding'
+              required:
+              - name
+              - sheet_binding
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogAdminProduct'
+              example:
+                product_id: 1
+                name: Caja de regalo
+                content: null
+                image_ref: null
+                thumb_ref: null
+                add_igv: true
+                is_active: true
+                sheet_binding:
+                  row: 5
+                tiers:
+                - min_quantity: 1
+                  cost_base: 10
+                  suggested_price: 14
+                  margin: 0.29
+        '400':
+          description: Datos invalidos, o falta business_id (admin sin alcance)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /admin/catalog/products/{id}:
+    patch:
+      operationId: updateCatalogProduct
+      tags:
+      - admin-catalog
+      summary: PATCH /admin/catalog/products/:id
+      description: 'Actualiza add_igv, is_active y/o sheet_binding. Un producto de otro negocio
+        responde 404 (admin con alcance).'
+      x-source: 'contrato adelantado por el architect (run catalogo-tramos-regalos, decisions.md
+        Q6); aun sin implementar en rebeca-backend'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                business_id:
+                  type: integer
+                  description: Solo para admins sin alcance (obligatorio); con alcance se ignora.
+                add_igv:
+                  type: boolean
+                is_active:
+                  type: boolean
+                sheet_binding:
+                  $ref: '#/components/schemas/CatalogSheetBinding'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogAdminProduct'
+              example:
+                product_id: 1
+                name: Caja de regalo
+                content: null
+                image_ref: null
+                thumb_ref: null
+                add_igv: true
+                is_active: true
+                sheet_binding:
+                  row: 5
+                tiers:
+                - min_quantity: 1
+                  cost_base: 10
+                  suggested_price: 14
+                  margin: 0.29
+        '400':
+          description: Datos invalidos, o falta business_id (admin sin alcance)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Producto inexistente o de otro negocio
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /admin/catalog/products/{id}/image:
+    post:
+      operationId: uploadCatalogProductImage
+      tags:
+      - admin-catalog
+      summary: POST /admin/catalog/products/:id/image
+      description: 'Imagen del producto. Una imagen por llamada (mismo motivo que POST
+        /package/image: multer sin limits).'
+      x-source: 'contrato adelantado por el architect (run catalogo-tramos-regalos, decisions.md
+        Q5); aun sin implementar en rebeca-backend'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                business_id:
+                  type: integer
+                  description: Solo para admins sin alcance (obligatorio); con alcance se ignora.
+                image:
+                  type: string
+                  format: binary
+              required:
+              - image
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  image_ref:
+                    type: string
+                  thumb_ref:
+                    type: string
+                required:
+                - image_ref
+                - thumb_ref
+              example:
+                image_ref: catalog/7/12.jpg
+                thumb_ref: catalog/7/12_thumb.jpg
+        '400':
+          description: Imagen invalida, o falta business_id (admin sin alcance)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Producto inexistente o de otro negocio
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /catalog/{business_key}/products:
+    get:
+      operationId: searchCatalogProducts
+      tags:
+      - catalog
+      summary: GET /catalog/:business_key/products
+      description: 'Catalogo publico para el agente. business_key = provider.catalog_key (opaco, no el
+        prov_id). Solo nombre, contenido, imagen y precio por unidad del tramo que corresponde a
+        `quantity` (con IGV aplicado si el producto tiene add_igv). Nunca expone costo base, precio
+        sugerido ni margen. Con quantity > 1000 responde needs_human=true y sin productos.'
+      x-source: 'contrato adelantado por el architect (run catalogo-tramos-regalos, decisions.md Q3);
+        aun sin implementar en rebeca-backend. No es /public/v1'
+      security: []
+      parameters:
+      - name: business_key
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: quantity
+        in: query
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Unidades que quiere el cliente; define el tramo de precio.
+      - name: max_unit_price
+        in: query
+        required: false
+        schema:
+          type: number
+        description: Filtra los productos cuyo precio por unidad supera este valor.
+      - name: text
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Busqueda libre por nombre o contenido.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogPublicSearchResult'
+              example:
+                needs_human: false
+                products:
+                - name: Box Ejecutiva
+                  content: Libreta A5, lapicero y caja blanca
+                  image_ref: catalog/7/12.jpg
+                  unit_price: 33.99
+        '400':
+          description: quantity ausente o invalida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: business_key desconocido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   securitySchemes:
     bearerAuth:
@@ -10805,6 +11282,13 @@ components:
         POST/GET/DELETE /logs/auth/tokens. Sustituye las env vars LOGGER_KEY_*. Valida `source` en cada
         POST /logs/batch y POST /logs/bugs; sin rate limit por IP (Q11-bis).'
   parameters:
+    CatalogBusinessIdQuery:
+      name: business_id
+      in: query
+      required: false
+      description: Obligatorio para admins sin alcance (400 si falta); con alcance se ignora y se usa su provider_id.
+      schema:
+        type: integer
     XSessionIdHeader:
       name: X-Session-Id
       in: header
@@ -12450,3 +12934,148 @@ components:
             - integer
             - "null"
           description: null = sin cuota propia = valores por defecto (5000/dia por negocio para keys publicables, contando solo keys publicables; sin limite para secret)
+    CatalogSheetCells:
+      type: object
+      description: 'Mapa disperso celda -> contenido, con la notacion A1 ("B9", "G9"). Solo lo que
+        escribe el proveedor: literales o formulas que empiezan por "=".'
+      additionalProperties:
+        type: [string, number, 'null']
+    CatalogSheetError:
+      type: object
+      properties:
+        cell:
+          type: string
+        reason:
+          type: string
+      required:
+      - cell
+      - reason
+    CatalogSheetDraft:
+      type: object
+      properties:
+        cells:
+          $ref: '#/components/schemas/CatalogSheetCells'
+        values:
+          type: object
+          description: Valor calculado por el servidor para cada celda de cells.
+          additionalProperties:
+            type: [string, number, 'null']
+        errors:
+          type: object
+          description: Celda -> motivo, solo para las celdas que no se pudieron calcular.
+          additionalProperties:
+            type: string
+        updated_at:
+          type: [string, 'null']
+          format: date-time
+      required:
+      - cells
+      - values
+      - errors
+    CatalogSheetBinding:
+      type: object
+      description: 'Vinculo del producto con un bloque de la hoja. `row` es la fila de cabecera del
+        bloque; Publicar comprueba que la cabecera coincida con product.name (decisions.md Q12: sin
+        insertar ni borrar filas).'
+      properties:
+        row:
+          type: integer
+          minimum: 1
+      required:
+      - row
+      additionalProperties: true
+    CatalogAdminTier:
+      type: object
+      description: Un tramo de cantidad con sus costos y margen. Solo en la vista de admin.
+      properties:
+        min_quantity:
+          type: integer
+        cost_base:
+          type: number
+        suggested_price:
+          type: number
+        margin:
+          type: number
+          description: Fraccion (0.25 = 25 %) sobre el precio sugerido.
+      required:
+      - min_quantity
+      - cost_base
+      - suggested_price
+      - margin
+    CatalogAdminProduct:
+      type: object
+      properties:
+        product_id:
+          type: integer
+        name:
+          type: string
+        content:
+          type: [string, 'null']
+        image_ref:
+          type: [string, 'null']
+        thumb_ref:
+          type: [string, 'null']
+        add_igv:
+          type: boolean
+        is_active:
+          type: boolean
+        sheet_binding:
+          $ref: '#/components/schemas/CatalogSheetBinding'
+        tiers:
+          type: array
+          items:
+            $ref: '#/components/schemas/CatalogAdminTier'
+      required:
+      - product_id
+      - name
+      - add_igv
+      - is_active
+      - sheet_binding
+      - tiers
+    CatalogPublicProduct:
+      type: object
+      description: Vista publica (agente). Sin costo, precio sugerido ni margen.
+      properties:
+        name:
+          type: string
+        content:
+          type: [string, 'null']
+        image_ref:
+          type: [string, 'null']
+        unit_price:
+          type: number
+          description: Precio por unidad del tramo de la cantidad pedida, con IGV si add_igv.
+      required:
+      - name
+      - unit_price
+    CatalogPublicSearchResult:
+      type: object
+      properties:
+        needs_human:
+          type: boolean
+          description: true cuando quantity > 1000; el agente deriva a una persona y products viene vacio.
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/CatalogPublicProduct'
+      required:
+      - needs_human
+      - products
+    AdminLoginProvider:
+      type: object
+      description: Negocio del admin devuelto por el login.
+      properties:
+        vertical:
+          type: [string, 'null']
+          description: Opcional. 'retail' hace que el admin muestre la pestana Catalogo.
+      additionalProperties: true
+    AdminLoginResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            provider:
+              $ref: '#/components/schemas/AdminLoginProvider'
+          additionalProperties: true
+      additionalProperties: true

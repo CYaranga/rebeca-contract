@@ -724,4 +724,20 @@ export const handlers = [
   http.get("*/public-api/quota", () => HttpResponse.json({})),
   // setPublicApiQuota
   http.put("*/public-api/quota", () => HttpResponse.json({})),
+  // getCatalogSheet
+  http.get("*/admin/catalog/sheet", () => HttpResponse.json({"cells":{"B9":"Box Ejecutiva","G9":20,"C9":"=+D9+0.3"},"values":{"B9":"Box Ejecutiva","G9":20,"C9":20.3},"errors":{},"updated_at":"2026-09-30T12:00:00Z"})),
+  // putCatalogSheet
+  http.put("*/admin/catalog/sheet", () => HttpResponse.json({})),
+  // publishCatalogSheet
+  http.post("*/admin/catalog/sheet/publish", () => HttpResponse.json({"published_at":"2026-09-30T12:00:00Z","product_count":21,"price_count":189})),
+  // listCatalogProducts
+  http.get("*/admin/catalog/products", () => HttpResponse.json([{"product_id":1,"name":"Caja de regalo","content":null,"image_ref":null,"thumb_ref":null,"add_igv":true,"is_active":true,"sheet_binding":{"row":5},"tiers":[{"min_quantity":1,"cost_base":10,"suggested_price":14,"margin":0.29}]}])),
+  // createCatalogProduct
+  http.post("*/admin/catalog/products", () => HttpResponse.json({"product_id":1,"name":"Caja de regalo","content":null,"image_ref":null,"thumb_ref":null,"add_igv":true,"is_active":true,"sheet_binding":{"row":5},"tiers":[{"min_quantity":1,"cost_base":10,"suggested_price":14,"margin":0.29}]})),
+  // updateCatalogProduct
+  http.patch("*/admin/catalog/products/:id", () => HttpResponse.json({"product_id":1,"name":"Caja de regalo","content":null,"image_ref":null,"thumb_ref":null,"add_igv":true,"is_active":true,"sheet_binding":{"row":5},"tiers":[{"min_quantity":1,"cost_base":10,"suggested_price":14,"margin":0.29}]})),
+  // uploadCatalogProductImage
+  http.post("*/admin/catalog/products/:id/image", () => HttpResponse.json({"image_ref":"catalog/7/12.jpg","thumb_ref":"catalog/7/12_thumb.jpg"})),
+  // searchCatalogProducts
+  http.get("*/catalog/:business_key/products", () => HttpResponse.json({"needs_human":false,"products":[{"name":"Box Ejecutiva","content":"Libreta A5, lapicero y caja blanca","image_ref":"catalog/7/12.jpg","unit_price":33.99}]})),
 ];
