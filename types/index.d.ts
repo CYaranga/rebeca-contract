@@ -5469,6 +5469,134 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/catalog/sheet": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /admin/catalog/sheet
+         * @description Borrador de la hoja de precios del negocio. Devuelve `cells` tal cual los escribio el proveedor y, aparte, `values`/`errors` que calcula SIEMPRE el servidor (el navegador no manda valores calculados). Admin con alcance: se usa su provider_id y business_id se ignora. Admin sin alcance: business_id obligatorio, sin el responde 400.
+         */
+        get: operations["getCatalogSheet"];
+        /**
+         * PUT /admin/catalog/sheet
+         * @description Reemplaza el borrador. `cells` es un mapa disperso con solo lo que escribe el proveedor (valores literales o formulas que empiezan por =). Responde el borrador con values/errors recalculados. No inserta ni borra filas (decisions.md Q12).
+         */
+        put: operations["putCatalogSheet"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/catalog/sheet/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * POST /admin/catalog/sheet/publish
+         * @description Valida el borrador y lo publica a product/precios. Con errores responde 400 y `errors` lista celda -> motivo; no se publica nada.
+         */
+        post: operations["publishCatalogSheet"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/catalog/products": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /admin/catalog/products
+         * @description Productos del catalogo del negocio con su margen por tramo (vista de admin: aqui si hay cost_base, suggested_price y margin).
+         */
+        get: operations["listCatalogProducts"];
+        put?: never;
+        /**
+         * POST /admin/catalog/products
+         * @description Crea un producto vinculado a un bloque de la hoja (sheet_binding).
+         */
+        post: operations["createCatalogProduct"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/catalog/products/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * PATCH /admin/catalog/products/:id
+         * @description Actualiza add_igv, is_active y/o sheet_binding. Un producto de otro negocio responde 404 (admin con alcance).
+         */
+        patch: operations["updateCatalogProduct"];
+        trace?: never;
+    };
+    "/admin/catalog/products/{id}/image": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * POST /admin/catalog/products/:id/image
+         * @description Imagen del producto. Una imagen por llamada (mismo motivo que POST /package/image: multer sin limits).
+         */
+        post: operations["uploadCatalogProductImage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/{business_key}/products": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /catalog/:business_key/products
+         * @description Catalogo publico para el agente. business_key = provider.catalog_key (opaco, no el prov_id). Solo nombre, contenido, imagen y precio por unidad del tramo que corresponde a `quantity` (con IGV aplicado si el producto tiene add_igv). Nunca expone costo base, precio sugerido ni margen. Con quantity > 1000 responde needs_human=true y sin productos.
+         */
+        get: operations["searchCatalogProducts"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -6239,9 +6367,86 @@ export interface components {
             /** @description null = sin cuota propia = valores por defecto (5000/dia por negocio para keys publicables, contando solo keys publicables; sin limite para secret) */
             daily_quota: number | null;
         };
+        /** @description Mapa disperso celda -> contenido, con la notacion A1 ("B9", "G9"). Solo lo que escribe el proveedor: literales o formulas que empiezan por "=". */
+        CatalogSheetCells: {
+            [key: string]: string | number | null;
+        };
+        CatalogSheetError: {
+            cell: string;
+            reason: string;
+        };
+        CatalogSheetDraft: {
+            cells: components["schemas"]["CatalogSheetCells"];
+            /** @description Valor calculado por el servidor para cada celda de cells. */
+            values: {
+                [key: string]: string | number | null;
+            };
+            /** @description Celda -> motivo, solo para las celdas que no se pudieron calcular. */
+            errors: {
+                [key: string]: string;
+            };
+            /** Format: date-time */
+            updated_at?: string | null;
+        };
+        /** @description Vinculo del producto con un bloque de la hoja. `row` es la fila de cabecera del bloque; Publicar comprueba que la cabecera coincida con product.name (decisions.md Q12: sin insertar ni borrar filas). */
+        CatalogSheetBinding: {
+            row: number;
+        } & {
+            [key: string]: unknown;
+        };
+        /** @description Un tramo de cantidad con sus costos y margen. Solo en la vista de admin. */
+        CatalogAdminTier: {
+            min_quantity: number;
+            cost_base: number;
+            suggested_price: number;
+            /** @description Fraccion (0.25 = 25 %) sobre el precio sugerido. */
+            margin: number;
+        };
+        CatalogAdminProduct: {
+            product_id: number;
+            name: string;
+            content?: string | null;
+            image_ref?: string | null;
+            thumb_ref?: string | null;
+            add_igv: boolean;
+            is_active: boolean;
+            sheet_binding: components["schemas"]["CatalogSheetBinding"];
+            tiers: components["schemas"]["CatalogAdminTier"][];
+        };
+        /** @description Vista publica (agente). Sin costo, precio sugerido ni margen. */
+        CatalogPublicProduct: {
+            name: string;
+            content?: string | null;
+            image_ref?: string | null;
+            /** @description Precio por unidad del tramo de la cantidad pedida, con IGV si add_igv. */
+            unit_price: number;
+        };
+        CatalogPublicSearchResult: {
+            /** @description true cuando quantity > 1000; el agente deriva a una persona y products viene vacio. */
+            needs_human: boolean;
+            products: components["schemas"]["CatalogPublicProduct"][];
+        };
+        /** @description Negocio del admin devuelto por el login. */
+        AdminLoginProvider: {
+            /** @description Opcional. 'retail' hace que el admin muestre la pestana Catalogo. */
+            vertical?: string | null;
+        } & {
+            [key: string]: unknown;
+        };
+        AdminLoginResponse: {
+            data?: {
+                provider?: components["schemas"]["AdminLoginProvider"];
+            } & {
+                [key: string]: unknown;
+            };
+        } & {
+            [key: string]: unknown;
+        };
     };
     responses: never;
     parameters: {
+        /** @description Obligatorio para admins sin alcance (400 si falta); con alcance se ignora y se usa su provider_id. */
+        CatalogBusinessIdQuery: number;
         /** @description Header de correlacion recomendado en toda peticion al backend (spec:228); el backend lo cuelga en req.ctx y lo usa para etiquetar su propia fila de log con la sesion del cliente (Glosario spec:40). */
         XSessionIdHeader: string;
         /** @description Header de correlacion recomendado en toda peticion al backend (spec:228); el backend lo cuelga en req.ctx y lo usa para etiquetar su propia fila de log con la traza del cliente (Glosario spec:41). */
@@ -6322,7 +6527,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["GenericResult"];
+                    "application/json": components["schemas"]["AdminLoginResponse"];
                 };
             };
         };
@@ -18788,6 +18993,511 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PublicApiErrorResponse"];
+                };
+            };
+        };
+    };
+    getCatalogSheet: {
+        parameters: {
+            query?: {
+                /** @description Obligatorio para admins sin alcance (400 si falta); con alcance se ignora y se usa su provider_id. */
+                business_id?: components["parameters"]["CatalogBusinessIdQuery"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "cells": {
+                     *         "B9": "Box Ejecutiva",
+                     *         "G9": 20,
+                     *         "C9": "=+D9+0.3"
+                     *       },
+                     *       "values": {
+                     *         "B9": "Box Ejecutiva",
+                     *         "G9": 20,
+                     *         "C9": 20.3
+                     *       },
+                     *       "errors": {},
+                     *       "updated_at": "2026-09-30T12:00:00Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["CatalogSheetDraft"];
+                };
+            };
+            /** @description Falta business_id (admin sin alcance) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    putCatalogSheet: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Solo para admins sin alcance (obligatorio); con alcance se ignora. */
+                    business_id?: number;
+                    cells: components["schemas"]["CatalogSheetCells"];
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogSheetDraft"];
+                };
+            };
+            /** @description cells invalido, o falta business_id (admin sin alcance) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    publishCatalogSheet: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /** @description Solo para admins sin alcance (obligatorio); con alcance se ignora. */
+                    business_id?: number;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "published_at": "2026-09-30T12:00:00Z",
+                     *       "product_count": 21,
+                     *       "price_count": 189
+                     *     }
+                     */
+                    "application/json": {
+                        /** Format: date-time */
+                        published_at: string;
+                        product_count: number;
+                        price_count: number;
+                    };
+                };
+            };
+            /** @description El borrador tiene errores (o falta business_id para admin sin alcance) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string;
+                        errors?: components["schemas"]["CatalogSheetError"][];
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    listCatalogProducts: {
+        parameters: {
+            query?: {
+                /** @description Obligatorio para admins sin alcance (400 si falta); con alcance se ignora y se usa su provider_id. */
+                business_id?: components["parameters"]["CatalogBusinessIdQuery"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example [
+                     *       {
+                     *         "product_id": 1,
+                     *         "name": "Caja de regalo",
+                     *         "content": null,
+                     *         "image_ref": null,
+                     *         "thumb_ref": null,
+                     *         "add_igv": true,
+                     *         "is_active": true,
+                     *         "sheet_binding": {
+                     *           "row": 5
+                     *         },
+                     *         "tiers": [
+                     *           {
+                     *             "min_quantity": 1,
+                     *             "cost_base": 10,
+                     *             "suggested_price": 14,
+                     *             "margin": 0.29
+                     *           }
+                     *         ]
+                     *       }
+                     *     ]
+                     */
+                    "application/json": components["schemas"]["CatalogAdminProduct"][];
+                };
+            };
+            /** @description Falta business_id (admin sin alcance) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    createCatalogProduct: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Solo para admins sin alcance (obligatorio); con alcance se ignora. */
+                    business_id?: number;
+                    name: string;
+                    sheet_binding: components["schemas"]["CatalogSheetBinding"];
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "product_id": 1,
+                     *       "name": "Caja de regalo",
+                     *       "content": null,
+                     *       "image_ref": null,
+                     *       "thumb_ref": null,
+                     *       "add_igv": true,
+                     *       "is_active": true,
+                     *       "sheet_binding": {
+                     *         "row": 5
+                     *       },
+                     *       "tiers": [
+                     *         {
+                     *           "min_quantity": 1,
+                     *           "cost_base": 10,
+                     *           "suggested_price": 14,
+                     *           "margin": 0.29
+                     *         }
+                     *       ]
+                     *     }
+                     */
+                    "application/json": components["schemas"]["CatalogAdminProduct"];
+                };
+            };
+            /** @description Datos invalidos, o falta business_id (admin sin alcance) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    updateCatalogProduct: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Solo para admins sin alcance (obligatorio); con alcance se ignora. */
+                    business_id?: number;
+                    add_igv?: boolean;
+                    is_active?: boolean;
+                    sheet_binding?: components["schemas"]["CatalogSheetBinding"];
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "product_id": 1,
+                     *       "name": "Caja de regalo",
+                     *       "content": null,
+                     *       "image_ref": null,
+                     *       "thumb_ref": null,
+                     *       "add_igv": true,
+                     *       "is_active": true,
+                     *       "sheet_binding": {
+                     *         "row": 5
+                     *       },
+                     *       "tiers": [
+                     *         {
+                     *           "min_quantity": 1,
+                     *           "cost_base": 10,
+                     *           "suggested_price": 14,
+                     *           "margin": 0.29
+                     *         }
+                     *       ]
+                     *     }
+                     */
+                    "application/json": components["schemas"]["CatalogAdminProduct"];
+                };
+            };
+            /** @description Datos invalidos, o falta business_id (admin sin alcance) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Producto inexistente o de otro negocio */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    uploadCatalogProductImage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /** @description Solo para admins sin alcance (obligatorio); con alcance se ignora. */
+                    business_id?: number;
+                    /** Format: binary */
+                    image: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "image_ref": "catalog/7/12.jpg",
+                     *       "thumb_ref": "catalog/7/12_thumb.jpg"
+                     *     }
+                     */
+                    "application/json": {
+                        image_ref: string;
+                        thumb_ref: string;
+                    };
+                };
+            };
+            /** @description Imagen invalida, o falta business_id (admin sin alcance) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Producto inexistente o de otro negocio */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    searchCatalogProducts: {
+        parameters: {
+            query: {
+                /** @description Unidades que quiere el cliente; define el tramo de precio. */
+                quantity: number;
+                /** @description Filtra los productos cuyo precio por unidad supera este valor. */
+                max_unit_price?: number;
+                /** @description Busqueda libre por nombre o contenido. */
+                text?: string;
+            };
+            header?: never;
+            path: {
+                business_key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "needs_human": false,
+                     *       "products": [
+                     *         {
+                     *           "name": "Box Ejecutiva",
+                     *           "content": "Libreta A5, lapicero y caja blanca",
+                     *           "image_ref": "catalog/7/12.jpg",
+                     *           "unit_price": 33.99
+                     *         }
+                     *       ]
+                     *     }
+                     */
+                    "application/json": components["schemas"]["CatalogPublicSearchResult"];
+                };
+            };
+            /** @description quantity ausente o invalida */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description business_key desconocido */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
                 };
             };
         };
